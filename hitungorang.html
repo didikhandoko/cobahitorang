@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e5a7b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+
+<title>Hitung Orang — DIDIKHAND</title>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231e5a7b'/%3E%3Cstop offset='1' stop-color='%236ab7ba'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='system-ui,sans-serif' font-size='27' font-weight='700' fill='%23fff' text-anchor='middle'%3EDH%3C/text%3E%3C/svg%3E">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS — DIDIKHAND (selaras dengan portal index.html)
+     ============================================================ */
+  :root{
+    --bg:#f9fafb; --card:#ffffff;
+    --teal:#1e5a7b; --teal2:#6ab7ba;
+    --pink:#ec4899; --pink6:#db2777;
+    --ink:#1f2937; --sub:#374151; --muted:#9ca3af;
+    --line:#e5e7eb; --line2:#f3f4f6;
+    --green:#16a34a; --blue:#2563eb; --amber:#d97706; --red:#dc2626;
+    --shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04);
+    --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);min-height:100vh;}
+  .wrap{max-width:640px;margin:0 auto;padding:16px 16px 32px;}
+
+  /* ---------- HEADER ---------- */
+  header{display:flex;align-items:center;gap:14px;margin-bottom:16px;
+    background:linear-gradient(135deg,#1e5a7b 0%,#6ab7ba 100%);color:#fff;
+    border-radius:16px;padding:18px;box-shadow:var(--shadow);}
+  .logo{width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;
+    font-size:22px;flex:0 0 auto;}
+  header h1{font-size:19px;font-weight:800;margin:0;line-height:1.2;}
+  header .sub{font-size:11px;color:rgba(255,255,255,.85);letter-spacing:.14em;
+    text-transform:uppercase;margin-top:3px;}
+  header .back{margin-left:auto;color:#fff;opacity:.85;text-decoration:none;font-size:18px;
+    width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.14);
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  header .back:active{background:rgba(255,255,255,.28);}
+
+  /* ---------- KARTU & LABEL ---------- */
+  .card{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:16px;
+    margin-bottom:14px;box-shadow:var(--shadow);}
+  .cap{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+    font-weight:700;margin-bottom:9px;display:block;}
+  .hidden{display:none !important;}
+
+  /* ---------- INPUT ---------- */
+  label.slide{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted);}
+  input[type=range]{-webkit-appearance:none;appearance:none;flex:1;width:100%;height:6px;
+    border-radius:5px;background:#e5e7eb;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;
+    border-radius:50%;background:var(--pink);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border:2px solid #fff;
+    border-radius:50%;background:var(--pink);}
+  input[type=text]{width:100%;background:#f9fafb;border:1px solid var(--line);color:var(--ink);
+    border-radius:10px;padding:9px 11px;font-size:14px;font-family:inherit;}
+  input[type=text]:focus{outline:none;border-color:var(--teal2);box-shadow:0 0 0 3px rgba(106,183,186,.25);background:#fff;}
+
+  /* ---------- SEGMENTED / CHIP ---------- */
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{background:#f3f4f6;border:1px solid var(--line);color:var(--sub);padding:9px 13px;
+    border-radius:999px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;}
+  .chip.on{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .chip .dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto;}
+
+  /* ---------- TOGGLE ---------- */
+  .opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;
+    border-bottom:1px solid var(--line2);}
+  .opt:last-child{border-bottom:0;}
+  .opt span{font-size:14px;color:var(--sub);}
+  .opt small{color:var(--muted);font-size:11px;display:block;margin-top:2px;}
+  .sw{width:50px;height:28px;border-radius:999px;background:#e5e7eb;border:1px solid var(--line);
+    position:relative;flex:0 0 auto;cursor:pointer;transition:.2s;}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s;}
+  .sw.on{background:var(--teal);border-color:var(--teal);} .sw.on::after{left:24px;}
+
+  /* ---------- TOMBOL ---------- */
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .btn{flex:1;min-width:120px;border:0;border-radius:12px;padding:14px;font-size:15px;
+    font-weight:800;font-family:inherit;cursor:pointer;text-align:center;text-decoration:none;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;}
+  .btn.primary{background:var(--pink);color:#fff;box-shadow:0 8px 15px -6px rgba(236,72,153,.5);}
+  .btn.primary:active{background:var(--pink6);}
+  .btn.ghost{background:#fff;color:var(--sub);border:1px solid var(--line);}
+  .btn.ghost:active{background:#f3f4f6;}
+  .btn.teal{background:var(--teal);color:#fff;}
+  .btn.block{width:100%;flex:none;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* tombol alat kecil (di toolbar papan) */
+  .tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .tbtn{flex:0 0 auto;min-width:0;border:1px solid var(--line);background:#fff;color:var(--sub);
+    border-radius:11px;padding:10px 12px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;}
+  .tbtn:active{background:#f3f4f6;}
+  .tbtn.on{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .tbtn.grow{flex:1;justify-content:center;}
+
+  /* ---------- HASIL / STATISTIK ---------- */
+  .result{background:#eef6f7;border:1px solid #cfe6e7;border-radius:12px;padding:14px;
+    color:var(--teal);font-size:13px;line-height:1.7;display:flex;align-items:center;gap:14px;}
+  .bignum{font-size:42px;font-weight:800;color:var(--teal);line-height:1;}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;}
+  .stat{background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;
+    border-top:3px solid var(--teal2);}
+  .stat b{display:block;font-size:20px;color:var(--ink);}
+  .stat span{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
+
+  /* ---------- PAPAN HITUNG ---------- */
+  .board-wrap{position:relative;width:100%;height:60vh;min-height:320px;max-height:640px;
+    background:#0f172a;border-radius:14px;overflow:hidden;border:1px solid #0b1220;
+    touch-action:none;user-select:none;-webkit-user-select:none;}
+  #board{width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;}
+  .badge{position:absolute;top:10px;left:10px;background:rgba(15,23,42,.72);backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);color:#fff;border-radius:12px;padding:8px 14px;
+    display:flex;align-items:baseline;gap:8px;border:1px solid rgba(255,255,255,.14);pointer-events:none;}
+  .badge b{font-size:30px;font-weight:800;line-height:1;}
+  .badge small{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.8);}
+  .hint{position:absolute;left:10px;right:10px;bottom:10px;color:rgba(255,255,255,.9);
+    background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.12);border-radius:10px;
+    padding:8px 11px;font-size:11px;line-height:1.5;text-align:center;pointer-events:none;transition:.3s;}
+  .catbar{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
+  .catbar button{border:1px solid rgba(255,255,255,.2);background:rgba(15,23,42,.72);color:#fff;
+    border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;pointer-events:auto;}
+  .catbar button .dot{width:11px;height:11px;border-radius:50%;}
+  .catbar button.on{outline:2px solid #fff;}
+
+  /* ---------- KAMERA ---------- */
+  .cam-wrap{position:relative;width:100%;height:56vh;min-height:300px;max-height:560px;
+    background:#0f172a;border-radius:14px;overflow:hidden;margin-top:12px;}
+  #video{width:100%;height:100%;object-fit:cover;display:block;background:#0f172a;}
+  .cam-tools{position:absolute;left:0;right:0;bottom:0;padding:12px;display:flex;gap:10px;
+    align-items:center;justify-content:center;background:linear-gradient(transparent,rgba(15,23,42,.75));}
+  .cam-tools .cap-btn{background:var(--pink);color:#fff;border:0;border-radius:999px;
+    padding:14px 22px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;
+    box-shadow:0 8px 15px -6px rgba(236,72,153,.6);display:inline-flex;align-items:center;gap:8px;}
+  .cam-tools .cap-btn:active{background:var(--pink6);}
+  .cam-ic{width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);
+    background:rgba(15,23,42,.6);color:#fff;font-size:16px;cursor:pointer;flex:0 0 auto;}
+
+  /* ---------- PANEL LIPAT / CATATAN ---------- */
+  details{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:4px 16px;
+    margin-bottom:14px;box-shadow:var(--shadow);}
+  summary{padding:13px 0;font-weight:700;color:var(--sub);cursor:pointer;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;}
+  summary::-webkit-details-marker{display:none;}
+  summary::after{content:"\25BE";color:var(--pink);}
+  details[open] summary::after{content:"\25B4";}
+  .note{font-size:11px;color:var(--muted);line-height:1.7;margin-top:8px;}
+  .note b{color:var(--sub);}
+  .steps{margin:6px 0 8px;padding-left:18px;font-size:12.5px;color:var(--sub);line-height:1.8;}
+  .disc{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:12px;
+    padding:12px;font-size:11.5px;line-height:1.7;}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:var(--teal);color:#fff;padding:11px 18px;border-radius:12px;font-weight:800;
+    font-size:13px;box-shadow:var(--shadow);transition:.25s;z-index:50;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  footer{text-align:center;padding:18px 6px 6px;color:var(--muted);font-size:10px;
+    letter-spacing:.14em;text-transform:uppercase;line-height:1.9;}
+  footer b{color:var(--teal);font-weight:800;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo"><i class="fas fa-people-group"></i></div>
+    <div>
+      <h1>Hitung Orang</h1>
+      <div class="sub">Didikhand</div>
+    </div>
+    <a class="back" href="index.html" title="Kembali ke portal"><i class="fas fa-home"></i></a>
+  </header>
+
+  <!-- ====================== SUMBER GAMBAR ====================== -->
+  <div class="card" id="sourceCard">
+    <span class="cap">Mulai Menghitung</span>
+    <div class="row">
+      <button class="btn primary" id="btnCam"><i class="fas fa-camera"></i> Buka Kamera</button>
+      <button class="btn ghost" id="btnPhoto"><i class="fas fa-image"></i> Pilih Foto</button>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" class="hidden">
+    <p class="note" id="srcNote"><b>Cara kerja:</b> arahkan kamera ke kerumunan lalu bekukan
+      gambarnya, atau pilih foto yang sudah ada. Setelah itu ketuk tiap kepala untuk menghitung.
+      Membekukan gambar mencegah orang yang bergerak terhitung dua kali.</p>
+
+    <div class="cam-wrap hidden" id="camWrap">
+      <video id="video" playsinline muted autoplay></video>
+      <div class="cam-tools">
+        <button class="cam-ic" id="btnSwitch" title="Ganti kamera"><i class="fas fa-camera-rotate"></i></button>
+        <button class="cap-btn" id="btnCapture"><i class="fas fa-crosshairs"></i> Bekukan Gambar</button>
+        <button class="cam-ic" id="btnCloseCam" title="Tutup kamera"><i class="fas fa-xmark"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== PAPAN HITUNG ====================== -->
+  <div class="card hidden" id="boardCard">
+    <span class="cap">Papan Hitung — ketuk kepala untuk menandai</span>
+    <div class="board-wrap" id="boardWrap">
+      <canvas id="board"></canvas>
+      <div class="badge"><b id="countBig">0</b><small id="countLbl">orang</small></div>
+      <div class="catbar hidden" id="catBar"></div>
+      <div class="hint" id="hint">Ketuk tiap kepala • ketuk penanda untuk hapus • cubit untuk perbesar • seret untuk geser</div>
+    </div>
+
+    <div class="tools">
+      <button class="tbtn" id="btnUndo"><i class="fas fa-rotate-left"></i> Urungkan</button>
+      <button class="tbtn" id="btnClear"><i class="fas fa-eraser"></i> Kosongkan</button>
+      <button class="tbtn" id="btnZoomOut"><i class="fas fa-magnifying-glass-minus"></i></button>
+      <button class="tbtn" id="btnZoomIn"><i class="fas fa-magnifying-glass-plus"></i></button>
+      <button class="tbtn" id="btnFit"><i class="fas fa-expand"></i> Muat</button>
+      <button class="tbtn" id="btnGrid"><i class="fas fa-border-all"></i> Grid</button>
+    </div>
+
+    <label class="slide" style="margin-top:14px">
+      <i class="fas fa-circle-dot" style="color:var(--pink)"></i>
+      <input type="range" id="dotSize" min="4" max="18" value="8">
+      <span id="dotSizeVal" style="min-width:74px;text-align:right">Titik 8px</span>
+    </label>
+    <label class="slide hidden" id="gridRow" style="margin-top:10px">
+      <i class="fas fa-table-cells" style="color:var(--teal2)"></i>
+      <input type="range" id="gridCols" min="2" max="12" value="4">
+      <span id="gridColsVal" style="min-width:74px;text-align:right">Grid 4×</span>
+    </label>
+
+    <div class="row" style="margin-top:14px">
+      <button class="btn teal" id="btnAuto"><i class="fas fa-wand-magic-sparkles"></i> Deteksi Otomatis</button>
+      <button class="btn primary" id="btnSave"><i class="fas fa-download"></i> Simpan PNG</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn ghost block" id="btnRetake"><i class="fas fa-arrows-rotate"></i> Ganti Sumber Gambar</button>
+    </div>
+  </div>
+
+  <!-- ====================== HASIL ====================== -->
+  <div class="card hidden" id="statsCard">
+    <span class="cap">Hasil</span>
+    <div class="result">
+      <b class="bignum" id="totalOut">0</b>
+      <div>
+        <div style="font-weight:800;color:var(--teal);font-size:15px">orang tertandai</div>
+        <div style="color:var(--sub);font-size:12px" id="statsSub">Ketuk tiap kepala di papan untuk menambah hitungan.</div>
+      </div>
+    </div>
+    <div class="stats hidden" id="catStats"></div>
+  </div>
+
+  <!-- ====================== KATEGORI ====================== -->
+  <details id="catPanel">
+    <summary>Kategori ganda (opsional)</summary>
+    <p class="note" style="margin-top:0">Aktifkan bila ingin menghitung beberapa kelompok sekaligus,
+      misalnya <b>laki-laki / perempuan</b> atau <b>dewasa / anak</b>. Pilih kategori aktif di
+      pojok papan sebelum menandai.</p>
+    <div class="opt">
+      <div><span>Pakai kategori ganda</span><small>Muncul tombol pemilih warna di papan hitung</small></div>
+      <div class="sw" id="swMulti"></div>
+    </div>
+    <div id="catEditor" class="hidden" style="margin-top:6px"></div>
+  </details>
+
+  <!-- ====================== PANDUAN ====================== -->
+  <details>
+    <summary>Panduan menghitung akurat</summary>
+    <ol class="steps">
+      <li><b>Bekukan dulu.</b> Untuk kerumunan yang bergerak, bekukan gambar agar tidak ada orang yang terhitung dua kali.</li>
+      <li><b>Perbesar area padat.</b> Cubit untuk zoom, lalu seret untuk menggeser sebelum menandai kepala yang berdempetan.</li>
+      <li><b>Pakai grid.</b> Nyalakan grid dan hitung petak demi petak agar tidak ada yang terlewat atau ganda.</li>
+      <li><b>Titik cincin.</b> Penanda berbentuk cincin sehingga kepala di baliknya tetap terlihat untuk pemeriksaan.</li>
+      <li><b>Salah tandai?</b> Ketuk penanda untuk menghapusnya, atau tekan <b>Urungkan</b>.</li>
+      <li><b>Simpan bukti.</b> Tekan <b>Simpan PNG</b> untuk menyimpan gambar berikut penanda dan jumlahnya.</li>
+    </ol>
+  </details>
+
+  <div class="card">
+    <p class="disc" style="margin:0"><i class="fas fa-circle-info"></i>
+      <b>Catatan.</b> Penandaan manual pada gambar beku adalah cara paling akurat—komputer masih sering
+      keliru di kerumunan padat. <b>Deteksi Otomatis</b> hanya alat bantu, <b>butuh internet</b>, dan bisa
+      melewatkan orang pada gambar padat/buram; hasilnya wajib Anda periksa dan koreksi manual.
+      <b>Kamera</b> hanya berjalan di alamat <b>https://</b> (aman di Vercel) atau localhost—bila dibuka
+      langsung dari berkas, gunakan tombol <b>Pilih Foto</b>. Semua proses berjalan di perangkat Anda
+      dan gambar tidak diunggah ke mana pun.</p>
+  </div>
+
+  <footer>
+    &copy; 2026 Portal <b>Didikhand</b><br>Dikembangkan DHN
+  </footer>
+</div>
+
+<div class="toast" id="toast">Tersimpan!</div>
+
+<script>
+(function(){
+  /* ================= HELPER (dari template) ================= */
+  var $=function(id){ return document.getElementById(id); };
+  var _tt=null;
+  function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(_tt); _tt=setTimeout(function(){ t.classList.remove('show'); },1900); }
+  var KEY='dh-hitungorang';
+  function save(o){ try{ localStorage.setItem(KEY,JSON.stringify(o)); }catch(e){} }
+  function load(def){ try{ var s=localStorage.getItem(KEY); return s?Object.assign({},def,JSON.parse(s)):def; }catch(e){ return def; } }
+  function nf(n){ return (Number(n)||0).toLocaleString('id-ID'); }
+  function bindSw(id,cb,initial){ var el=$(id); if(!el) return;
+    if(initial!==undefined) el.classList.toggle('on',!!initial);
+    el.addEventListener('click',function(){ this.classList.toggle('on'); if(cb) cb(this.classList.contains('on')); }); }
+
+  /* ================= STATE ================= */
+  var DEF_CATS=[
+    {name:'Orang', color:'#1e5a7b'},
+    {name:'Kelompok 2', color:'#ec4899'},
+    {name:'Kelompok 3', color:'#2563eb'}
+  ];
+  var st = load({ dot:8, grid:false, cols:4, multi:false, cats:DEF_CATS });
+  if(!Array.isArray(st.cats) || st.cats.length!==3) st.cats = DEF_CATS.slice();
+
+  var src=null, srcW=0, srcH=0;      // kanvas sumber (gambar beku / foto)
+  var markers=[];                    // {x,y,c} koordinat piksel gambar
+  var undoStack=[];
+  var activeCat=0;
+  var view={scale:1, tx:0, ty:0, fit:1};
+
+  var board=$('board'), ctx=board.getContext('2d'), dpr=Math.max(1, window.devicePixelRatio||1);
+
+  /* ================= UTIL WARNA ================= */
+  function hexA(hex,a){
+    hex=hex.replace('#',''); if(hex.length===3) hex=hex.split('').map(function(c){return c+c;}).join('');
+    var n=parseInt(hex,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+  }
+
+  /* ================= UKUR KANVAS ================= */
+  function sizeCanvas(){
+    var r=board.getBoundingClientRect();
+    board.width=Math.max(1,Math.round(r.width*dpr));
+    board.height=Math.max(1,Math.round(r.height*dpr));
+  }
+  function W(){ return board.width/dpr; }
+  function H(){ return board.height/dpr; }
+
+  /* ================= PASANG SUMBER ================= */
+  function setSource(imgLike, natW, natH){
+    // skala turun bila gambar sangat besar (hemat memori & responsif saat ketuk)
+    var MAX=2400, w=natW, h=natH, s=Math.min(1, MAX/Math.max(w,h));
+    srcW=Math.round(w*s); srcH=Math.round(h*s);
+    src=document.createElement('canvas'); src.width=srcW; src.height=srcH;
+    src.getContext('2d').drawImage(imgLike,0,0,srcW,srcH);
+    markers=[]; undoStack=[];
+    $('sourceCard').classList.add('hidden');
+    $('boardCard').classList.remove('hidden');
+    $('statsCard').classList.remove('hidden');
+    sizeCanvas(); fitView(); draw(); updateCount();
+    setTimeout(function(){ var hn=$('hint'); if(hn) hn.style.opacity='0'; }, 5000);
+  }
+
+  function fitView(){
+    var w=W(), h=H();
+    var s=Math.min(w/srcW, h/srcH);
+    view.fit=s; view.scale=s;
+    view.tx=(w-srcW*s)/2; view.ty=(h-srcH*s)/2;
+  }
+  function clampView(){
+    var w=W(), h=H(), iw=srcW*view.scale, ih=srcH*view.scale;
+    view.tx = iw<=w ? (w-iw)/2 : Math.min(0, Math.max(w-iw, view.tx));
+    view.ty = ih<=h ? (h-ih)/2 : Math.min(0, Math.max(h-ih, view.ty));
+  }
+  function zoomAt(cx,cy,factor){
+    var min=view.fit, max=view.fit*16;
+    var ns=Math.min(max, Math.max(min, view.scale*factor));
+    var ix=(cx-view.tx)/view.scale, iy=(cy-view.ty)/view.scale;
+    view.scale=ns; view.tx=cx-ix*view.scale; view.ty=cy-iy*view.scale;
+    clampView(); draw();
+  }
+
+  /* ================= GAMBAR ================= */
+  var raf=null;
+  function draw(){ if(raf) return; raf=requestAnimationFrame(function(){ raf=null; render(); }); }
+  function render(){
+    if(!src) return;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W(),H());
+    ctx.imageSmoothingEnabled=true;
+    ctx.drawImage(src, view.tx, view.ty, srcW*view.scale, srcH*view.scale);
+
+    if(st.grid) drawGrid();
+
+    var r=st.dot;
+    for(var i=0;i<markers.length;i++){
+      var m=markers[i];
+      var cx=m.x*view.scale+view.tx, cy=m.y*view.scale+view.ty;
+      if(cx<-r||cy<-r||cx>W()+r||cy>H()+r) continue;
+      var col=st.cats[m.c] ? st.cats[m.c].color : st.cats[0].color;
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,6.2832);
+      ctx.fillStyle=hexA(col,.28); ctx.fill();
+      ctx.lineWidth=Math.max(1.5,r*0.28); ctx.strokeStyle=col; ctx.stroke();
+      ctx.lineWidth=1; ctx.strokeStyle='rgba(255,255,255,.9)'; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx,cy,Math.max(1,r*0.16),0,6.2832); ctx.fillStyle='#fff'; ctx.fill();
+    }
+  }
+  function drawGrid(){
+    var x0=view.tx, y0=view.ty, iw=srcW*view.scale, ih=srcH*view.scale;
+    var cell=iw/st.cols, rows=Math.max(1,Math.round(ih/cell));
+    ctx.save(); ctx.strokeStyle='rgba(255,255,255,.45)'; ctx.lineWidth=1;
+    ctx.beginPath();
+    for(var c=1;c<st.cols;c++){ var x=x0+cell*c; ctx.moveTo(x,y0); ctx.lineTo(x,y0+ih); }
+    for(var rr=1;rr<rows;rr++){ var y=y0+(ih/rows)*rr; ctx.moveTo(x0,y); ctx.lineTo(x0+iw,y); }
+    ctx.stroke(); ctx.restore();
+  }
+
+  /* ================= HITUNGAN ================= */
+  function updateCount(){
+    var total=markers.length;
+    $('countBig').textContent=nf(total);
+    $('totalOut').textContent=nf(total);
+    $('countLbl').textContent = st.multi ? 'total' : 'orang';
+    var sub=$('statsSub');
+    sub.textContent = total===0 ? 'Ketuk tiap kepala di papan untuk menambah hitungan.'
+      : 'Perbesar area padat dan pakai grid agar tidak ada yang terlewat.';
+    // stats per kategori
+    var cs=$('catStats');
+    if(st.multi){
+      var counts=[0,0,0]; markers.forEach(function(m){ counts[m.c]=(counts[m.c]||0)+1; });
+      cs.innerHTML='';
+      for(var i=0;i<3;i++){
+        var d=document.createElement('div'); d.className='stat';
+        d.style.borderTopColor=st.cats[i].color;
+        d.innerHTML='<b>'+nf(counts[i])+'</b><span>'+escapeHtml(st.cats[i].name)+'</span>';
+        cs.appendChild(d);
+      }
+      cs.classList.remove('hidden');
+    } else cs.classList.add('hidden');
+  }
+  function escapeHtml(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  /* ================= AKSI PENANDA ================= */
+  function addMarker(ix,iy){
+    if(ix<0||iy<0||ix>srcW||iy>srcH) return;
+    var m={x:ix,y:iy,c:st.multi?activeCat:0};
+    markers.push(m); undoStack.push({t:'add'}); draw(); updateCount();
+  }
+  function hitTest(cx,cy){
+    // radius sentuh dalam px layar
+    var r=Math.max(16, st.dot+8), best=-1, bd=r*r;
+    for(var i=markers.length-1;i>=0;i--){
+      var m=markers[i], mx=m.x*view.scale+view.tx, my=m.y*view.scale+view.ty;
+      var d=(mx-cx)*(mx-cx)+(my-cy)*(my-cy);
+      if(d<=bd){ bd=d; best=i; }
+    }
+    return best;
+  }
+  function tap(cx,cy){
+    var hit=hitTest(cx,cy);
+    if(hit>=0){ var m=markers.splice(hit,1)[0]; undoStack.push({t:'del',m:m,i:hit}); draw(); updateCount(); return; }
+    addMarker((cx-view.tx)/view.scale,(cy-view.ty)/view.scale);
+  }
+  function undo(){
+    var op=undoStack.pop(); if(!op){ toast('Tidak ada yang bisa diurungkan'); return; }
+    if(op.t==='add') markers.pop();
+    else if(op.t==='del') markers.splice(op.i,0,op.m);
+    else if(op.t==='clear') markers=op.all;
+    else if(op.t==='auto'){ for(var k=0;k<op.n;k++) markers.pop(); }
+    draw(); updateCount();
+  }
+
+  /* ================= GESTUR (ketuk / geser / cubit) ================= */
+  var pointers=new Map(), prev=null, g=null;
+  function metrics(){
+    var xs=0,ys=0,arr=[]; pointers.forEach(function(p){ xs+=p.x; ys+=p.y; arr.push(p); });
+    var n=arr.length, cx=xs/n, cy=ys/n, sp=0;
+    for(var i=0;i<n;i++){ sp+=Math.hypot(arr[i].x-cx,arr[i].y-cy); }
+    return {cx:cx, cy:cy, sp:(sp/n)||0, n:n};
+  }
+  function localXY(e){ var r=board.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+
+  board.addEventListener('pointerdown',function(e){
+    board.setPointerCapture(e.pointerId);
+    var p=localXY(e); pointers.set(e.pointerId,p);
+    if(pointers.size===1) g={sx:p.x, sy:p.y, moved:0, t:Date.now(), multi:false};
+    else if(g) g.multi=true;
+    prev=null;
+  });
+  board.addEventListener('pointermove',function(e){
+    if(!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, localXY(e));
+    var cur=metrics();
+    if(prev){
+      view.tx += cur.cx-prev.cx; view.ty += cur.cy-prev.cy;
+      if(cur.n>=2 && prev.sp>0){
+        var f=cur.sp/prev.sp, ns=Math.min(view.fit*16, Math.max(view.fit, view.scale*f));
+        var ix=(cur.cx-view.tx)/view.scale, iy=(cur.cy-view.ty)/view.scale;
+        view.scale=ns; view.tx=cur.cx-ix*view.scale; view.ty=cur.cy-iy*view.scale;
+      }
+      if(g) g.moved += Math.hypot(cur.cx-prev.cx, cur.cy-prev.cy);
+      clampView(); draw();
+    }
+    prev=cur;
+  });
+  function endPointer(e){
+    if(!pointers.has(e.pointerId)) return;
+    var wasSingle = pointers.size===1;
+    var up=localXY(e);
+    pointers.delete(e.pointerId);
+    prev = pointers.size? metrics() : null;
+    if(pointers.size===0 && g && !g.multi && wasSingle){
+      var dist=Math.hypot(up.x-g.sx, up.y-g.sy);
+      if(Math.max(g.moved,dist)<9 && (Date.now()-g.t)<450) tap(g.sx,g.sy);
+    }
+    if(pointers.size===0) g=null;
+  }
+  board.addEventListener('pointerup',endPointer);
+  board.addEventListener('pointercancel',endPointer);
+  board.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+
+  /* ================= KAMERA ================= */
+  var stream=null, facing='environment';
+  function stopCam(){ if(stream){ stream.getTracks().forEach(function(t){ t.stop(); }); stream=null; } $('camWrap').classList.add('hidden'); }
+  async function startCam(){
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      toast('Kamera tidak didukung — pakai Pilih Foto'); return;
+    }
+    if(location.protocol!=='https:' && location.hostname!=='localhost'){
+      toast('Kamera butuh https:// — pakai Pilih Foto');
+    }
+    try{
+      stopCam();
+      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:false});
+      var v=$('video'); v.srcObject=stream; await v.play().catch(function(){});
+      $('camWrap').classList.remove('hidden');
+      $('camWrap').scrollIntoView({behavior:'smooth',block:'center'});
+    }catch(err){
+      toast('Tidak bisa membuka kamera — pakai Pilih Foto');
+    }
+  }
+  $('btnCam').addEventListener('click',startCam);
+  $('btnSwitch').addEventListener('click',function(){ facing = facing==='environment'?'user':'environment'; startCam(); });
+  $('btnCloseCam').addEventListener('click',stopCam);
+  $('btnCapture').addEventListener('click',function(){
+    var v=$('video'); if(!v.videoWidth){ toast('Kamera belum siap'); return; }
+    var c=document.createElement('canvas'); c.width=v.videoWidth; c.height=v.videoHeight;
+    c.getContext('2d').drawImage(v,0,0);
+    stopCam();
+    setSource(c, v.videoWidth, v.videoHeight);
+    $('boardCard').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+
+  /* ================= PILIH FOTO ================= */
+  $('btnPhoto').addEventListener('click',function(){ $('fileInput').click(); });
+  $('fileInput').addEventListener('change',function(e){
+    var f=e.target.files && e.target.files[0]; if(!f) return;
+    var url=URL.createObjectURL(f), img=new Image();
+    img.onload=function(){ setSource(img, img.naturalWidth, img.naturalHeight); URL.revokeObjectURL(url);
+      $('boardCard').scrollIntoView({behavior:'smooth',block:'start'}); };
+    img.onerror=function(){ toast('Gagal memuat foto'); URL.revokeObjectURL(url); };
+    img.src=url; this.value='';
+  });
+
+  /* ================= TOOLBAR ================= */
+  $('btnUndo').addEventListener('click',undo);
+  $('btnClear').addEventListener('click',function(){
+    if(!markers.length){ toast('Papan sudah kosong'); return; }
+    undoStack.push({t:'clear', all:markers.slice()}); markers=[]; draw(); updateCount(); toast('Dikosongkan — tekan Urungkan untuk membatalkan');
+  });
+  $('btnZoomIn').addEventListener('click',function(){ zoomAt(W()/2,H()/2,1.5); });
+  $('btnZoomOut').addEventListener('click',function(){ zoomAt(W()/2,H()/2,1/1.5); });
+  $('btnFit').addEventListener('click',function(){ fitView(); draw(); });
+  $('btnGrid').addEventListener('click',function(){
+    st.grid=!st.grid; save(st); this.classList.toggle('on',st.grid);
+    $('gridRow').classList.toggle('hidden',!st.grid); draw();
+  });
+  $('btnRetake').addEventListener('click',function(){
+    if(markers.length && !confirm('Ganti sumber gambar? Penanda saat ini akan hilang.')) return;
+    stopCam();
+    $('boardCard').classList.add('hidden'); $('statsCard').classList.add('hidden');
+    $('sourceCard').classList.remove('hidden');
+    markers=[]; undoStack=[]; src=null;
+    $('sourceCard').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+
+  // slider titik
+  $('dotSize').value=st.dot; $('dotSizeVal').textContent='Titik '+st.dot+'px';
+  $('dotSize').addEventListener('input',function(){ st.dot=+this.value; $('dotSizeVal').textContent='Titik '+st.dot+'px'; save(st); draw(); });
+  // slider grid
+  $('gridCols').value=st.cols; $('gridColsVal').textContent='Grid '+st.cols+'×';
+  $('btnGrid').classList.toggle('on',st.grid); $('gridRow').classList.toggle('hidden',!st.grid);
+  $('gridCols').addEventListener('input',function(){ st.cols=+this.value; $('gridColsVal').textContent='Grid '+st.cols+'×'; save(st); draw(); });
+
+  /* ================= KATEGORI ================= */
+  function renderCatBar(){
+    var bar=$('catBar');
+    if(!st.multi){ bar.classList.add('hidden'); bar.innerHTML=''; return; }
+    bar.classList.remove('hidden'); bar.innerHTML='';
+    st.cats.forEach(function(cat,i){
+      var b=document.createElement('button'); if(i===activeCat) b.className='on';
+      b.innerHTML='<span class="dot" style="background:'+cat.color+'"></span>'+escapeHtml(cat.name);
+      b.addEventListener('click',function(){ activeCat=i; renderCatBar(); });
+      bar.appendChild(b);
+    });
+  }
+  function renderCatEditor(){
+    var ed=$('catEditor'); ed.innerHTML='';
+    st.cats.forEach(function(cat,i){
+      var row=document.createElement('label'); row.className='chip'; row.style.cssText='width:100%;justify-content:flex-start;margin-bottom:8px;background:#f9fafb;';
+      var dot=document.createElement('span'); dot.className='dot'; dot.style.background=cat.color;
+      var inp=document.createElement('input'); inp.type='text'; inp.value=cat.name; inp.maxLength=16;
+      inp.style.cssText='border:0;background:transparent;box-shadow:none;padding:4px;font-weight:700;';
+      inp.addEventListener('input',function(){ st.cats[i].name=this.value||('Kelompok '+(i+1)); save(st); renderCatBar(); updateCount(); });
+      row.appendChild(dot); row.appendChild(inp); ed.appendChild(row);
+    });
+  }
+  bindSw('swMulti',function(on){
+    st.multi=on; save(st); activeCat=0;
+    $('catEditor').classList.toggle('hidden',!on);
+    if(on) renderCatEditor();
+    renderCatBar(); updateCount();
+  }, st.multi);
+  if(st.multi){ $('catEditor').classList.remove('hidden'); renderCatEditor(); }
+
+  /* ================= DETEKSI OTOMATIS (alat bantu, butuh internet) ================= */
+  var cocoModel=null, loadingModel=false;
+  function loadScript(src){ return new Promise(function(res,rej){ var s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=function(){ rej(new Error('load')); }; document.head.appendChild(s); }); }
+  async function ensureModel(){
+    if(cocoModel) return cocoModel;
+    if(!window.cocoSsd){
+      await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js');
+    }
+    cocoModel=await window.cocoSsd.load({base:'lite_mobilenet_v2'});
+    return cocoModel;
+  }
+  $('btnAuto').addEventListener('click',async function(){
+    if(!src){ return; }
+    if(loadingModel) return;
+    var btn=this, old=btn.innerHTML;
+    loadingModel=true; btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Memuat…';
+    try{
+      var model=await ensureModel();
+      btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Mendeteksi…';
+      var preds=await model.detect(src, 50);
+      var added=0;
+      preds.forEach(function(p){
+        if(p.class!=='person' || p.score<0.35) return;
+        // perkiraan posisi kepala: tengah-atas kotak orang
+        var hx=p.bbox[0]+p.bbox[2]/2, hy=p.bbox[1]+p.bbox[3]*0.16;
+        // hindari duplikat dekat penanda yang sudah ada
+        var dup=markers.some(function(m){ return Math.hypot(m.x-hx,m.y-hy) < Math.max(14,p.bbox[2]*0.3); });
+        if(dup) return;
+        markers.push({x:hx,y:hy,c:st.multi?activeCat:0}); added++;
+      });
+      if(added){ undoStack.push({t:'auto',n:added}); draw(); updateCount();
+        toast('Ditambah '+added+' perkiraan — periksa & koreksi manual'); }
+      else toast('Tidak ada yang terdeteksi — tandai manual');
+    }catch(err){
+      toast('Gagal memuat model — periksa koneksi internet');
+    }finally{
+      loadingModel=false; btn.disabled=false; btn.innerHTML=old;
+    }
+  });
+
+  /* ================= SIMPAN PNG ================= */
+  $('btnSave').addEventListener('click',function(){
+    if(!src){ return; }
+    var pad=64, out=document.createElement('canvas');
+    out.width=srcW; out.height=srcH+pad;
+    var o=out.getContext('2d');
+    o.fillStyle='#0f172a'; o.fillRect(0,0,out.width,out.height);
+    o.drawImage(src,0,0);
+    // penanda pada resolusi asli
+    var r=Math.max(6, srcW*0.006);
+    markers.forEach(function(m){
+      var col=st.cats[m.c]?st.cats[m.c].color:st.cats[0].color;
+      o.beginPath(); o.arc(m.x,m.y,r,0,6.2832);
+      o.fillStyle=hexA(col,.28); o.fill();
+      o.lineWidth=Math.max(2,r*0.3); o.strokeStyle=col; o.stroke();
+      o.lineWidth=1.5; o.strokeStyle='rgba(255,255,255,.9)'; o.stroke();
+    });
+    // bilah jumlah
+    o.fillStyle='#fff'; o.font='700 '+Math.round(pad*0.42)+'px '+
+      'ui-sans-serif,system-ui,Segoe UI,Roboto,sans-serif';
+    o.textBaseline='middle';
+    var label='Total: '+markers.length+' orang';
+    if(st.multi){ var cc=[0,0,0]; markers.forEach(function(m){cc[m.c]++;});
+      label+='  ('+st.cats.map(function(c,i){return c.name+' '+cc[i];}).join(' · ')+')'; }
+    o.fillText(label, 16, srcH+pad/2);
+    o.fillStyle=hexA('#6ab7ba',1); o.fillRect(0,srcH,srcW,3);
+
+    var a=document.createElement('a');
+    a.download='hitung-orang-'+markers.length+'.png';
+    a.href=out.toDataURL('image/png'); a.click();
+    toast('Gambar disimpan');
+  });
+
+  /* ================= RESIZE ================= */
+  var rt=null;
+  window.addEventListener('resize',function(){
+    if(!src) return;
+    clearTimeout(rt); rt=setTimeout(function(){
+      var oldFit=view.fit; sizeCanvas();
+      // jaga posisi relatif saat orientasi berubah
+      fitView(); draw();
+    },150);
+  });
+})();
+</script>
+</body>
+</html>
