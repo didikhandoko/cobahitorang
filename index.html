@@ -7,21 +7,20 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 
-<title>Pemindai Dokumen — DIDIKHAND</title>
+<title>Ukur Luas Lahan — DIDIKHAND</title>
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231e5a7b'/%3E%3Cstop offset='1' stop-color='%236ab7ba'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='system-ui,sans-serif' font-size='27' font-weight='700' fill='%23fff' text-anchor='middle'%3EDH%3C/text%3E%3C/svg%3E">
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<!-- OpenStreetMap via Leaflet (butuh internet; ada cadangan offline bila gagal dimuat) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
-  /* ============================================================
-     DESIGN TOKENS — DIDIKHAND (selaras dengan portal index.html)
-     ============================================================ */
+  /* ===== DESIGN TOKENS — DIDIKHAND (jangan diubah) ===== */
   :root{
-    --bg:#f9fafb; --card:#ffffff;
-    --teal:#1e5a7b; --teal2:#6ab7ba;
-    --pink:#ec4899; --pink6:#db2777;
-    --ink:#1f2937; --sub:#374151; --muted:#9ca3af;
+    --bg:#f9fafb; --card:#ffffff; --teal:#1e5a7b; --teal2:#6ab7ba;
+    --pink:#ec4899; --pink6:#db2777; --ink:#1f2937; --sub:#374151; --muted:#9ca3af;
     --line:#e5e7eb; --line2:#f3f4f6;
     --green:#16a34a; --blue:#2563eb; --amber:#d97706; --red:#dc2626;
     --shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04);
@@ -53,23 +52,29 @@
     font-weight:700;margin-bottom:9px;display:block;}
 
   label.fld{display:block;margin-bottom:14px;}
-  select{width:100%;background:#f9fafb;border:1px solid var(--line);color:var(--ink);
+  input[type=text],input[type=number],select{
+    width:100%;background:#f9fafb;border:1px solid var(--line);color:var(--ink);
     border-radius:12px;padding:12px;font-size:15px;font-family:inherit;line-height:1.5;}
-  select:focus{outline:none;border-color:var(--teal2);box-shadow:0 0 0 3px rgba(106,183,186,.25);background:#fff;}
-
-  label.slide{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted);}
-  input[type=range]{-webkit-appearance:none;appearance:none;flex:1;width:100%;height:6px;
-    border-radius:5px;background:#e5e7eb;}
-  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;
-    border-radius:50%;background:var(--pink);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);}
-  input[type=range]::-moz-range-thumb{width:20px;height:20px;border:2px solid #fff;
-    border-radius:50%;background:var(--pink);}
+  input:focus,select:focus{outline:none;border-color:var(--teal2);
+    box-shadow:0 0 0 3px rgba(106,183,186,.25);background:#fff;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 
   .seg{display:flex;background:#f3f4f6;border:1px solid var(--line);border-radius:11px;
     padding:3px;gap:3px;margin-bottom:12px;}
   .seg button{flex:1;background:transparent;border:0;color:var(--muted);padding:11px 6px;
     border-radius:8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;}
   .seg button.on{background:var(--teal);color:#fff;box-shadow:0 4px 10px -4px rgba(30,90,123,.6);}
+
+  .opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;
+    border-bottom:1px solid var(--line2);}
+  .opt:last-child{border-bottom:0;}
+  .opt span{font-size:14px;color:var(--sub);}
+  .opt small{color:var(--muted);font-size:11px;display:block;margin-top:2px;}
+  .sw{width:50px;height:28px;border-radius:999px;background:#e5e7eb;border:1px solid var(--line);
+    position:relative;flex:0 0 auto;cursor:pointer;transition:.2s;}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s;}
+  .sw.on{background:var(--teal);border-color:var(--teal);} .sw.on::after{left:24px;}
 
   .row{display:flex;gap:10px;flex-wrap:wrap;}
   .btn{flex:1;min-width:120px;border:0;border-radius:12px;padding:14px;font-size:15px;
@@ -80,13 +85,21 @@
   .btn.ghost{background:#fff;color:var(--sub);border:1px solid var(--line);}
   .btn.teal{background:var(--teal);color:#fff;}
   .btn.block{width:100%;flex:none;}
-  .btn:disabled{opacity:.5;pointer-events:none;}
-  .btn.sm{padding:11px;font-size:13px;min-width:0;}
+  .btn:disabled{cursor:default;}
 
+  .result{background:#eef6f7;border:1px solid #cfe6e7;border-radius:12px;padding:14px;
+    color:var(--teal);font-size:13px;line-height:1.7;}
+  .bignum{font-size:30px;font-weight:800;color:var(--teal);line-height:1.1;}
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
   .stat{background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;}
   .stat b{display:block;font-size:18px;color:var(--ink);}
   .stat span{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+
+  .item{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);
+    border-radius:12px;margin-bottom:9px;background:#fff;border-left-width:4px;border-left-color:var(--teal2);}
+  .item .t1{font-size:15px;font-weight:800;color:var(--ink);}
+  .item .t2{font-size:12px;color:var(--muted);margin-top:2px;}
+  .item .meta{flex:1;min-width:0;}
 
   details{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:4px 16px;
     margin-bottom:14px;box-shadow:var(--shadow);}
@@ -100,203 +113,183 @@
   .note b{color:var(--sub);}
   .disc{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:12px;
     padding:12px;font-size:11.5px;line-height:1.7;}
-  .empty{text-align:center;color:var(--muted);font-size:13px;padding:22px 8px;}
+  .empty{text-align:center;color:var(--muted);font-size:13px;padding:18px 0;}
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;
     background:var(--teal);color:#fff;padding:11px 18px;border-radius:12px;font-weight:800;
-    font-size:13px;box-shadow:var(--shadow);transition:.25s;z-index:50;pointer-events:none;}
+    font-size:13px;box-shadow:var(--shadow);transition:.25s;z-index:900;pointer-events:none;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
   footer{text-align:center;padding:18px 6px 6px;color:var(--muted);font-size:10px;
     letter-spacing:.14em;text-transform:uppercase;line-height:1.9;}
   footer b{color:var(--teal);font-weight:800;}
 
-  /* ---------- KHUSUS APLIKASI ---------- */
-  .stage{position:relative;background:#111827;border-radius:12px;overflow:hidden;
-    display:flex;align-items:center;justify-content:center;min-height:120px;}
-  .stage canvas,.stage video{display:block;max-width:100%;height:auto;touch-action:none;}
-  .stage.empty-stage{padding:34px 12px;color:#9ca3af;font-size:13px;text-align:center;background:#f9fafb;
-    border:1px dashed var(--line);}
-  .drop{cursor:pointer;}
-  .drop i{font-size:26px;color:var(--teal2);display:block;margin-bottom:8px;}
-  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
-  .hidden{display:none!important;}
-  .busy{position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:60;display:none;
-    align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;}
-  .busy.on{display:flex;}
-  .busy .box{background:var(--teal);padding:16px 22px;border-radius:14px;display:flex;
-    gap:12px;align-items:center;box-shadow:var(--shadow);}
-  .spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;
-    border-radius:50%;animation:sp .8s linear infinite;}
-  @keyframes sp{to{transform:rotate(360deg);}}
+  /* ===== khusus aplikasi ===== */
+  .gpsline{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+  .gpsline .txt{font-size:13px;color:var(--sub);font-weight:700;}
+  .accchip{display:none;font-size:12px;font-weight:700;padding:6px 11px;border-radius:999px;
+    background:#f3f4f6;border:1px solid var(--line);color:var(--sub);}
+  .accchip.good{background:#dcfce7;border-color:#bbf7d0;color:#166534;}
+  .accchip.bad{background:#fee2e2;border-color:#fecaca;color:#991b1b;}
 
-  .pages{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;}
-  .pg{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#f3f4f6;}
-  .pg img{display:block;width:100%;height:112px;object-fit:cover;}
-  .pg .n{position:absolute;top:5px;left:5px;background:var(--teal);color:#fff;font-size:10px;
-    font-weight:800;border-radius:999px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;}
-  .pg .del{position:absolute;top:5px;right:5px;background:rgba(220,38,38,.92);color:#fff;border:0;
-    width:22px;height:22px;border-radius:999px;cursor:pointer;font-size:11px;display:flex;
-    align-items:center;justify-content:center;}
-  .pg .mv{position:absolute;bottom:5px;right:5px;display:flex;gap:4px;}
-  .pg .mv button{background:rgba(31,41,55,.82);color:#fff;border:0;width:22px;height:22px;
-    border-radius:6px;cursor:pointer;font-size:10px;}
-  .valrow{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;}
-  .valrow b{color:var(--pink);}
+  #lmap{height:340px;border-radius:12px;overflow:hidden;border:1px solid var(--line);display:none;z-index:0;}
+  .mapwrap{background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:8px;}
+  svg#svgmap{width:100%;height:auto;display:block;border-radius:8px;}
+  .cnt{font-size:12px;color:var(--muted);text-align:center;margin-top:10px;}
+  .cnt b{color:var(--teal);font-size:14px;}
+  .maphint{font-size:11.5px;color:var(--muted);line-height:1.6;margin-top:10px;}
+  .maphint b{color:var(--sub);}
+
+  .vdot{width:20px;height:20px;border-radius:50%;background:#1e5a7b;color:#fff;font-size:10px;
+    font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;
+    box-shadow:0 1px 4px rgba(0,0,0,.45);}
+  .vdot.first{background:#ec4899;}
+  .leaflet-container{font-family:var(--font);}
+
+  .mini{background:#f3f4f6;border:1px solid var(--line);color:var(--sub);font-family:inherit;
+    font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;cursor:pointer;margin-right:4px;}
+  .mini.del{color:var(--red);}
+  .err{display:none;margin-top:12px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;
+    border-radius:12px;padding:11px;font-size:11.5px;line-height:1.6;}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <div class="logo"><i class="fas fa-crop-simple"></i></div>
+    <div class="logo"><i class="fas fa-draw-polygon"></i></div>
     <div>
-      <h1>Pemindai Dokumen</h1>
+      <h1>Ukur Luas Lahan</h1>
       <div class="sub">Didikhand</div>
     </div>
     <a class="back" href="index.html" title="Kembali ke portal"><i class="fas fa-home"></i></a>
   </header>
 
-  <!-- ================= 1. SUMBER ================= -->
+  <!-- MODE + PETA -->
   <div class="card">
-    <span class="cap">Ambil Dokumen</span>
-    <div class="seg" id="srcSeg">
-      <button data-v="unggah" class="on"><i class="fas fa-image"></i> Unggah</button>
-      <button data-v="kamera"><i class="fas fa-camera"></i> Kamera</button>
-    </div>
-
-    <div id="upPanel">
-      <div class="stage empty-stage drop" id="dropZone">
-        <div>
-          <i class="fas fa-file-arrow-up"></i>
-          Ketuk untuk memilih foto dokumen<br>
-          <span style="font-size:11px">JPG / PNG / HEIC · bisa banyak untuk beberapa halaman</span>
-        </div>
-      </div>
-      <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
-    </div>
-
-    <div id="camPanel" class="hidden">
-      <div class="stage" id="camStage">
-        <video id="camVideo" playsinline muted></video>
-        <div class="empty" id="camHint" style="color:#9ca3af">Kamera belum aktif.</div>
-      </div>
-      <div class="toolbar">
-        <button class="btn teal sm" id="camStart"><i class="fas fa-video"></i> Aktifkan Kamera</button>
-        <button class="btn primary sm" id="camShot" disabled><i class="fas fa-camera"></i> Jepret</button>
-      </div>
-      <p class="note"><b>Perlu HTTPS.</b> Kamera hanya jalan di alamat <b>https://</b> (Vercel aman) atau
-        <b>localhost</b>. Kalau dibuka sebagai berkas biasa, pakai tab <b>Unggah</b>.</p>
-    </div>
-  </div>
-
-  <!-- ================= 2. SESUAIKAN TEPI ================= -->
-  <div class="card hidden" id="editCard">
-    <span class="cap">Sesuaikan Tepi</span>
-    <div class="stage" id="editStage">
-      <canvas id="editCanvas"></canvas>
-    </div>
-    <p class="note">Geser 4 titik pojok agar pas menempel di sudut dokumen. Bagian dalam garis
-      pink yang akan diratakan.</p>
-    <div class="toolbar">
-      <button class="btn ghost sm" id="btnAuto"><i class="fas fa-wand-magic-sparkles"></i> Deteksi Otomatis</button>
-      <button class="btn ghost sm" id="btnFull"><i class="fas fa-expand"></i> Penuhi Bingkai</button>
-      <button class="btn ghost sm" id="btnRot"><i class="fas fa-rotate-right"></i> Putar</button>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <button class="btn primary block" id="btnProcess"><i class="fas fa-crop"></i> Ratakan &amp; Proses</button>
-    </div>
-  </div>
-
-  <!-- ================= 3. FILTER & HASIL ================= -->
-  <div class="card hidden" id="filterCard">
-    <span class="cap">Filter &amp; Hasil</span>
+    <span class="cap">Cara Merekam Titik</span>
     <div class="seg" id="modeSeg">
-      <button data-v="asli">Asli</button>
-      <button data-v="abu">Abu</button>
-      <button data-v="bw" class="on">Hitam-Putih</button>
-      <button data-v="perjelas">Perjelas</button>
+      <button data-v="gps" class="on"><i class="fas fa-person-walking"></i> Jalan Keliling</button>
+      <button data-v="map"><i class="fas fa-map-location-dot"></i> Titik di Peta</button>
     </div>
 
-    <div id="grpBC" class="hidden">
-      <div class="valrow"><span>Kecerahan</span><b id="vBright">0</b></div>
-      <label class="slide"><input type="range" id="sBright" min="-80" max="80" value="0"></label>
-      <div class="valrow" style="margin-top:12px"><span>Kontras</span><b id="vContrast">100%</b></div>
-      <label class="slide"><input type="range" id="sContrast" min="50" max="220" value="100"></label>
+    <!-- Peta OSM (Leaflet) -->
+    <div id="lmap"></div>
+    <!-- Cadangan offline bila peta gagal dimuat -->
+    <div class="mapwrap" id="svgwrap">
+      <svg id="svgmap" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg"></svg>
     </div>
 
-    <div id="grpBW">
-      <div class="valrow"><span>Kepekaan</span><b id="vSens">10</b></div>
-      <label class="slide"><input type="range" id="sSens" min="0" max="30" value="10"></label>
-      <div class="valrow" style="margin-top:12px"><span>Detail area</span><b id="vDetail">15</b></div>
-      <label class="slide"><input type="range" id="sDetail" min="4" max="45" value="15"></label>
+    <div class="maphint" id="mapHint"></div>
+
+    <!-- kendali GPS -->
+    <div id="gpsBox" style="margin-top:12px">
+      <div class="gpsline">
+        <span class="txt" id="gpsInfo">GPS mati</span>
+        <span class="accchip" id="accChip"></span>
+      </div>
+      <div class="opt">
+        <div><span>Nyalakan GPS</span><small>Butuh izin lokasi &amp; koneksi https</small></div>
+        <div class="sw" id="swGps"></div>
+      </div>
+      <div class="opt">
+        <div><span>Rekam otomatis</span><small>Tandai tiap bergerak &plusmn; 4 m (tepi melengkung)</small></div>
+        <div class="sw" id="swAuto"></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary" id="mark" disabled style="opacity:.55"><i class="fas fa-location-dot"></i> Tandai Sudut</button>
+      </div>
     </div>
 
-    <div class="stage" style="margin-top:12px"><canvas id="resultCanvas"></canvas></div>
+    <div class="cnt">Titik tersimpan: <b id="cnt">0</b> &nbsp;·&nbsp; titik <b style="color:var(--pink)">merah</b> = titik awal</div>
 
     <div class="row" style="margin-top:12px">
-      <button class="btn primary" id="btnAdd"><i class="fas fa-plus"></i> Tambah ke Dokumen</button>
-      <button class="btn ghost sm" id="btnImg" style="flex:0 0 auto"><i class="fas fa-download"></i></button>
+      <button class="btn ghost" id="undo"><i class="fas fa-rotate-left"></i> Batal Titik</button>
+      <button class="btn ghost" id="clear"><i class="fas fa-eraser"></i> Kosongkan</button>
+    </div>
+
+    <details style="box-shadow:none;border:1px solid var(--line);margin-top:12px;margin-bottom:0">
+      <summary>Entri koordinat manual (lanjutan)</summary>
+      <div class="row2" style="margin-top:6px">
+        <label class="fld"><span class="cap">Lintang (lat)</span><input type="text" id="mlat" inputmode="decimal" placeholder="-7.782"></label>
+        <label class="fld"><span class="cap">Bujur (lng)</span><input type="text" id="mlng" inputmode="decimal" placeholder="110.367"></label>
+      </div>
+      <button class="btn teal block" id="addManual" style="margin-bottom:8px"><i class="fas fa-plus"></i> Tambah Titik</button>
+      <p class="note" style="margin-top:0">Berguna saat offline atau memasukkan koordinat hasil survei. Urutkan mengelilingi batas.</p>
+    </details>
+  </div>
+
+  <!-- HASIL -->
+  <div class="card">
+    <span class="cap">Hasil Luas</span>
+    <div class="result">
+      Luas lahan: <b class="bignum" id="area">—</b> m&sup2;
+      <div id="extra" style="margin-top:6px">Tandai minimal 3 titik sudut untuk mendapat luas.</div>
+    </div>
+    <div class="stats" style="margin-top:12px">
+      <div class="stat"><b id="sUbin">—</b><span>Ubin / Bata</span></div>
+      <div class="stat"><b id="sHa">—</b><span>Hektar</span></div>
+      <div class="stat"><b id="sKel">—</b><span>Keliling (m)</span></div>
+    </div>
+    <div class="err" id="err"></div>
+
+    <div style="margin-top:14px">
+      <span class="cap">Nilai 1 ubin / bata / ru</span>
+      <div class="seg" id="ubinSeg">
+        <button data-v="14.0625" class="on">14,0625 m&sup2; (presisi)</button>
+        <button data-v="14">14 m&sup2; (bulat)</button>
+      </div>
     </div>
   </div>
 
-  <!-- ================= 4. DOKUMEN ================= -->
+  <!-- UNDUH -->
   <div class="card">
-    <span class="cap">Dokumen</span>
-    <div class="stats">
-      <div class="stat"><b id="stPages">0</b><span>Halaman</span></div>
-      <div class="stat"><b id="stSize">A4</b><span>Ukuran</span></div>
-      <div class="stat"><b id="stQ">90%</b><span>Kualitas</span></div>
+    <span class="cap">Unduh Hasil</span>
+    <div class="row">
+      <button class="btn primary" id="dlPng"><i class="fas fa-image"></i> Gambar (PNG)</button>
+      <button class="btn teal" id="dlGeo"><i class="fas fa-file-code"></i> Data (GeoJSON)</button>
     </div>
+    <p class="note"><b>PNG</b>: sketsa lahan + tabel hasil (bisa disimpan/dicetak). <b>GeoJSON</b>: format peta baku
+      yang bisa dibuka lagi di OpenStreetMap, geojson.io, atau QGIS.</p>
+  </div>
 
-    <div id="pagesWrap">
-      <div class="empty" id="pagesEmpty">Belum ada halaman. Ambil dokumen, ratakan, lalu
-        <b>Tambah ke Dokumen</b>.</div>
-      <div class="pages hidden" id="pages"></div>
+  <!-- SIMPAN -->
+  <div class="card">
+    <span class="cap">Simpan &amp; Riwayat</span>
+    <div class="row2" style="align-items:end">
+      <label class="fld" style="margin-bottom:0"><span class="cap">Nama lahan</span><input type="text" id="saveName" placeholder="mis. Kebun Belakang"></label>
+      <button class="btn primary" id="saveBtn" style="margin-bottom:0"><i class="fas fa-floppy-disk"></i> Simpan</button>
     </div>
-
-    <div class="row" style="margin-top:14px">
-      <button class="btn primary" id="btnPDF" disabled><i class="fas fa-file-pdf"></i> Unduh PDF</button>
-      <button class="btn ghost sm" id="btnClear" style="flex:0 0 auto" disabled><i class="fas fa-trash"></i></button>
-    </div>
-
-    <details style="margin-top:14px;box-shadow:none;border:1px solid var(--line);">
-      <summary>Pengaturan PDF</summary>
-      <div style="padding-bottom:12px">
-        <span class="cap">Ukuran halaman</span>
-        <div class="seg" id="sizeSeg">
-          <button data-v="a4" class="on">A4</button>
-          <button data-v="letter">Letter</button>
-          <button data-v="fit">Pas Gambar</button>
-        </div>
-        <div class="valrow"><span>Kualitas JPEG (ukuran berkas)</span><b id="vQ">90%</b></div>
-        <label class="slide"><input type="range" id="sQ" min="55" max="95" value="90"></label>
-      </div>
-    </details>
+    <div id="list" style="margin-top:14px"><div class="empty">Belum ada lahan tersimpan.</div></div>
   </div>
 
   <details>
     <summary>Panduan &amp; Cara Kerja</summary>
-    <div class="note" style="margin-top:0">
-      <p><b>1. Ambil dokumen.</b> Unggah foto atau jepret lewat kamera. Cahaya rata dan latar
-        yang kontras dengan kertas membuat hasil terbaik.</p>
-      <p><b>2. Sesuaikan tepi.</b> <b>Deteksi Otomatis</b> menebak sudut kertas dengan
-        deteksi tepi Sobel + garis Hough sederhana. Rapikan manual dengan menggeser titik pojok.</p>
-      <p><b>3. Ratakan.</b> Empat titik dipetakan ke persegi lewat transformasi perspektif
-        (homografi), jadi foto miring pun jadi tegak lurus.</p>
-      <p><b>4. Filter.</b> <b>Hitam-Putih</b> memakai binarisasi adaptif (ambang mengikuti rata-rata
-        area sekitar), cocok untuk teks. <b>Perjelas</b> meratakan kontras. <b>Abu</b> grayscale,
-        <b>Asli</b> warna apa adanya.</p>
-      <p><b>5. PDF.</b> Semua halaman digabung jadi satu PDF di dalam perangkat — tanpa server,
-        tanpa iklan.</p>
-    </div>
+    <p class="note" style="margin-top:0">
+      <b>Jalan Keliling:</b> nyalakan GPS &rarr; berdiri di satu sudut &rarr; tekan <b>Tandai Sudut</b> &rarr;
+      jalan ke sudut berikutnya &rarr; ulangi sampai kembali ke titik awal.<br>
+      <b>Titik di Peta:</b> pilih mode ini lalu <b>ketuk peta</b> di tiap sudut lahan. Titik yang salah bisa
+      <b>digeser</b> (drag) untuk memperbaiki, atau tekan <b>Batal Titik</b>.
+    </p>
+    <p class="note">
+      <b>Rumus:</b> koordinat diproyeksikan ke bidang datar lokal (meter) memakai panjang derajat WGS-84 di
+      lintang lahan, lalu luas dihitung dengan <b>rumus tali sepatu (shoelace)</b>:
+      Luas = &frac12;&nbsp;|&Sigma;(x&#8305;&middot;y&#8305;&#8330;&#8321; &minus; x&#8305;&#8330;&#8321;&middot;y&#8305;)|.
+      Susuri batas berurutan searah, jangan menyilang.
+    </p>
+    <p class="note">
+      <b>Konversi:</b> 1 hektar = 10.000 m&sup2; · 1 are = 100 m&sup2; ·
+      1 ubin = 1 bata = 1 ru = 1 tumbak &asymp; 14 m&sup2; · 1 bau (bahu) = 500 ubin &asymp; 7.031 m&sup2;.
+    </p>
+    <p class="note">Peta &amp; ubin data &copy; <b>OpenStreetMap</b> dan kontributornya.</p>
   </details>
 
   <div class="card">
     <p class="disc" style="margin:0"><i class="fas fa-circle-info"></i>
-      <b>Catatan jujur.</b> Deteksi tepi otomatis bersifat <b>perkiraan</b> dan bisa meleset pada
-      latar ramai atau kontras rendah — selalu cek dan geser titik pojok bila perlu. Seluruh proses
-      berjalan <b>offline di perangkat</b>; foto tidak dikirim ke mana pun dan tidak disimpan setelah
-      halaman ditutup. Yang tersimpan hanya preferensi filter.</p>
+      <b>Catatan &amp; batasan.</b> Hasil bersifat <b>perkiraan</b>. Ketelitian bergantung pada sinyal GPS
+      (umumnya &plusmn; 3&ndash;10 m) atau ketepatan ketukan di peta. Peta OpenStreetMap dan fitur GPS
+      <b>butuh internet/https</b> (otomatis aman di Vercel); saat offline pakai entri koordinat manual.
+      Satuan <b>ubin/bata/ru/tumbak</b> bersifat tradisi &amp; sedikit beda antar daerah (umum 14&ndash;14,0625 m&sup2;).
+      Untuk keperluan resmi/sertifikat, gunakan pengukuran BPN.</p>
   </div>
 
   <footer>
@@ -304,526 +297,480 @@
   </footer>
 </div>
 
-<div class="busy" id="busy"><div class="box"><div class="spin"></div><span id="busyMsg">Memproses…</span></div></div>
 <div class="toast" id="toast">Tersimpan!</div>
 
 <script>
 (function(){
-  /* ============ HELPER ============ */
-  var $=function(id){ return document.getElementById(id); };
+  var $=function(id){return document.getElementById(id);};
   var _tt=null;
-  function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show');
-    clearTimeout(_tt); _tt=setTimeout(function(){ t.classList.remove('show'); },1800); }
-  var KEY='dh-pemindaidokumen';
-  function save(o){ try{ localStorage.setItem(KEY,JSON.stringify(o)); }catch(e){} }
-  function load(def){ try{ var s=localStorage.getItem(KEY); return s?Object.assign({},def,JSON.parse(s)):def; }catch(e){ return def; } }
-  function bindSeg(id,cb){ var el=$(id); if(!el) return;
-    el.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){
-      el.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
-      this.classList.add('on'); if(cb) cb(this.dataset.v); }); }); }
-  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
-  function clamp255(v){ return v<0?0:(v>255?255:v|0); }
-  function busy(on,msg){ if(msg)$('busyMsg').textContent=msg; $('busy').classList.toggle('on',on); }
+  function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');
+    clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove('show');},1800);}
 
-  /* ============ STATE ============ */
-  var state=load({mode:'bw',bright:0,contrast:100,sens:10,detail:15,size:'a4',quality:90});
-  var srcCanvas=null, srcCtx=null;      // sumber resolusi penuh
-  var corners=null;                     // 4 titik dlm koordinat sumber [TL,TR,BR,BL]
-  var editScale=1;                      // sumber -> css px
-  var warpCanvas=null, warpCtx=null;    // hasil ratakan (warna)
-  var pages=[];                         // {canvas}
-  var camStream=null;
-  var MAXSRC=2200, MAXOUT=1650;
+  var KEY='dh-ukurlahan';
+  function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+  function load(def){try{var s=localStorage.getItem(KEY);return s?Object.assign({},def,JSON.parse(s)):def;}catch(e){return def;}}
 
-  /* ============ SUMBER: TAB ============ */
-  bindSeg('srcSeg',function(v){
-    $('upPanel').classList.toggle('hidden',v!=='unggah');
-    $('camPanel').classList.toggle('hidden',v!=='kamera');
-    if(v!=='kamera') stopCamera();
-  });
+  function bindSeg(id,cb){var el=$(id);if(!el)return;
+    el.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){
+      el.querySelectorAll('button').forEach(function(x){x.classList.remove('on');});
+      this.classList.add('on');if(cb)cb(this.dataset.v);});});}
+  function segSet(id,val){var el=$(id);if(!el)return;
+    el.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.v===String(val));});}
+  function bindSw(id,cb,init){var el=$(id);if(!el)return;
+    if(init!==undefined)el.classList.toggle('on',!!init);
+    el.addEventListener('click',function(){this.classList.toggle('on');if(cb)cb(this.classList.contains('on'));});}
+  function nf(n,d){return (Number(n)||0).toLocaleString('id-ID',
+    {minimumFractionDigits:d||0,maximumFractionDigits:d===undefined?0:d});}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function fnameSafe(s){return (String(s||'lahan').trim()||'lahan').toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'lahan';}
 
-  /* ---- Unggah ---- */
-  $('dropZone').addEventListener('click',function(){ $('fileInput').click(); });
-  $('fileInput').addEventListener('change',function(e){
-    var files=Array.from(e.target.files||[]); if(!files.length) return;
-    // banyak berkas -> proses satu per satu jadi halaman siap (pakai bingkai penuh + filter aktif)
-    if(files.length>1){ batchImport(files); }
-    else { loadFile(files[0]); }
-    e.target.value='';
-  });
+  /* ---------------- state ---------------- */
+  var state=load({mode:'gps',ubin:14.0625,auto:false,pts:[],saved:[]});
+  if(!Array.isArray(state.saved)) state.saved=[];
+  var pts=Array.isArray(state.pts)?state.pts.slice():[];   // {lat,lng,acc}
+  var gpsOn=false, watchId=null, lastFix=null;
 
-  function loadImageFromBlob(blob){
-    return new Promise(function(res,rej){
-      if(window.createImageBitmap){
-        createImageBitmap(blob,{imageOrientation:'from-image'}).then(res).catch(function(){
-          fallbackImg(blob).then(res,rej); });
-      } else { fallbackImg(blob).then(res,rej); }
-    });
+  /* ---------------- geodesi + shoelace ---------------- */
+  function mPerDeg(lat){
+    var p=lat*Math.PI/180;
+    return {
+      lat:111132.92-559.82*Math.cos(2*p)+1.175*Math.cos(4*p)-0.0023*Math.cos(6*p),
+      lng:111412.84*Math.cos(p)-93.5*Math.cos(3*p)+0.118*Math.cos(5*p)
+    };
   }
-  function fallbackImg(blob){ return new Promise(function(res,rej){
-    var url=URL.createObjectURL(blob); var im=new Image();
-    im.onload=function(){ URL.revokeObjectURL(url); res(im); };
-    im.onerror=function(){ URL.revokeObjectURL(url); rej(new Error('gagal')); }; im.src=url; }); }
-
-  function bitmapToCanvas(bm){
-    var w=bm.width, h=bm.height, sc=Math.min(1,MAXSRC/Math.max(w,h));
-    w=Math.round(w*sc); h=Math.round(h*sc);
-    var c=document.createElement('canvas'); c.width=w; c.height=h;
-    c.getContext('2d').drawImage(bm,0,0,w,h);
-    if(bm.close) bm.close();
-    return c;
+  function project(list){
+    if(!list.length)return [];
+    var lat0=0,lng0=0,i;
+    for(i=0;i<list.length;i++){lat0+=list[i].lat;lng0+=list[i].lng;}
+    lat0/=list.length; lng0/=list.length;
+    var m=mPerDeg(lat0);
+    return list.map(function(p){return {x:(p.lng-lng0)*m.lng, y:(p.lat-lat0)*m.lat};});
   }
-
-  function loadFile(file){
-    busy(true,'Memuat gambar…');
-    loadImageFromBlob(file).then(function(bm){
-      srcCanvas=bitmapToCanvas(bm); srcCtx=srcCanvas.getContext('2d');
-      setFullFrame();
-      $('editCard').classList.remove('hidden');
-      $('filterCard').classList.add('hidden');
-      autoDetect(true);
-      renderEdit();
-      busy(false);
-      $('editCard').scrollIntoView({behavior:'smooth',block:'start'});
-    }).catch(function(){ busy(false); toast('Gambar gagal dimuat'); });
+  function shoelace(xy){
+    var n=xy.length,a=0,i,j; if(n<3)return 0;
+    for(i=0;i<n;i++){j=(i+1)%n; a+=xy[i].x*xy[j].y-xy[j].x*xy[i].y;}
+    return Math.abs(a)/2;
+  }
+  function perim(xy,closed){
+    var n=xy.length,d=0,i,j; if(n<2)return 0;
+    var lim=closed?n:n-1;
+    for(i=0;i<lim;i++){j=(i+1)%n;var dx=xy[j].x-xy[i].x,dy=xy[j].y-xy[i].y;d+=Math.sqrt(dx*dx+dy*dy);}
+    return d;
+  }
+  function distLL(a,b){
+    var m=mPerDeg((a.lat+b.lat)/2);
+    var dx=(b.lng-a.lng)*m.lng, dy=(b.lat-a.lat)*m.lat;
+    return Math.sqrt(dx*dx+dy*dy);
   }
 
-  function batchImport(files){
-    busy(true,'Mengimpor '+files.length+' halaman…');
-    var i=0;
-    (function next(){
-      if(i>=files.length){ busy(false); renderPages(); toast(files.length+' halaman ditambahkan'); return; }
-      loadImageFromBlob(files[i]).then(function(bm){
-        var c=bitmapToCanvas(bm);
-        // bingkai penuh + filter aktif
-        srcCanvas=c; srcCtx=c.getContext('2d'); setFullFrame();
-        doWarp(); applyFilter();
-        var pc=document.createElement('canvas'); pc.width=warpCanvas.width; pc.height=warpCanvas.height;
-        pc.getContext('2d').drawImage($('resultCanvas'),0,0);
-        pages.push({canvas:pc}); i++; setTimeout(next,10);
-      }).catch(function(){ i++; next(); });
-    })();
+  /* ---------------- peta Leaflet (OSM) ---------------- */
+  var useLeaflet=false, map=null, layer=null, meDot=null, meRing=null;
+  function initMap(){
+    if(!window.L) return false;
+    try{
+      map=L.map('lmap',{zoomControl:true,tap:true}).setView([-7.7975,110.3688],17);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+        maxZoom:19, attribution:'&copy; OpenStreetMap'
+      }).addTo(map);
+      layer=L.layerGroup().addTo(map);
+      map.on('click',function(e){
+        if(state.mode==='map'){
+          if(pts.length && distLL(pts[pts.length-1],{lat:e.latlng.lat,lng:e.latlng.lng})<0.3) return;
+          addPoint({lat:e.latlng.lat,lng:e.latlng.lng,acc:null});
+          toast('Titik '+pts.length+' ditambah');
+        }
+      });
+      return true;
+    }catch(e){ return false; }
   }
-
-  /* ---- Kamera ---- */
-  $('camStart').addEventListener('click',startCamera);
-  $('camShot').addEventListener('click',shootCamera);
-  function startCamera(){
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-      toast('Perangkat/alamat tak mendukung kamera'); return; }
-    navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false})
-      .then(function(s){ camStream=s; var v=$('camVideo'); v.srcObject=s; v.play();
-        $('camHint').classList.add('hidden'); $('camShot').disabled=false;
-        $('camStart').innerHTML='<i class="fas fa-rotate"></i> Ulangi'; })
-      .catch(function(){ toast('Izin kamera ditolak / perlu HTTPS'); });
+  function vIcon(i,first){
+    return L.divIcon({className:'',iconSize:[20,20],iconAnchor:[10,10],
+      html:'<div class="vdot'+(first?' first':'')+'">'+(i+1)+'</div>'});
   }
-  function stopCamera(){ if(camStream){ camStream.getTracks().forEach(function(t){t.stop();}); camStream=null;
-    $('camShot').disabled=true; $('camHint').classList.remove('hidden'); } }
-  function shootCamera(){
-    var v=$('camVideo'); if(!v.videoWidth){ toast('Kamera belum siap'); return; }
-    var w=v.videoWidth, h=v.videoHeight, sc=Math.min(1,MAXSRC/Math.max(w,h));
-    w=Math.round(w*sc); h=Math.round(h*sc);
-    srcCanvas=document.createElement('canvas'); srcCanvas.width=w; srcCanvas.height=h;
-    srcCtx=srcCanvas.getContext('2d'); srcCtx.drawImage(v,0,0,w,h);
-    setFullFrame(); $('editCard').classList.remove('hidden'); $('filterCard').classList.add('hidden');
-    autoDetect(true); renderEdit(); toast('Foto diambil');
-    $('editCard').scrollIntoView({behavior:'smooth',block:'start'});
-  }
-
-  /* ============ SUDUT ============ */
-  function setFullFrame(){ var w=srcCanvas.width,h=srcCanvas.height;
-    corners=[[0,0],[w,0],[w,h],[0,h]]; }
-
-  /* ---- Deteksi otomatis: Sobel + Hough ---- */
-  function autoDetect(silent){
-    if(!srcCanvas) return;
-    var sw=srcCanvas.width, sh=srcCanvas.height;
-    var maxD=360, sc=Math.min(1,maxD/Math.max(sw,sh));
-    var w=Math.max(2,Math.round(sw*sc)), h=Math.max(2,Math.round(sh*sc));
-    var t=document.createElement('canvas'); t.width=w; t.height=h;
-    var tc=t.getContext('2d'); tc.drawImage(srcCanvas,0,0,w,h);
-    var d=tc.getImageData(0,0,w,h).data;
-    var g=new Float32Array(w*h);
-    for(var i=0;i<w*h;i++){ g[i]=0.299*d[i*4]+0.587*d[i*4+1]+0.114*d[i*4+2]; }
-    // Sobel
-    var mag=new Float32Array(w*h), maxM=0;
-    for(var y=1;y<h-1;y++) for(var x=1;x<w-1;x++){
-      var p=y*w+x;
-      var gx=-g[p-w-1]-2*g[p-1]-g[p+w-1]+g[p-w+1]+2*g[p+1]+g[p+w+1];
-      var gy=-g[p-w-1]-2*g[p-w]-g[p-w+1]+g[p+w-1]+2*g[p+w]+g[p+w+1];
-      var m=Math.sqrt(gx*gx+gy*gy); mag[p]=m; if(m>maxM)maxM=m;
-    }
-    if(maxM<1){ if(!silent) toast('Gagal deteksi'); return; }
-    var thr=maxM*0.30;
-    // Hough
-    var TS=180; var cos=new Float32Array(TS), sin=new Float32Array(TS);
-    for(var tt=0;tt<TS;tt++){ var a=tt*Math.PI/180; cos[tt]=Math.cos(a); sin[tt]=Math.sin(a); }
-    var diag=Math.ceil(Math.sqrt(w*w+h*h)), rOff=diag, rSize=2*diag+1;
-    var acc=new Int32Array(TS*rSize);
-    for(var yy=0;yy<h;yy++) for(var xx=0;xx<w;xx++){
-      if(mag[yy*w+xx]<thr) continue;
-      for(var th=0;th<TS;th++){
-        var r=(xx*cos[th]+yy*sin[th])|0; acc[th*rSize+(r+rOff)]++;
+  function drawLeaflet(){
+    if(!useLeaflet) return;
+    layer.clearLayers();
+    if(pts.length){
+      var lls=pts.map(function(p){return [p.lat,p.lng];});
+      if(pts.length>=3){
+        L.polygon(lls,{color:'#1e5a7b',weight:2,fillColor:'#6ab7ba',fillOpacity:.25,lineJoin:'round'}).addTo(layer);
+      } else {
+        L.polyline(lls,{color:'#1e5a7b',weight:2,dashArray:'5 4'}).addTo(layer);
       }
-    }
-    // peaks
-    var minVotes=Math.max(18,Math.round(0.22*Math.max(w,h)));
-    var peaks=[];
-    for(var th2=0;th2<TS;th2++) for(var rr=1;rr<rSize-1;rr++){
-      var val=acc[th2*rSize+rr]; if(val<minVotes) continue;
-      var isMax=true;
-      for(var dt=-2;dt<=2&&isMax;dt++) for(var dr=-8;dr<=8;dr++){
-        var ti=th2+dt; if(ti<0)ti+=TS; if(ti>=TS)ti-=TS;
-        var ri=rr+dr; if(ri<0||ri>=rSize) continue;
-        if(acc[ti*rSize+ri]>val){ isMax=false; break; }
-      }
-      if(isMax) peaks.push({th:th2,rho:rr-rOff,v:val});
-    }
-    // klasifikasi
-    var vert=[], horiz=[];
-    peaks.forEach(function(pk){
-      var a=pk.th;
-      if(a<=22||a>=158) vert.push(pk);
-      else if(a>=68&&a<=112) horiz.push(pk);
-    });
-    if(vert.length<2||horiz.length<2){ if(!silent) toast('Tepi tak jelas — sesuaikan manual'); return; }
-    function lineX(pk,yc){ var a=pk.th*Math.PI/180; return (pk.rho-yc*Math.sin(a))/Math.cos(a); }
-    function lineY(pk,xc){ var a=pk.th*Math.PI/180; return (pk.rho-xc*Math.cos(a))/Math.sin(a); }
-    var yc=h/2, xc=w/2;
-    vert.sort(function(A,B){ return lineX(A,yc)-lineX(B,yc); });
-    horiz.sort(function(A,B){ return lineY(A,xc)-lineY(B,xc); });
-    var L=vert[0], R=vert[vert.length-1], T=horiz[0], B=horiz[horiz.length-1];
-    function inter(p1,p2){
-      var a1=p1.th*Math.PI/180, a2=p2.th*Math.PI/180;
-      var c1=Math.cos(a1),s1=Math.sin(a1),c2=Math.cos(a2),s2=Math.sin(a2);
-      var det=c1*s2-s1*c2; if(Math.abs(det)<1e-6) return null;
-      return [ (p1.rho*s2-p2.rho*s1)/det, (c1*p2.rho-c2*p1.rho)/det ];
-    }
-    var tl=inter(L,T), tr=inter(R,T), br=inter(R,B), bl=inter(L,B);
-    if(!tl||!tr||!br||!bl){ if(!silent) toast('Deteksi gagal'); return; }
-    var quad=[tl,tr,br,bl], mg=Math.max(w,h)*0.06;
-    for(var q=0;q<4;q++){ if(quad[q][0]<-mg||quad[q][0]>w+mg||quad[q][1]<-mg||quad[q][1]>h+mg){
-      if(!silent) toast('Deteksi meleset — sesuaikan manual'); return; } }
-    // area cukup besar & bukan hampir seluruh bingkai (kalau seluruh bingkai, biarkan penuh)
-    var area=polyArea(quad), frac=area/(w*h);
-    if(frac<0.12){ if(!silent) toast('Area terlalu kecil — sesuaikan manual'); return; }
-    // skala balik ke koordinat sumber + jepit
-    var inv=1/sc;
-    corners=quad.map(function(pt){ return [clamp(pt[0]*inv,0,sw), clamp(pt[1]*inv,0,sh)]; });
-    orderCorners();
-    renderEdit();
-    if(!silent) toast('Tepi terdeteksi');
-  }
-  function polyArea(p){ var s=0; for(var i=0;i<4;i++){ var j=(i+1)%4; s+=p[i][0]*p[j][1]-p[j][0]*p[i][1]; } return Math.abs(s)/2; }
-  function orderCorners(){
-    var pts=corners.slice();
-    var bySum=pts.slice().sort(function(a,b){return (a[0]+a[1])-(b[0]+b[1]);});
-    var byDif=pts.slice().sort(function(a,b){return (a[0]-a[1])-(b[0]-b[1]);});
-    corners=[bySum[0], byDif[3], bySum[3], byDif[0]]; // TL,TR,BR,BL
-  }
-
-  $('btnAuto').addEventListener('click',function(){ autoDetect(false); });
-  $('btnFull').addEventListener('click',function(){ setFullFrame(); renderEdit(); });
-  $('btnRot').addEventListener('click',function(){
-    var w=srcCanvas.width,h=srcCanvas.height;
-    var c=document.createElement('canvas'); c.width=h; c.height=w;
-    var cx=c.getContext('2d'); cx.translate(h,0); cx.rotate(Math.PI/2); cx.drawImage(srcCanvas,0,0);
-    srcCanvas=c; srcCtx=cx; setFullFrame(); autoDetect(true); renderEdit();
-  });
-
-  /* ---- Render kanvas edit + geser titik ---- */
-  var dragIdx=-1;
-  function renderEdit(){
-    if(!srcCanvas) return;
-    var cv=$('editCanvas'), host=$('editStage');
-    var cssW=Math.min(host.clientWidth||608, 608);
-    var scale=cssW/srcCanvas.width, cssH=srcCanvas.height*scale;
-    var dpr=Math.min(2,window.devicePixelRatio||1);
-    cv.width=Math.round(cssW*dpr); cv.height=Math.round(cssH*dpr);
-    cv.style.width=cssW+'px'; cv.style.height=cssH+'px';
-    var c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
-    c.clearRect(0,0,cssW,cssH); c.drawImage(srcCanvas,0,0,cssW,cssH);
-    editScale=scale;
-    var pt=corners.map(function(p){ return [p[0]*scale,p[1]*scale]; });
-    // area luar redup
-    c.save(); c.beginPath();
-    c.rect(0,0,cssW,cssH);
-    c.moveTo(pt[0][0],pt[0][1]); for(var i=1;i<4;i++)c.lineTo(pt[i][0],pt[i][1]); c.closePath();
-    c.fillStyle='rgba(17,24,39,.45)'; c.fill('evenodd'); c.restore();
-    // garis
-    c.beginPath(); c.moveTo(pt[0][0],pt[0][1]); for(var j=1;j<4;j++)c.lineTo(pt[j][0],pt[j][1]); c.closePath();
-    c.lineWidth=2; c.strokeStyle='#ec4899'; c.stroke();
-    // titik
-    pt.forEach(function(p){
-      c.beginPath(); c.arc(p[0],p[1],9,0,7); c.fillStyle='#fff'; c.fill();
-      c.lineWidth=3; c.strokeStyle='#ec4899'; c.stroke();
-      c.beginPath(); c.arc(p[0],p[1],3,0,7); c.fillStyle='#ec4899'; c.fill();
-    });
-  }
-  function evPos(e){ var cv=$('editCanvas'), r=cv.getBoundingClientRect();
-    var cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
-    var cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
-    return [cx/editScale, cy/editScale]; }
-  function startDrag(e){ if(!corners) return; e.preventDefault();
-    var p=evPos(e), best=0, bd=1e12;
-    for(var i=0;i<4;i++){ var dx=corners[i][0]-p[0], dy=corners[i][1]-p[1], dd=dx*dx+dy*dy;
-      if(dd<bd){bd=dd;best=i;} }
-    dragIdx=best; moveDrag(e); }
-  function moveDrag(e){ if(dragIdx<0) return; e.preventDefault();
-    var p=evPos(e); corners[dragIdx]=[clamp(p[0],0,srcCanvas.width),clamp(p[1],0,srcCanvas.height)];
-    renderEdit(); }
-  function endDrag(){ dragIdx=-1; }
-  var ec=$('editCanvas');
-  ec.addEventListener('pointerdown',startDrag);
-  window.addEventListener('pointermove',moveDrag);
-  window.addEventListener('pointerup',endDrag);
-  window.addEventListener('resize',function(){ if(srcCanvas) renderEdit(); });
-
-  /* ============ HOMOGRAFI + WARP ============ */
-  function computeH(from,to){ // maps (u,v)->(x,y)
-    var A=[],B=[];
-    for(var i=0;i<4;i++){ var u=from[i][0],v=from[i][1],x=to[i][0],yv=to[i][1];
-      A.push([u,v,1,0,0,0,-u*x,-v*x]); B.push(x);
-      A.push([0,0,0,u,v,1,-u*yv,-v*yv]); B.push(yv); }
-    var n=8; for(var k=0;k<n;k++)A[k].push(B[k]);
-    for(var col=0;col<n;col++){ var piv=col;
-      for(var r=col+1;r<n;r++) if(Math.abs(A[r][col])>Math.abs(A[piv][col])) piv=r;
-      var tmp=A[col]; A[col]=A[piv]; A[piv]=tmp;
-      var dv=A[col][col]; if(Math.abs(dv)<1e-12) return null;
-      for(var c2=col;c2<=n;c2++) A[col][c2]/=dv;
-      for(var r2=0;r2<n;r2++){ if(r2===col)continue; var f=A[r2][col];
-        for(var c3=col;c3<=n;c3++) A[r2][c3]-=f*A[col][c3]; } }
-    return A.map(function(row){return row[n];});
-  }
-  function dist(a,b){ return Math.hypot(a[0]-b[0],a[1]-b[1]); }
-
-  function doWarp(){
-    orderCorners();
-    var TL=corners[0],TR=corners[1],BR=corners[2],BL=corners[3];
-    var wTop=dist(TL,TR), wBot=dist(BL,BR), hL=dist(TL,BL), hR=dist(TR,BR);
-    var outW=Math.max(8,Math.round(Math.max(wTop,wBot))), outH=Math.max(8,Math.round(Math.max(hL,hR)));
-    var sc=Math.min(1,MAXOUT/Math.max(outW,outH));
-    outW=Math.round(outW*sc); outH=Math.round(outH*sc);
-    var dst=[[0,0],[outW,0],[outW,outH],[0,outH]];
-    var H=computeH(dst,corners); if(!H) return false;
-    var sw=srcCanvas.width, sh=srcCanvas.height;
-    var sImg=srcCtx.getImageData(0,0,sw,sh).data;
-    warpCanvas=document.createElement('canvas'); warpCanvas.width=outW; warpCanvas.height=outH;
-    warpCtx=warpCanvas.getContext('2d');
-    var out=warpCtx.createImageData(outW,outH), od=out.data;
-    var a=H[0],b=H[1],c=H[2],dd=H[3],e=H[4],f=H[5],gg=H[6],hh=H[7];
-    for(var y=0;y<outH;y++){
-      for(var x=0;x<outW;x++){
-        var den=gg*x+hh*y+1;
-        var sx=(a*x+b*y+c)/den, sy=(dd*x+e*y+f)/den;
-        var o=(y*outW+x)*4;
-        if(sx<0||sy<0||sx>=sw-1||sy>=sh-1){ od[o]=od[o+1]=od[o+2]=255; od[o+3]=255; continue; }
-        var x0=sx|0, y0=sy|0, fx=sx-x0, fy=sy-y0;
-        var i00=(y0*sw+x0)*4, i10=i00+4, i01=i00+sw*4, i11=i01+4;
-        var w00=(1-fx)*(1-fy), w10=fx*(1-fy), w01=(1-fx)*fy, w11=fx*fy;
-        od[o]  =sImg[i00]*w00+sImg[i10]*w10+sImg[i01]*w01+sImg[i11]*w11;
-        od[o+1]=sImg[i00+1]*w00+sImg[i10+1]*w10+sImg[i01+1]*w01+sImg[i11+1]*w11;
-        od[o+2]=sImg[i00+2]*w00+sImg[i10+2]*w10+sImg[i01+2]*w01+sImg[i11+2]*w11;
-        od[o+3]=255;
-      }
-    }
-    warpCtx.putImageData(out,0,0);
-    return true;
-  }
-
-  $('btnProcess').addEventListener('click',function(){
-    busy(true,'Meratakan…');
-    setTimeout(function(){
-      if(!doWarp()){ busy(false); toast('Gagal memproses'); return; }
-      applyFilter();
-      $('filterCard').classList.remove('hidden');
-      syncFilterUI();
-      busy(false);
-      $('filterCard').scrollIntoView({behavior:'smooth',block:'start'});
-    },30);
-  });
-
-  /* ============ FILTER ============ */
-  function applyFilter(){
-    if(!warpCanvas) return;
-    var w=warpCanvas.width,h=warpCanvas.height, rc=$('resultCanvas');
-    rc.width=w; rc.height=h;
-    var img=warpCtx.getImageData(0,0,w,h), d=img.data, mode=state.mode;
-    if(mode==='bw'){ adaptiveBinary(d,w,h,state.detail,state.sens); }
-    else if(mode==='perjelas'){ perjelas(d,w,h,state.bright,state.contrast/100); }
-    else { var gray=(mode==='abu'), br=state.bright, ct=state.contrast/100;
-      for(var i=0;i<d.length;i+=4){
-        var r=d[i],g=d[i+1],b=d[i+2];
-        if(gray){ var y=0.299*r+0.587*g+0.114*b; r=g=b=y; }
-        d[i]=clamp255((r-128)*ct+128+br);
-        d[i+1]=clamp255((g-128)*ct+128+br);
-        d[i+2]=clamp255((b-128)*ct+128+br);
-      }
-    }
-    rc.getContext('2d').putImageData(img,0,0);
-  }
-  function adaptiveBinary(d,w,h,radius,C){
-    var n=w*h, gray=new Float32Array(n);
-    for(var i=0,p=0;i<d.length;i+=4,p++) gray[p]=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
-    var iw=w+1, integ=new Float64Array(iw*(h+1));
-    for(var y=0;y<h;y++){ var rs=0; for(var x=0;x<w;x++){ rs+=gray[y*w+x];
-      integ[(y+1)*iw+(x+1)]=integ[y*iw+(x+1)]+rs; } }
-    var r=radius|0;
-    for(var yy=0;yy<h;yy++) for(var xx=0;xx<w;xx++){
-      var x0=xx-r<0?0:xx-r, y0=yy-r<0?0:yy-r, x1=xx+r>=w?w-1:xx+r, y1=yy+r>=h?h-1:yy+r;
-      var area=(x1-x0+1)*(y1-y0+1);
-      var s=integ[(y1+1)*iw+(x1+1)]-integ[y0*iw+(x1+1)]-integ[(y1+1)*iw+x0]+integ[y0*iw+x0];
-      var mean=s/area, pp=yy*w+xx, val=gray[pp]>(mean-C)?255:0, o=pp*4;
-      d[o]=d[o+1]=d[o+2]=val;
-    }
-  }
-  function perjelas(d,w,h,br,ct){
-    var n=w*h, lum=new Float32Array(n), hist=new Uint32Array(256);
-    for(var i=0,p=0;i<d.length;i+=4,p++){ var yv=(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2])|0; lum[p]=yv; hist[yv]++; }
-    var lp=n*0.02, hp=n*0.98, acc=0, lo=0, hi=255;
-    for(var v=0;v<256;v++){ acc+=hist[v]; if(acc>=lp){lo=v;break;} }
-    acc=0; for(var v2=0;v2<256;v2++){ acc+=hist[v2]; if(acc>=hp){hi=v2;break;} }
-    var rng=Math.max(1,hi-lo);
-    for(var k=0,q=0;k<d.length;k+=4,q++){
-      var g=(lum[q]-lo)/rng*255; g=(g-128)*ct+128+br;
-      d[k]=d[k+1]=d[k+2]=clamp255(g);
-    }
-  }
-
-  bindSeg('modeSeg',function(v){ state.mode=v; save(state); syncFilterUI(); applyFilter(); });
-  function syncFilterUI(){
-    var bw=state.mode==='bw';
-    $('grpBW').classList.toggle('hidden',!bw);   // sliders BW hanya untuk mode Hitam-Putih
-    $('grpBC').classList.toggle('hidden',bw);    // kecerahan/kontras untuk Asli/Abu/Perjelas
-  }
-  function slider(id,valId,fmt,setter){
-    var el=$(id); el.addEventListener('input',function(){
-      setter(+this.value); $(valId).textContent=fmt(this.value); save(state);
-      clearTimeout(el._t); el._t=setTimeout(applyFilter,60);
-    });
-  }
-  slider('sBright','vBright',function(x){return x;},function(x){state.bright=x;});
-  slider('sContrast','vContrast',function(x){return x+'%';},function(x){state.contrast=x;});
-  slider('sSens','vSens',function(x){return x;},function(x){state.sens=x;});
-  slider('sDetail','vDetail',function(x){return x;},function(x){state.detail=x;});
-
-  $('btnAdd').addEventListener('click',function(){
-    if(!warpCanvas){ toast('Belum ada hasil'); return; }
-    var rc=$('resultCanvas'), pc=document.createElement('canvas');
-    pc.width=rc.width; pc.height=rc.height; pc.getContext('2d').drawImage(rc,0,0);
-    pages.push({canvas:pc}); renderPages(); toast('Halaman '+pages.length+' ditambahkan');
-  });
-  $('btnImg').addEventListener('click',function(){
-    var rc=$('resultCanvas'); if(!rc.width){ toast('Belum ada hasil'); return; }
-    rc.toBlob(function(bl){ downloadBlob(bl,'pindai_'+Date.now()+'.png'); },'image/png');
-  });
-
-  /* ============ HALAMAN & PDF ============ */
-  bindSeg('sizeSeg',function(v){ state.size=v; save(state); updateStats(); });
-  $('sQ').addEventListener('input',function(){ state.quality=+this.value; $('vQ').textContent=this.value+'%';
-    save(state); updateStats(); });
-
-  function renderPages(){
-    var wrap=$('pages'), empty=$('pagesEmpty');
-    wrap.innerHTML='';
-    if(!pages.length){ empty.classList.remove('hidden'); wrap.classList.add('hidden'); }
-    else{ empty.classList.add('hidden'); wrap.classList.remove('hidden');
-      pages.forEach(function(pg,idx){
-        var div=document.createElement('div'); div.className='pg';
-        var img=document.createElement('img'); img.src=pg.canvas.toDataURL('image/jpeg',0.6); div.appendChild(img);
-        var n=document.createElement('div'); n.className='n'; n.textContent=idx+1; div.appendChild(n);
-        var del=document.createElement('button'); del.className='del'; del.innerHTML='<i class="fas fa-times"></i>';
-        del.onclick=function(){ pages.splice(idx,1); renderPages(); }; div.appendChild(del);
-        var mv=document.createElement('div'); mv.className='mv';
-        if(idx>0){ var up=document.createElement('button'); up.innerHTML='<i class="fas fa-arrow-left"></i>';
-          up.onclick=function(){ var t=pages[idx-1];pages[idx-1]=pages[idx];pages[idx]=t;renderPages(); }; mv.appendChild(up); }
-        if(idx<pages.length-1){ var dn=document.createElement('button'); dn.innerHTML='<i class="fas fa-arrow-right"></i>';
-          dn.onclick=function(){ var t=pages[idx+1];pages[idx+1]=pages[idx];pages[idx]=t;renderPages(); }; mv.appendChild(dn); }
-        div.appendChild(mv);
-        wrap.appendChild(div);
+      pts.forEach(function(p,i){
+        var mk=L.marker([p.lat,p.lng],{draggable:(state.mode==='map'),icon:vIcon(i,i===0),
+          keyboard:false}).addTo(layer);
+        mk.on('dragend',function(){var ll=mk.getLatLng();pts[i].lat=ll.lat;pts[i].lng=ll.lng;render();});
       });
     }
-    updateStats();
+    if(meDot) meDot.addTo(layer);
+    if(meRing) meRing.addTo(layer);
   }
-  function updateStats(){
-    $('stPages').textContent=pages.length;
-    $('stSize').textContent=state.size==='a4'?'A4':(state.size==='letter'?'Letter':'Pas');
-    $('stQ').textContent=state.quality+'%';
-    $('btnPDF').disabled=!pages.length; $('btnClear').disabled=!pages.length;
+  function showMe(lat,lng,acc){
+    if(!useLeaflet) return;
+    if(!meDot){ meDot=L.circleMarker([lat,lng],{radius:6,color:'#fff',weight:2,
+      fillColor:'#2563eb',fillOpacity:1}); }
+    else meDot.setLatLng([lat,lng]);
+    if(!meRing){ meRing=L.circle([lat,lng],{radius:acc||8,color:'#2563eb',weight:1,
+      fillColor:'#2563eb',fillOpacity:.08}); }
+    else { meRing.setLatLng([lat,lng]); meRing.setRadius(acc||8); }
+    drawLeaflet();
   }
-  $('btnClear').addEventListener('click',function(){ if(pages.length&&confirm('Kosongkan semua halaman?')){
-    pages=[]; renderPages(); } });
+  function fitToPts(){
+    if(!useLeaflet||!pts.length) return;
+    if(pts.length===1){ map.setView([pts[0].lat,pts[0].lng],18); return; }
+    map.fitBounds(L.latLngBounds(pts.map(function(p){return [p.lat,p.lng];})).pad(0.25));
+  }
 
-  $('btnPDF').addEventListener('click',function(){
-    if(!pages.length) return;
-    busy(true,'Membuat PDF…');
-    var q=state.quality/100;
-    var jobs=pages.map(function(pg){ return new Promise(function(res){
-      pg.canvas.toBlob(function(bl){ bl.arrayBuffer().then(function(ab){
-        res({bytes:new Uint8Array(ab),w:pg.canvas.width,h:pg.canvas.height}); }); },'image/jpeg',q);
-    }); });
-    Promise.all(jobs).then(function(imgs){
-      var pdf=buildPDF(imgs,state.size);
-      downloadBlob(new Blob([pdf],{type:'application/pdf'}),'dokumen_'+Date.now()+'.pdf');
-      busy(false); toast('PDF '+imgs.length+' halaman diunduh');
-    }).catch(function(){ busy(false); toast('Gagal membuat PDF'); });
+  /* ---------------- SVG cadangan ---------------- */
+  function drawSVG(xy){
+    var svg=$('svgmap');
+    if(xy.length===0){
+      svg.innerHTML='<text x="150" y="94" text-anchor="middle" fill="#9ca3af" font-size="12" font-family="sans-serif">Belum ada titik</text>';
+      return;
+    }
+    var xs=xy.map(function(p){return p.x;}), ys=xy.map(function(p){return p.y;});
+    var minx=Math.min.apply(null,xs),maxx=Math.max.apply(null,xs);
+    var miny=Math.min.apply(null,ys),maxy=Math.max.apply(null,ys);
+    var w=(maxx-minx)||1,h=(maxy-miny)||1,vw=300,vh=180,pad=22;
+    var sc=Math.min((vw-2*pad)/w,(vh-2*pad)/h); if(!isFinite(sc)||sc<=0)sc=1;
+    var offX=(vw-w*sc)/2-minx*sc, offY=(vh-h*sc)/2-miny*sc;
+    var P=xy.map(function(p){return {X:p.x*sc+offX,Y:vh-(p.y*sc+offY)};});
+    var d=P.map(function(p,i){return (i?'L':'M')+p.X.toFixed(1)+' '+p.Y.toFixed(1);}).join(' ');
+    var shape=pts.length>=3
+      ? '<path d="'+d+' Z" fill="rgba(106,183,186,.22)" stroke="#1e5a7b" stroke-width="2" stroke-linejoin="round"/>'
+      : '<path d="'+d+'" fill="none" stroke="#1e5a7b" stroke-width="2" stroke-dasharray="4 3"/>';
+    var dots=P.map(function(p,i){return '<circle cx="'+p.X.toFixed(1)+'" cy="'+p.Y.toFixed(1)
+      +'" r="'+(i===0?5:3.5)+'" fill="'+(i===0?'#ec4899':'#1e5a7b')+'" stroke="#fff" stroke-width="1.5"/>';}).join('');
+    svg.innerHTML=shape+dots;
+  }
+
+  /* ---------------- render ---------------- */
+  function render(){
+    var xy=project(pts);
+    var closed=pts.length>=3;
+    var A=shoelace(xy), P=perim(xy,closed);
+    var uv=state.ubin, ubin=A/uv, ha=A/10000, are=A/100, bau=ubin/500;
+
+    $('area').textContent=A>0?nf(A,1):'—';
+    $('sUbin').textContent=A>0?nf(ubin,2):'—';
+    $('sHa').textContent=A>0?nf(ha,4):'—';
+    $('sKel').textContent=P>0?nf(P,1):'—';
+    $('extra').innerHTML=A>0?('&asymp; '+nf(are,2)+' are &nbsp;·&nbsp; '+nf(bau,3)+' bau')
+      :'Tandai minimal 3 titik sudut untuk mendapat luas.';
+
+    var accs=pts.map(function(p){return p.acc;}).filter(function(a){return a&&isFinite(a);});
+    if(A>0&&accs.length){
+      var mAcc=accs.reduce(function(s,a){return s+a;},0)/accs.length, sig=0.5*P*mAcc;
+      $('err').style.display='block';
+      $('err').innerHTML='<i class="fas fa-triangle-exclamation"></i> Perkiraan galat kasar &plusmn; '
+        +nf(sig,0)+' m&sup2; (rata-rata akurasi GPS &plusmn; '+nf(mAcc,1)+' m).';
+    } else $('err').style.display='none';
+
+    $('cnt').textContent=pts.length;
+    if(useLeaflet) drawLeaflet(); else drawSVG(xy);
+    state.pts=pts; save(state);
+  }
+
+  /* ---------------- titik ---------------- */
+  function addPoint(p,src){
+    pts.push({lat:p.lat,lng:p.lng,acc:(p.acc!=null?p.acc:null)});
+    render();
+    if(useLeaflet && src==='gps'){ map.panTo([p.lat,p.lng]); }
+  }
+  $('mark').addEventListener('click',function(){
+    if(this.disabled)return;
+    if(!lastFix){toast('Menunggu sinyal GPS…');return;}
+    addPoint(lastFix,'gps'); toast('Sudut '+pts.length+' ditandai');
+  });
+  $('addManual').addEventListener('click',function(){
+    var la=parseFloat(String($('mlat').value).replace(',','.'));
+    var ln=parseFloat(String($('mlng').value).replace(',','.'));
+    if(!isFinite(la)||!isFinite(ln)){toast('Isi lintang & bujur dulu');return;}
+    if(la<-90||la>90||ln<-180||ln>180){toast('Koordinat di luar jangkauan');return;}
+    addPoint({lat:la,lng:ln,acc:null});
+    $('mlat').value='';$('mlng').value='';$('mlat').focus();
+    if(useLeaflet) fitToPts();
+    toast('Titik '+pts.length+' ditambah');
+  });
+  $('undo').addEventListener('click',function(){
+    if(pts.length){pts.pop();render();toast('Titik terakhir dibatalkan');}
+  });
+  $('clear').addEventListener('click',function(){
+    if(!pts.length)return;
+    if(confirm('Kosongkan semua titik lahan sekarang?')){pts=[];render();}
   });
 
-  function pageBox(iw,ih,size){ // -> {pw,ph,dw,dh,dx,dy}
-    if(size==='fit'){ var pw=iw/150*72, ph=ih/150*72; return {pw:pw,ph:ph,dw:pw,dh:ph,dx:0,dy:0}; }
-    var base=size==='letter'?[612,792]:[595.28,841.89];
-    var land=iw>ih, PW=land?base[1]:base[0], PH=land?base[0]:base[1], m=18;
-    var aw=PW-2*m, ah=PH-2*m, s=Math.min(aw/iw,ah/ih), dw=iw*s, dh=ih*s;
-    return {pw:PW,ph:PH,dw:dw,dh:dh,dx:(PW-dw)/2,dy:(PH-dh)/2};
-  }
-  function buildPDF(imgs,size){
-    var chunks=[], len=0, enc=new TextEncoder(), off={};
-    function put(x){ var b=(typeof x==='string')?enc.encode(x):x; chunks.push(b); len+=b.length; }
-    function obj(n,body){ off[n]=len; put(n+' 0 obj\n'); put(body); put('\nendobj\n'); }
-    put('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
-    var N=imgs.length, kids=[]; for(var i=0;i<N;i++) kids.push((3+i*3)+' 0 R');
-    obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
-    obj(2,'<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+N+' >>');
-    for(var j=0;j<N;j++){
-      var im=imgs[j], bx=pageBox(im.w,im.h,size);
-      var pageN=3+j*3, contN=4+j*3, imgN=5+j*3;
-      var f2=function(v){return (Math.round(v*100)/100);};
-      obj(pageN,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+f2(bx.pw)+' '+f2(bx.ph)+']'
-        +' /Resources << /XObject << /Im0 '+imgN+' 0 R >> >> /Contents '+contN+' 0 R >>');
-      var cs='q\n'+f2(bx.dw)+' 0 0 '+f2(bx.dh)+' '+f2(bx.dx)+' '+f2(bx.dy)+' cm\n/Im0 Do\nQ\n';
-      obj(contN,'<< /Length '+cs.length+' >>\nstream\n'+cs+'endstream');
-      off[imgN]=len; put(imgN+' 0 obj\n');
-      put('<< /Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h
-        +' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+im.bytes.length+' >>\nstream\n');
-      put(im.bytes); put('\nendstream\nendobj\n');
+  /* ---------------- GPS ---------------- */
+  function setGps(on){
+    if(on){
+      if(!('geolocation' in navigator)){toast('Perangkat tak mendukung GPS');$('swGps').classList.remove('on');return;}
+      try{
+        watchId=navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:1000,timeout:20000});
+        gpsOn=true;$('gpsInfo').textContent='Mencari sinyal…';
+      }catch(e){toast('Gagal memulai GPS');$('swGps').classList.remove('on');}
+    } else {
+      if(watchId!=null){try{navigator.geolocation.clearWatch(watchId);}catch(e){}}
+      watchId=null;gpsOn=false;lastFix=null;
+      $('gpsInfo').textContent='GPS mati';$('accChip').style.display='none';
     }
-    var xref=len, maxObj=2+3*N;
-    put('xref\n0 '+(maxObj+1)+'\n'); put('0000000000 65535 f \n');
-    for(var n=1;n<=maxObj;n++) put(String(off[n]).padStart(10,'0')+' 00000 n \n');
-    put('trailer\n<< /Size '+(maxObj+1)+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF');
-    var outArr=new Uint8Array(len), o=0;
-    chunks.forEach(function(c){ outArr.set(c,o); o+=c.length; });
-    return outArr;
+    updateButtons();
+  }
+  function onPos(p){
+    lastFix={lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy};
+    var a=p.coords.accuracy, chip=$('accChip');
+    chip.style.display='inline-block';
+    chip.className='accchip '+(a<=8?'good':(a<=20?'':'bad'));
+    chip.innerHTML='<i class="fas fa-location-crosshairs"></i> &plusmn; '+nf(a,1)+' m';
+    $('gpsInfo').textContent=a<=8?'Sinyal bagus':(a<=20?'Sinyal cukup':'Sinyal lemah — cari tempat terbuka');
+    showMe(lastFix.lat,lastFix.lng,a);
+    if(!onPos._c && useLeaflet){ onPos._c=true; map.setView([lastFix.lat,lastFix.lng],18); }
+    updateButtons();
+    if(state.auto) autoAdd();
+  }
+  function onErr(e){
+    var msg=e.code===1?'Izin lokasi ditolak':(e.code===2?'Lokasi tak tersedia (butuh https)':'GPS lambat merespon');
+    $('gpsInfo').textContent=msg;toast(msg);
+    if(e.code===1||e.code===2){$('swGps').classList.remove('on');setGps(false);}
+  }
+  function autoAdd(){
+    if(!lastFix)return;
+    if(!pts.length||distLL(pts[pts.length-1],lastFix)>=4){addPoint(lastFix,'gps');}
+  }
+  function updateButtons(){
+    var ready=gpsOn&&!!lastFix&&state.mode==='gps';
+    var b=$('mark');b.disabled=!ready;b.style.opacity=ready?'1':'.55';
   }
 
-  function downloadBlob(blob,name){
-    var url=URL.createObjectURL(blob), a=document.createElement('a');
-    a.href=url; a.download=name; document.body.appendChild(a); a.click();
-    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); },100);
+  /* ---------------- unduh ---------------- */
+  function download(href,name){
+    var a=document.createElement('a');a.href=href;a.download=name;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
   }
+  function niceStep(px_per_m,maxpx){
+    var steps=[1,2,5,10,20,25,50,100,200,250,500,1000,2000];
+    for(var i=0;i<steps.length;i++){ if(steps[i]*px_per_m>=60 && steps[i]*px_per_m<=maxpx) return steps[i]; }
+    // fallback: largest that fits
+    for(var j=steps.length-1;j>=0;j--){ if(steps[j]*px_per_m<=maxpx) return steps[j]; }
+    return steps[0];
+  }
+  function exportPNG(){
+    if(pts.length<3){toast('Butuh minimal 3 titik');return;}
+    var xy=project(pts), A=shoelace(xy), P=perim(xy,true), uv=state.ubin;
+    var name=(String($('saveName').value)||'').trim()||'Lahan Tanpa Nama';
+    var date=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
 
-  /* ============ INIT UI dari state ============ */
-  function initUI(){
-    $('modeSeg').querySelectorAll('button').forEach(function(b){ b.classList.toggle('on',b.dataset.v===state.mode); });
-    $('sizeSeg').querySelectorAll('button').forEach(function(b){ b.classList.toggle('on',b.dataset.v===state.size); });
-    $('sBright').value=state.bright; $('vBright').textContent=state.bright;
-    $('sContrast').value=state.contrast; $('vContrast').textContent=state.contrast+'%';
-    $('sSens').value=state.sens; $('vSens').textContent=state.sens;
-    $('sDetail').value=state.detail; $('vDetail').textContent=state.detail;
-    $('sQ').value=state.quality; $('vQ').textContent=state.quality+'%';
-    syncFilterUI(); updateStats(); renderPages();
+    var W=1000, headH=84, sx=40, sy=110, sw=560, sh=380;
+    var perCol=Math.ceil(pts.length/2), coordRows=perCol, coordTop=sy+sh+34;
+    var coordsH=coordRows*22+30;
+    var H=Math.max(sy+sh, 110+300)+coordsH+70;
+
+    var cv=document.createElement('canvas');
+    var scale=2; cv.width=W*scale; cv.height=H*scale;
+    cv.style.width=W+'px';
+    var ctx=cv.getContext('2d'); ctx.scale(scale,scale);
+    ctx.textBaseline='alphabetic';
+
+    // bg
+    ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
+    // header gradient
+    var g=ctx.createLinearGradient(0,0,W,0);g.addColorStop(0,'#1e5a7b');g.addColorStop(1,'#6ab7ba');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,headH);
+    ctx.fillStyle='#fff';ctx.font='800 26px '+"ui-sans-serif,system-ui,Arial";
+    ctx.fillText('Ukur Luas Lahan',40,42);
+    ctx.font='700 13px Arial';ctx.globalAlpha=.9;
+    ctx.fillText('PORTAL DIDIKHAND',40,64);ctx.globalAlpha=1;
+    ctx.textAlign='right';ctx.font='600 14px Arial';
+    ctx.fillText(name,W-40,40);
+    ctx.font='400 12px Arial';ctx.globalAlpha=.9;ctx.fillText(date,W-40,60);
+    ctx.globalAlpha=1;ctx.textAlign='left';
+
+    // sketch box
+    ctx.fillStyle='#f9fafb';ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;
+    roundRect(ctx,sx,sy,sw,sh,12);ctx.fill();ctx.stroke();
+
+    // scaling
+    var xs=xy.map(function(p){return p.x;}), ys=xy.map(function(p){return p.y;});
+    var minx=Math.min.apply(null,xs),maxx=Math.max.apply(null,xs);
+    var miny=Math.min.apply(null,ys),maxy=Math.max.apply(null,ys);
+    var bw=(maxx-minx)||1, bh=(maxy-miny)||1, inpad=54;
+    var sc=Math.min((sw-2*inpad)/bw,(sh-2*inpad)/bh); if(!isFinite(sc)||sc<=0)sc=1;
+    var padX=(sw-bw*sc)/2, padY=(sh-bh*sc)/2;
+    function PX(p){return {X:sx+padX+(p.x-minx)*sc, Y:sy+padY+(bh-(p.y-miny))*sc};}
+    var Pn=xy.map(PX);
+
+    // faint grid
+    ctx.strokeStyle='#eef2f4';ctx.lineWidth=1;
+    for(var gx=sx+20;gx<sx+sw;gx+=40){ctx.beginPath();ctx.moveTo(gx,sy+6);ctx.lineTo(gx,sy+sh-6);ctx.stroke();}
+    for(var gy=sy+20;gy<sy+sh;gy+=40){ctx.beginPath();ctx.moveTo(sx+6,gy);ctx.lineTo(sx+sw-6,gy);ctx.stroke();}
+
+    // polygon
+    ctx.beginPath();Pn.forEach(function(p,i){i?ctx.lineTo(p.X,p.Y):ctx.moveTo(p.X,p.Y);});ctx.closePath();
+    ctx.fillStyle='rgba(106,183,186,.28)';ctx.fill();
+    ctx.strokeStyle='#1e5a7b';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.stroke();
+    // vertices
+    Pn.forEach(function(p,i){
+      ctx.beginPath();ctx.arc(p.X,p.Y,i===0?8:6,0,Math.PI*2);
+      ctx.fillStyle=i===0?'#ec4899':'#1e5a7b';ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle='#fff';ctx.font='700 10px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(String(i+1),p.X,p.Y+0.5);ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    });
+
+    // north arrow (atas = utara)
+    var nx=sx+sw-30, ny=sy+34;
+    ctx.fillStyle='#1e5a7b';ctx.beginPath();
+    ctx.moveTo(nx,ny-16);ctx.lineTo(nx-6,ny+2);ctx.lineTo(nx+6,ny+2);ctx.closePath();ctx.fill();
+    ctx.font='800 12px Arial';ctx.textAlign='center';ctx.fillText('U',nx,ny+16);ctx.textAlign='left';
+
+    // scale bar
+    var stepM=niceStep(sc, sw-2*inpad);
+    var barpx=stepM*sc, bx=sx+24, by=sy+sh-22;
+    ctx.strokeStyle='#374151';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+barpx,by);
+    ctx.moveTo(bx,by-4);ctx.lineTo(bx,by+4);ctx.moveTo(bx+barpx,by-4);ctx.lineTo(bx+barpx,by+4);ctx.stroke();
+    ctx.fillStyle='#374151';ctx.font='700 12px Arial';
+    ctx.fillText(nf(stepM,0)+' m',bx,by-8);
+
+    // results panel (kanan)
+    var rx=630, ry=sy;
+    ctx.fillStyle='#eef6f7';ctx.strokeStyle='#cfe6e7';roundRect(ctx,rx,ry,330,sh,12);ctx.fill();ctx.stroke();
+    var px=rx+22, py=ry+40;
+    ctx.fillStyle='#1e5a7b';ctx.font='700 12px Arial';ctx.fillText('LUAS LAHAN',px,py);
+    py+=34;ctx.font='800 34px Arial';ctx.fillText(nf(A,1)+' m²',px,py);
+    py+=30;ctx.font='400 13px Arial';ctx.fillStyle='#374151';
+    function line(label,val){ py+=26; ctx.fillStyle='#6b7280';ctx.font='400 13px Arial';ctx.fillText(label,px,py);
+      ctx.fillStyle='#111827';ctx.font='700 14px Arial';ctx.textAlign='right';ctx.fillText(val,rx+330-22,py);ctx.textAlign='left'; }
+    line('Hektar', nf(A/10000,4)+' ha');
+    line('Are', nf(A/100,2)+' are');
+    line('Ubin / Bata', nf(A/uv,2));
+    line('Bau (bahu)', nf(A/uv/500,3));
+    line('Keliling', nf(P,1)+' m');
+    line('Jumlah titik', String(pts.length));
+    py+=30;ctx.fillStyle='#9ca3af';ctx.font='400 11px Arial';
+    ctx.fillText('1 ubin = '+nf(uv,4).replace(/,?0+$/,'')+' m²',px,py);
+
+    // koordinat
+    ctx.fillStyle='#1e5a7b';ctx.font='700 12px Arial';ctx.fillText('TITIK KOORDINAT (lintang, bujur)',40,coordTop-12);
+    ctx.font='400 12px Arial';ctx.fillStyle='#374151';
+    pts.forEach(function(p,i){
+      var col=i<perCol?0:1, rowi=i<perCol?i:i-perCol;
+      var cxp=40+col*490, cyp=coordTop+rowi*22+6;
+      ctx.fillStyle='#9ca3af';ctx.fillText(('0'+(i+1)).slice(-2)+'.',cxp,cyp);
+      ctx.fillStyle='#374151';ctx.fillText(p.lat.toFixed(6)+',  '+p.lng.toFixed(6),cxp+26,cyp);
+    });
+
+    // footer
+    ctx.fillStyle='#9ca3af';ctx.font='400 11px Arial';
+    ctx.fillText('Hasil perkiraan · rumus shoelace pada proyeksi lokal WGS-84 · peta © OpenStreetMap · Portal DIDIKHAND',40,H-24);
+
+    try{
+      var url=cv.toDataURL('image/png');
+      download(url,'lahan-'+fnameSafe(name)+'.png');
+      toast('Gambar diunduh');
+    }catch(e){ toast('Gagal membuat gambar'); }
   }
-  initUI();
+  function roundRect(ctx,x,y,w,h,r){
+    ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+  }
+  function exportGeoJSON(){
+    if(pts.length<3){toast('Butuh minimal 3 titik');return;}
+    var name=(String($('saveName').value)||'').trim()||'Lahan';
+    var xy=project(pts), A=shoelace(xy);
+    var ring=pts.map(function(p){return [ +p.lng.toFixed(7), +p.lat.toFixed(7) ];});
+    ring.push(ring[0]);
+    var gj={type:'FeatureCollection',features:[{type:'Feature',
+      properties:{nama:name, luas_m2:+A.toFixed(2), luas_are:+(A/100).toFixed(2),
+        luas_hektar:+(A/10000).toFixed(4), luas_ubin_bata:+(A/state.ubin).toFixed(2),
+        luas_bau:+(A/state.ubin/500).toFixed(3), keliling_m:+perim(xy,true).toFixed(2),
+        jumlah_titik:pts.length, nilai_ubin_m2:state.ubin,
+        dibuat:new Date().toISOString(), sumber:'Portal DIDIKHAND — Ukur Luas Lahan'},
+      geometry:{type:'Polygon',coordinates:[ring]}}]};
+    var blob=new Blob([JSON.stringify(gj,null,2)],{type:'application/geo+json'});
+    download(URL.createObjectURL(blob),'lahan-'+fnameSafe(name)+'.geojson');
+    toast('GeoJSON diunduh');
+  }
+  $('dlPng').addEventListener('click',exportPNG);
+  $('dlGeo').addEventListener('click',exportGeoJSON);
+
+  /* ---------------- simpan / riwayat ---------------- */
+  $('saveBtn').addEventListener('click',function(){
+    if(pts.length<3){toast('Butuh minimal 3 titik');return;}
+    var name=(String($('saveName').value)||'').trim()||('Lahan '+(state.saved.length+1));
+    var xy=project(pts),A=shoelace(xy);
+    state.saved.unshift({id:Date.now(),name:name,area:A,ubin:A/state.ubin,perim:perim(xy,true),
+      pts:pts.slice(),date:new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})});
+    save(state);$('saveName').value='';renderList();toast('Tersimpan: '+name);
+  });
+  function renderList(){
+    var box=$('list');
+    if(!state.saved.length){box.innerHTML='<div class="empty">Belum ada lahan tersimpan.</div>';return;}
+    box.innerHTML=state.saved.map(function(s){
+      return '<div class="item"><div class="meta">'+
+        '<div class="t1">'+esc(s.name)+'</div>'+
+        '<div class="t2">'+nf(s.area,1)+' m&sup2; · '+nf(s.ubin,2)+' ubin/bata · '+esc(s.date)+'</div>'+
+        '<div style="margin-top:7px">'+
+          '<button class="mini" data-load="'+s.id+'"><i class="fas fa-rotate-left"></i> Muat</button>'+
+          '<button class="mini del" data-del="'+s.id+'"><i class="fas fa-trash"></i> Hapus</button>'+
+        '</div></div>'+
+        '<div class="stat" style="min-width:56px"><b>'+nf(s.area/10000,3)+'</b><span>hektar</span></div></div>';
+    }).join('');
+  }
+  $('list').addEventListener('click',function(e){
+    var lb=e.target.closest('[data-load]'), db=e.target.closest('[data-del]');
+    if(lb){
+      var s=state.saved.filter(function(x){return String(x.id)===lb.getAttribute('data-load');})[0];
+      if(s){pts=s.pts.slice();render();if(useLeaflet)fitToPts();toast('Dimuat: '+s.name);
+        window.scrollTo({top:0,behavior:'smooth'});}
+    } else if(db){
+      var id=db.getAttribute('data-del');
+      state.saved=state.saved.filter(function(x){return String(x.id)!==id;});
+      save(state);renderList();toast('Dihapus');
+    }
+  });
+
+  /* ---------------- mode & pengaturan ---------------- */
+  function refreshHint(){
+    var h=$('mapHint');
+    if(!useLeaflet){
+      h.innerHTML='<i class="fas fa-wifi"></i> Peta OpenStreetMap tak dapat dimuat (perlu internet). '+
+        'Gunakan <b>Jalan Keliling (GPS)</b> atau <b>entri koordinat manual</b> di bawah.';
+    } else if(state.mode==='map'){
+      h.innerHTML='<i class="fas fa-hand-pointer"></i> <b>Ketuk peta</b> di tiap sudut lahan secara berurutan. '+
+        'Titik bisa <b>digeser</b> untuk memperbaiki.';
+    } else {
+      h.innerHTML='<i class="fas fa-circle-info"></i> Titik biru = posisi Anda. Susuri batas lahan, tekan '+
+        '<b>Tandai Sudut</b> di tiap patok.';
+    }
+  }
+  function applyMode(){
+    var gps=state.mode==='gps';
+    $('gpsBox').style.display=gps?'':'none';
+    if(!gps&&gpsOn){$('swGps').classList.remove('on');setGps(false);}
+    if(useLeaflet){ drawLeaflet(); setTimeout(function(){map.invalidateSize();},60); }
+    refreshHint(); updateButtons();
+  }
+  bindSeg('modeSeg',function(v){state.mode=v;save(state);applyMode();});
+  bindSeg('ubinSeg',function(v){state.ubin=parseFloat(v);save(state);render();});
+  bindSw('swGps',setGps,false);
+  bindSw('swAuto',function(on){state.auto=on;save(state);},state.auto);
+
+  /* ---------------- init ---------------- */
+  if(window.L){
+    $('lmap').style.display='block';
+    useLeaflet=initMap();
+    if(useLeaflet){ $('svgwrap').style.display='none';
+      setTimeout(function(){map.invalidateSize();if(pts.length)fitToPts();},200);
+    } else { $('lmap').style.display='none'; }
+  }
+  segSet('modeSeg',state.mode);
+  segSet('ubinSeg',state.ubin);
+  applyMode();
+  renderList();
+  render();
 })();
 </script>
 </body>
