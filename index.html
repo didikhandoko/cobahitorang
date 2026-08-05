@@ -7,17 +7,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 
-<title>Ukur Luas Lahan — DIDIKHAND</title>
+<title>Ternak Digital — DIDIKHAND</title>
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231e5a7b'/%3E%3Cstop offset='1' stop-color='%236ab7ba'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='system-ui,sans-serif' font-size='27' font-weight='700' fill='%23fff' text-anchor='middle'%3EDH%3C/text%3E%3C/svg%3E">
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-<!-- OpenStreetMap via Leaflet (butuh internet; ada cadangan offline bila gagal dimuat) -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
-  /* ===== DESIGN TOKENS — DIDIKHAND (jangan diubah) ===== */
+  /* ============================================================
+     DESIGN TOKENS — DIDIKHAND (selaras dengan portal index.html)
+     ============================================================ */
   :root{
     --bg:#f9fafb; --card:#ffffff; --teal:#1e5a7b; --teal2:#6ab7ba;
     --pink:#ec4899; --pink6:#db2777; --ink:#1f2937; --sub:#374151; --muted:#9ca3af;
@@ -51,55 +50,22 @@
   .cap{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
     font-weight:700;margin-bottom:9px;display:block;}
 
-  label.fld{display:block;margin-bottom:14px;}
-  input[type=text],input[type=number],select{
-    width:100%;background:#f9fafb;border:1px solid var(--line);color:var(--ink);
-    border-radius:12px;padding:12px;font-size:15px;font-family:inherit;line-height:1.5;}
-  input:focus,select:focus{outline:none;border-color:var(--teal2);
-    box-shadow:0 0 0 3px rgba(106,183,186,.25);background:#fff;}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-
-  .seg{display:flex;background:#f3f4f6;border:1px solid var(--line);border-radius:11px;
-    padding:3px;gap:3px;margin-bottom:12px;}
-  .seg button{flex:1;background:transparent;border:0;color:var(--muted);padding:11px 6px;
-    border-radius:8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;}
-  .seg button.on{background:var(--teal);color:#fff;box-shadow:0 4px 10px -4px rgba(30,90,123,.6);}
-
-  .opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;
-    border-bottom:1px solid var(--line2);}
-  .opt:last-child{border-bottom:0;}
-  .opt span{font-size:14px;color:var(--sub);}
-  .opt small{color:var(--muted);font-size:11px;display:block;margin-top:2px;}
-  .sw{width:50px;height:28px;border-radius:999px;background:#e5e7eb;border:1px solid var(--line);
-    position:relative;flex:0 0 auto;cursor:pointer;transition:.2s;}
-  .sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
-    background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s;}
-  .sw.on{background:var(--teal);border-color:var(--teal);} .sw.on::after{left:24px;}
-
   .row{display:flex;gap:10px;flex-wrap:wrap;}
-  .btn{flex:1;min-width:120px;border:0;border-radius:12px;padding:14px;font-size:15px;
+  .btn{flex:1;min-width:104px;border:0;border-radius:12px;padding:13px;font-size:14px;
     font-weight:800;font-family:inherit;cursor:pointer;text-align:center;text-decoration:none;
-    display:inline-flex;align-items:center;justify-content:center;gap:8px;}
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;}
   .btn.primary{background:var(--pink);color:#fff;box-shadow:0 8px 15px -6px rgba(236,72,153,.5);}
   .btn.primary:active{background:var(--pink6);}
   .btn.ghost{background:#fff;color:var(--sub);border:1px solid var(--line);}
   .btn.teal{background:var(--teal);color:#fff;}
-  .btn.block{width:100%;flex:none;}
-  .btn:disabled{cursor:default;}
+  .btn.heal{background:#0ea5a5;color:#fff;}
+  .btn:disabled{background:#eef0f2;color:var(--muted);box-shadow:none;cursor:default;border-color:var(--line2);}
+  .badge{background:rgba(255,255,255,.28);border-radius:999px;padding:1px 7px;font-size:11px;}
 
-  .result{background:#eef6f7;border:1px solid #cfe6e7;border-radius:12px;padding:14px;
-    color:var(--teal);font-size:13px;line-height:1.7;}
-  .bignum{font-size:30px;font-weight:800;color:var(--teal);line-height:1.1;}
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-  .stat{background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;}
-  .stat b{display:block;font-size:18px;color:var(--ink);}
-  .stat span{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
-
-  .item{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);
-    border-radius:12px;margin-bottom:9px;background:#fff;border-left-width:4px;border-left-color:var(--teal2);}
-  .item .t1{font-size:15px;font-weight:800;color:var(--ink);}
-  .item .t2{font-size:12px;color:var(--muted);margin-top:2px;}
-  .item .meta{flex:1;min-width:0;}
+  .stat{background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:9px 6px;text-align:center;}
+  .stat b{display:block;font-size:16px;color:var(--ink);line-height:1.15;}
+  .stat span{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
 
   details{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:4px 16px;
     margin-bottom:14px;box-shadow:var(--shadow);}
@@ -113,183 +79,226 @@
   .note b{color:var(--sub);}
   .disc{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:12px;
     padding:12px;font-size:11.5px;line-height:1.7;}
-  .empty{text-align:center;color:var(--muted);font-size:13px;padding:18px 0;}
+  .empty{text-align:center;color:var(--muted);font-size:13px;padding:20px 6px;line-height:1.7;}
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;
     background:var(--teal);color:#fff;padding:11px 18px;border-radius:12px;font-weight:800;
-    font-size:13px;box-shadow:var(--shadow);transition:.25s;z-index:900;pointer-events:none;}
+    font-size:13px;box-shadow:var(--shadow);transition:.25s;z-index:60;pointer-events:none;max-width:90%;text-align:center;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
   footer{text-align:center;padding:18px 6px 6px;color:var(--muted);font-size:10px;
     letter-spacing:.14em;text-transform:uppercase;line-height:1.9;}
   footer b{color:var(--teal);font-weight:800;}
 
-  /* ===== khusus aplikasi ===== */
-  .gpsline{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
-  .gpsline .txt{font-size:13px;color:var(--sub);font-weight:700;}
-  .accchip{display:none;font-size:12px;font-weight:700;padding:6px 11px;border-radius:999px;
-    background:#f3f4f6;border:1px solid var(--line);color:var(--sub);}
-  .accchip.good{background:#dcfce7;border-color:#bbf7d0;color:#166534;}
-  .accchip.bad{background:#fee2e2;border-color:#fecaca;color:#991b1b;}
+  /* ---------- BANNER OFFLINE & CUACA ---------- */
+  .offline{background:#eef6f7;border:1px solid #cfe6e7;color:var(--teal);border-radius:12px;
+    padding:12px;font-size:12px;line-height:1.7;margin-bottom:14px;box-shadow:var(--shadow);}
+  .wbanner{border-radius:12px;padding:11px 13px;font-size:12.5px;font-weight:700;line-height:1.5;
+    margin-bottom:14px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;}
+  .wbanner i{font-size:18px;flex:0 0 auto;}
 
-  #lmap{height:340px;border-radius:12px;overflow:hidden;border:1px solid var(--line);display:none;z-index:0;}
-  .mapwrap{background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:8px;}
-  svg#svgmap{width:100%;height:auto;display:block;border-radius:8px;}
-  .cnt{font-size:12px;color:var(--muted);text-align:center;margin-top:10px;}
-  .cnt b{color:var(--teal);font-size:14px;}
-  .maphint{font-size:11.5px;color:var(--muted);line-height:1.6;margin-top:10px;}
-  .maphint b{color:var(--sub);}
+  /* ---------- KARTU HEWAN ---------- */
+  .animal{border:1px solid var(--line);border-left-width:5px;border-radius:14px;padding:12px;
+    margin-bottom:11px;background:#fff;}
+  .animal .top{display:flex;align-items:center;gap:12px;}
+  .ava{width:48px;height:48px;border-radius:13px;background:#f3f4f6;display:flex;align-items:center;
+    justify-content:center;font-size:27px;flex:0 0 auto;position:relative;}
+  .ava.happy{animation:bob 1.7s ease-in-out infinite;}
+  .ava.sick{filter:grayscale(.55) saturate(.6);}
+  .ava .sickdot{position:absolute;top:-4px;right:-4px;font-size:15px;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .animal .nm{font-size:15px;font-weight:800;color:var(--ink);}
+  .animal .mt{font-size:11px;color:var(--muted);margin-top:1px;}
+  .tag{display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;
+    margin-left:auto;flex:0 0 auto;}
+  .tag.ok{background:#dcfce7;color:#166534;} .tag.info{background:#dbeafe;color:#1e40af;}
+  .tag.warn{background:#fef3c7;color:#92400e;} .tag.bad{background:#fee2e2;color:#991b1b;}
 
-  .vdot{width:20px;height:20px;border-radius:50%;background:#1e5a7b;color:#fff;font-size:10px;
-    font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;
-    box-shadow:0 1px 4px rgba(0,0,0,.45);}
-  .vdot.first{background:#ec4899;}
-  .leaflet-container{font-family:var(--font);}
+  .bars{margin-top:11px;}
+  .barlab{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-top:7px;}
+  .bar{height:7px;background:#eef0f2;border-radius:999px;overflow:hidden;margin-top:3px;}
+  .bar>i{display:block;height:100%;border-radius:999px;transition:width .5s linear;}
 
-  .mini{background:#f3f4f6;border:1px solid var(--line);color:var(--sub);font-family:inherit;
-    font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;cursor:pointer;margin-right:4px;}
-  .mini.del{color:var(--red);}
-  .err{display:none;margin-top:12px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;
-    border-radius:12px;padding:11px;font-size:11.5px;line-height:1.6;}
+  .ripe{font-size:12px;font-weight:800;color:var(--green);margin-top:10px;
+    background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:8px 10px;}
+  .ripe.sickmsg{color:#991b1b;background:#fef2f2;border-color:#fecaca;}
+  .acts{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;}
+  .mini{border:0;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:800;
+    font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+  .mini.care{background:#f3f4f6;color:var(--sub);flex:0 0 auto;}
+  .mini.care:active{background:#e5e7eb;}
+  .mini.go{background:var(--pink);color:#fff;flex:1;justify-content:center;
+    box-shadow:0 6px 12px -6px rgba(236,72,153,.5);}
+  .mini.go:active{background:var(--pink6);}
+  .mini.go:disabled{background:#eef0f2;color:var(--muted);box-shadow:none;cursor:default;}
+  .mini.cure{background:#0ea5a5;color:#fff;flex:1;justify-content:center;
+    box-shadow:0 6px 12px -6px rgba(14,165,165,.5);}
+  .mini.cure:disabled{background:#eef0f2;color:var(--muted);box-shadow:none;cursor:default;}
+  .mini.sell{background:var(--teal);color:#fff;flex:0 0 auto;}
+  .mini.bury{background:#fee2e2;color:#991b1b;flex:1;justify-content:center;}
+
+  .shopitem{display:flex;align-items:center;gap:12px;padding:11px;border:1px solid var(--line);
+    border-radius:12px;margin-bottom:9px;}
+  .shopitem .em{font-size:27px;flex:0 0 auto;width:40px;text-align:center;}
+  .shopitem .info{flex:1;min-width:0;}
+  .shopitem .info b{font-size:14px;color:var(--ink);}
+  .shopitem .info small{display:block;font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5;}
+  .shopitem .price{font-size:12px;font-weight:800;color:var(--teal);margin-top:3px;}
+  .buy{border:0;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:800;
+    font-family:inherit;cursor:pointer;background:var(--pink);color:#fff;flex:0 0 auto;
+    box-shadow:0 6px 12px -6px rgba(236,72,153,.5);}
+  .buy:active{background:var(--pink6);}
+  .buy:disabled{background:#eef0f2;color:var(--muted);box-shadow:none;cursor:default;}
+
+  .syn{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line2);}
+  .syn:last-child{border-bottom:0;}
+  .syn i{color:var(--green);margin-top:2px;flex:0 0 auto;}
+  .syn span{font-size:12.5px;color:var(--sub);line-height:1.55;}
+
+  .wtab{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line2);}
+  .wtab:last-child{border-bottom:0;}
+  .wtab .we{font-size:20px;flex:0 0 auto;width:26px;text-align:center;}
+  .wtab b{font-size:12.5px;color:var(--ink);} .wtab p{margin:2px 0 0;font-size:11.5px;color:var(--muted);line-height:1.5;}
+
+  /* ---------- LAHAN (adegan animasi) ---------- */
+  .scene{position:relative;height:190px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#bfe3f2;}
+  .scene .sky{position:absolute;inset:0;transition:background 2s linear;z-index:0;}
+  .scene .stars{position:absolute;inset:0;opacity:0;transition:opacity 1.5s;z-index:0;
+    background-image:radial-gradient(1.4px 1.4px at 20% 22%,#fff,transparent),
+      radial-gradient(1.2px 1.2px at 42% 15%,#fff,transparent),
+      radial-gradient(1.5px 1.5px at 66% 26%,#fff,transparent),
+      radial-gradient(1.2px 1.2px at 80% 14%,#fff,transparent),
+      radial-gradient(1.3px 1.3px at 33% 34%,#fff,transparent),
+      radial-gradient(1.2px 1.2px at 88% 32%,#fff,transparent);}
+  .scene.night .stars{opacity:.9;}
+  .scene .sun{position:absolute;width:44px;height:44px;border-radius:50%;z-index:1;
+    background:radial-gradient(circle at 50% 45%,#fff6c8,#ffd54a 58%,#ffb300);
+    box-shadow:0 0 34px rgba(255,193,7,.55);transition:top 2s linear,left 2s linear,opacity 1.5s;}
+  .scene .sun.moon{background:radial-gradient(circle at 38% 38%,#fdfdf5,#dbe1ee 72%);
+    box-shadow:0 0 24px rgba(220,230,255,.5);}
+  .scene .cloud{position:absolute;color:#fff;opacity:.92;z-index:2;filter:drop-shadow(0 2px 3px rgba(0,0,0,.06));}
+  .scene.night .cloud{opacity:.28;} .scene.cloudy .cloud{opacity:1;}
+  .scene .ground{position:absolute;left:0;right:0;bottom:0;height:44%;z-index:1;
+    background:linear-gradient(#7cc36a,#57a44c);border-top:2px solid rgba(0,0,0,.06);transition:background 2s;}
+  .scene.dry .ground{background:linear-gradient(#c7b06a,#a5893f);}
+  .scene.mud .ground{background:linear-gradient(#9a7947,#6b5030);}
+  .scene .grass{position:absolute;bottom:2px;font-size:15px;opacity:.85;z-index:2;pointer-events:none;}
+  .scene .pond{position:absolute;border-radius:50%;z-index:2;
+    background:radial-gradient(circle at 50% 35%,#a7d9f0,#3f9ccb 70%,#2a7aa6);
+    border:2px solid #2b7aa8;box-shadow:inset 0 3px 6px rgba(255,255,255,.4);}
+  .scene .pondfish{position:absolute;font-size:16px;z-index:3;pointer-events:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2));}
+  .scene .spr{position:absolute;left:0;top:0;font-size:26px;z-index:3;will-change:transform;filter:drop-shadow(0 3px 2px rgba(0,0,0,.22));}
+  .scene .spr.sick{filter:grayscale(.55) saturate(.55) drop-shadow(0 3px 2px rgba(0,0,0,.22));}
+  .scene .fly{position:absolute;width:4px;height:4px;border-radius:50%;background:#2a2018;opacity:.75;z-index:4;pointer-events:none;}
+  .scene .heat{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;transition:opacity .8s;
+    background:linear-gradient(0deg,rgba(255,140,50,.14),rgba(255,215,120,.05));}
+  .scene.heat-on .heat{opacity:1;}
+  .scene .rain{position:absolute;inset:0;overflow:hidden;z-index:6;pointer-events:none;opacity:0;transition:opacity .6s;}
+  .scene.rain-on .rain{opacity:1;}
+  .scene .drop{position:absolute;top:-14%;width:2px;height:13px;border-radius:2px;
+    background:linear-gradient(rgba(255,255,255,0),rgba(200,224,244,.9));animation:fall linear infinite;}
+  .scene.storm .drop{animation-duration:.33s !important;height:16px;}
+  @keyframes fall{to{transform:translateY(200px)}}
+  .scene .flash{position:absolute;inset:0;z-index:7;background:#fff;opacity:0;pointer-events:none;}
+  .scene .floaty{position:absolute;z-index:8;pointer-events:none;animation:floaty 2.4s ease-out forwards;}
+  @keyframes floaty{0%{opacity:0;transform:translateY(0) scale(.6)}18%{opacity:1}100%{opacity:0;transform:translateY(-46px) scale(1.15)}}
+  @keyframes drift{from{left:-72px}to{left:112%}}
+  .scenecap{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--sub);align-items:center;}
+  .scenecap b{color:var(--ink);font-weight:800;} .scenecap .dot{color:var(--muted);}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <div class="logo"><i class="fas fa-draw-polygon"></i></div>
+    <div class="logo"><i class="fas fa-tractor"></i></div>
     <div>
-      <h1>Ukur Luas Lahan</h1>
+      <h1>Ternak Digital</h1>
       <div class="sub">Didikhand</div>
     </div>
     <a class="back" href="index.html" title="Kembali ke portal"><i class="fas fa-home"></i></a>
   </header>
 
-  <!-- MODE + PETA -->
+  <div id="offline"></div>
+  <div id="wbanner"></div>
+
+  <!-- LAHAN (adegan animasi) -->
   <div class="card">
-    <span class="cap">Cara Merekam Titik</span>
-    <div class="seg" id="modeSeg">
-      <button data-v="gps" class="on"><i class="fas fa-person-walking"></i> Jalan Keliling</button>
-      <button data-v="map"><i class="fas fa-map-location-dot"></i> Titik di Peta</button>
+    <span class="cap"><i class="fas fa-mountain-sun"></i> Kondisi Lahan &amp; Cuaca</span>
+    <div class="scene" id="scene">
+      <div class="sky" id="sky"></div>
+      <div class="stars"></div>
+      <div class="sun" id="sun"></div>
+      <div class="ground"></div>
     </div>
-
-    <!-- Peta OSM (Leaflet) -->
-    <div id="lmap"></div>
-    <!-- Cadangan offline bila peta gagal dimuat -->
-    <div class="mapwrap" id="svgwrap">
-      <svg id="svgmap" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg"></svg>
-    </div>
-
-    <div class="maphint" id="mapHint"></div>
-
-    <!-- kendali GPS -->
-    <div id="gpsBox" style="margin-top:12px">
-      <div class="gpsline">
-        <span class="txt" id="gpsInfo">GPS mati</span>
-        <span class="accchip" id="accChip"></span>
-      </div>
-      <div class="opt">
-        <div><span>Nyalakan GPS</span><small>Butuh izin lokasi &amp; koneksi https</small></div>
-        <div class="sw" id="swGps"></div>
-      </div>
-      <div class="opt">
-        <div><span>Rekam otomatis</span><small>Tandai tiap bergerak &plusmn; 4 m (tepi melengkung)</small></div>
-        <div class="sw" id="swAuto"></div>
-      </div>
-      <div class="row" style="margin-top:12px">
-        <button class="btn primary" id="mark" disabled style="opacity:.55"><i class="fas fa-location-dot"></i> Tandai Sudut</button>
-      </div>
-    </div>
-
-    <div class="cnt">Titik tersimpan: <b id="cnt">0</b> &nbsp;·&nbsp; titik <b style="color:var(--pink)">merah</b> = titik awal</div>
-
-    <div class="row" style="margin-top:12px">
-      <button class="btn ghost" id="undo"><i class="fas fa-rotate-left"></i> Batal Titik</button>
-      <button class="btn ghost" id="clear"><i class="fas fa-eraser"></i> Kosongkan</button>
-    </div>
-
-    <details style="box-shadow:none;border:1px solid var(--line);margin-top:12px;margin-bottom:0">
-      <summary>Entri koordinat manual (lanjutan)</summary>
-      <div class="row2" style="margin-top:6px">
-        <label class="fld"><span class="cap">Lintang (lat)</span><input type="text" id="mlat" inputmode="decimal" placeholder="-7.782"></label>
-        <label class="fld"><span class="cap">Bujur (lng)</span><input type="text" id="mlng" inputmode="decimal" placeholder="110.367"></label>
-      </div>
-      <button class="btn teal block" id="addManual" style="margin-bottom:8px"><i class="fas fa-plus"></i> Tambah Titik</button>
-      <p class="note" style="margin-top:0">Berguna saat offline atau memasukkan koordinat hasil survei. Urutkan mengelilingi batas.</p>
-    </details>
+    <div class="scenecap" id="sceneCap"></div>
+    <div class="note" id="weatherNote" style="margin-top:6px"></div>
   </div>
 
-  <!-- HASIL -->
+  <!-- DASHBOARD -->
   <div class="card">
-    <span class="cap">Hasil Luas</span>
-    <div class="result">
-      Luas lahan: <b class="bignum" id="area">—</b> m&sup2;
-      <div id="extra" style="margin-top:6px">Tandai minimal 3 titik sudut untuk mendapat luas.</div>
-    </div>
-    <div class="stats" style="margin-top:12px">
-      <div class="stat"><b id="sUbin">—</b><span>Ubin / Bata</span></div>
-      <div class="stat"><b id="sHa">—</b><span>Hektar</span></div>
-      <div class="stat"><b id="sKel">—</b><span>Keliling (m)</span></div>
-    </div>
-    <div class="err" id="err"></div>
-
-    <div style="margin-top:14px">
-      <span class="cap">Nilai 1 ubin / bata / ru</span>
-      <div class="seg" id="ubinSeg">
-        <button data-v="14.0625" class="on">14,0625 m&sup2; (presisi)</button>
-        <button data-v="14">14 m&sup2; (bulat)</button>
-      </div>
-    </div>
+    <span class="cap">Peternakan Kamu</span>
+    <div class="stats" id="dashStats" style="margin-bottom:10px"></div>
+    <div class="stats" id="dashStats2"></div>
+    <div id="dashActions" style="margin-top:12px"></div>
   </div>
 
-  <!-- UNDUH -->
+  <!-- KANDANG -->
   <div class="card">
-    <span class="cap">Unduh Hasil</span>
-    <div class="row">
-      <button class="btn primary" id="dlPng"><i class="fas fa-image"></i> Gambar (PNG)</button>
-      <button class="btn teal" id="dlGeo"><i class="fas fa-file-code"></i> Data (GeoJSON)</button>
-    </div>
-    <p class="note"><b>PNG</b>: sketsa lahan + tabel hasil (bisa disimpan/dicetak). <b>GeoJSON</b>: format peta baku
-      yang bisa dibuka lagi di OpenStreetMap, geojson.io, atau QGIS.</p>
+    <span class="cap">Kandang, Kolam &amp; Kesehatan</span>
+    <div id="barn"></div>
   </div>
 
-  <!-- SIMPAN -->
+  <!-- TOKO -->
+  <details id="shop">
+    <summary>Toko — Ternak, Pakan &amp; Apotek</summary>
+    <div id="shopBody" style="padding-bottom:10px"></div>
+  </details>
+
+  <!-- PERTANIAN TERPADU -->
   <div class="card">
-    <span class="cap">Simpan &amp; Riwayat</span>
-    <div class="row2" style="align-items:end">
-      <label class="fld" style="margin-bottom:0"><span class="cap">Nama lahan</span><input type="text" id="saveName" placeholder="mis. Kebun Belakang"></label>
-      <button class="btn primary" id="saveBtn" style="margin-bottom:0"><i class="fas fa-floppy-disk"></i> Simpan</button>
-    </div>
-    <div id="list" style="margin-top:14px"><div class="empty">Belum ada lahan tersimpan.</div></div>
+    <span class="cap"><i class="fas fa-recycle"></i> Pertanian Terpadu</span>
+    <div id="synBody"></div>
   </div>
 
+  <!-- CUACA & PENYAKIT -->
   <details>
-    <summary>Panduan &amp; Cara Kerja</summary>
+    <summary>Cuaca &amp; Penyakit</summary>
+    <div id="wtabBody" style="padding-bottom:8px"></div>
     <p class="note" style="margin-top:0">
-      <b>Jalan Keliling:</b> nyalakan GPS &rarr; berdiri di satu sudut &rarr; tekan <b>Tandai Sudut</b> &rarr;
-      jalan ke sudut berikutnya &rarr; ulangi sampai kembali ke titik awal.<br>
-      <b>Titik di Peta:</b> pilih mode ini lalu <b>ketuk peta</b> di tiap sudut lahan. Titik yang salah bisa
-      <b>digeser</b> (drag) untuk memperbaiki, atau tekan <b>Batal Titik</b>.
-    </p>
-    <p class="note">
-      <b>Rumus:</b> koordinat diproyeksikan ke bidang datar lokal (meter) memakai panjang derajat WGS-84 di
-      lintang lahan, lalu luas dihitung dengan <b>rumus tali sepatu (shoelace)</b>:
-      Luas = &frac12;&nbsp;|&Sigma;(x&#8305;&middot;y&#8305;&#8330;&#8321; &minus; x&#8305;&#8330;&#8321;&middot;y&#8305;)|.
-      Susuri batas berurutan searah, jangan menyilang.
-    </p>
-    <p class="note">
-      <b>Konversi:</b> 1 hektar = 10.000 m&sup2; · 1 are = 100 m&sup2; ·
-      1 ubin = 1 bata = 1 ru = 1 tumbak &asymp; 14 m&sup2; · 1 bau (bahu) = 500 ubin &asymp; 7.031 m&sup2;.
-    </p>
-    <p class="note">Peta &amp; ubin data &copy; <b>OpenStreetMap</b> dan kontributornya.</p>
+      <b>Penyakit.</b> Ternak bisa jatuh <b>sakit</b> bila kesehatan/kebersihan rendah, dan
+      risikonya meningkat saat hujan, panas terik, atau badai. Ternak sakit berhenti tumbuh &amp;
+      berproduksi dan kesehatannya terus turun. <b>Obat</b> menyembuhkan &amp; memberi kekebalan
+      sementara; <b>vitamin</b> menaikkan kesehatan dan mencegah sakit.</p>
+  </details>
+
+  <!-- PANDUAN -->
+  <details>
+    <summary>Cara Bermain</summary>
+    <div class="note" style="margin-top:0;line-height:1.9">
+      <b>Tujuan.</b> Rawat ternak agar sehat, panen hasilnya, jual, lalu kembangkan peternakan sampai mampu membeli sapi.<br>
+      <b>Rawat 3 hal:</b> <i class="fas fa-wheat-awn" style="color:var(--amber)"></i> kenyang,
+      <i class="fas fa-droplet" style="color:var(--blue)"></i> kebersihan,
+      <i class="fas fa-heart" style="color:var(--pink)"></i> senang — semuanya turun seiring waktu.<br>
+      <b>Kesehatan</b> naik bila semuanya terjaga. Bila dibiarkan, ternak melemah lalu bisa <b>sakit</b> —
+      butuh <b>obat</b> untuk sembuh. Sediakan stok obat &amp; vitamin dari <b>Apotek</b>.<br>
+      <b>Cuaca berubah-ubah</b> dan memengaruhi peternakan: hujan bikin kandang cepat kotor tapi kolam
+      ikan subur; panas bikin cepat lapar; badai bikin ternak stres &amp; mudah sakit.<br>
+      <b>Panen.</b> Ayam/bebek → telur, sapi/kambing → susu, kelinci → anakan (berulang).
+      <b>Ikan</b> dibesarkan lalu dipanen sekali (hasil besar).<br>
+      <b>Terus berjalan</b> walau aplikasi ditutup — saat kembali, ternak lebih lapar &amp; hasil menunggu.
+    </div>
   </details>
 
   <div class="card">
     <p class="disc" style="margin:0"><i class="fas fa-circle-info"></i>
-      <b>Catatan &amp; batasan.</b> Hasil bersifat <b>perkiraan</b>. Ketelitian bergantung pada sinyal GPS
-      (umumnya &plusmn; 3&ndash;10 m) atau ketepatan ketukan di peta. Peta OpenStreetMap dan fitur GPS
-      <b>butuh internet/https</b> (otomatis aman di Vercel); saat offline pakai entri koordinat manual.
-      Satuan <b>ubin/bata/ru/tumbak</b> bersifat tradisi &amp; sedikit beda antar daerah (umum 14&ndash;14,0625 m&sup2;).
-      Untuk keperluan resmi/sertifikat, gunakan pengukuran BPN.</p>
+      <b>Catatan.</b> Ini <b>simulasi/permainan edukatif</b>, bukan panduan usaha atau pengobatan nyata.
+      Harga, waktu tumbuh, cuaca, penyakit, dan hasil sengaja dipercepat &amp; disederhanakan agar seru.
+      Konsep <b>pertanian terpadu</b> digambarkan ringkas. Semua kemajuan tersimpan di perangkat ini saja.</p>
+  </div>
+
+  <div class="row" style="margin-top:2px">
+    <button class="btn ghost" data-act="reset" style="min-width:100%;color:var(--red)">
+      <i class="fas fa-rotate-left"></i> Mulai Ulang Peternakan</button>
   </div>
 
   <footer>
@@ -301,476 +310,641 @@
 
 <script>
 (function(){
-  var $=function(id){return document.getElementById(id);};
+  /* ---------- HELPER (pola template DIDIKHAND) ---------- */
+  var $=function(id){ return document.getElementById(id); };
   var _tt=null;
-  function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');
-    clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove('show');},1800);}
+  function toast(msg){ var t=$('toast'); t.innerHTML=msg; t.classList.add('show');
+    clearTimeout(_tt); _tt=setTimeout(function(){ t.classList.remove('show'); },2100); }
+  var KEY='dh-ternak';
+  function save(o){ try{ localStorage.setItem(KEY,JSON.stringify(o)); }catch(e){} }
+  function load(def){ try{ var s=localStorage.getItem(KEY); return s?Object.assign({},def,JSON.parse(s)):def; }catch(e){ return def; } }
+  function nf(n,dec){ return (Number(n)||0).toLocaleString('id-ID',{maximumFractionDigits:dec===undefined?0:dec}); }
+  function rp(n){ return 'Rp '+nf(Math.round(n)); }
+  var clamp=function(v){ return Math.max(0,Math.min(100,v)); };
 
-  var KEY='dh-ukurlahan';
-  function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
-  function load(def){try{var s=localStorage.getItem(KEY);return s?Object.assign({},def,JSON.parse(s)):def;}catch(e){return def;}}
+  /* ---------- DATA JENIS TERNAK ---------- */
+  var TYPES={
+    ayam:{nama:'Ayam',emoji:'🐔',harga:50000,dewasa:90,appetite:0.7,mess:0.9,pakanFeed:0.25,
+      mode:'produksi',prodRate:1/60,prodCap:20,prodNilai:2500,prodLabel:'butir',prodIcon:'🥚',
+      count:true,jualDewasa:65000,hasil:'Telur'},
+    bebek:{nama:'Bebek',emoji:'🦆',harga:75000,dewasa:120,appetite:0.8,mess:1.1,pakanFeed:0.3,
+      mode:'produksi',prodRate:1/80,prodCap:20,prodNilai:3500,prodLabel:'butir',prodIcon:'🥚',
+      count:true,jualDewasa:90000,hasil:'Telur bebek'},
+    ikan:{nama:'Ikan',emoji:'🐟',harga:250000,dewasa:300,appetite:0.9,mess:1.2,pakanFeed:1.5,
+      mode:'panen',jualPanen:520000,prodLabel:'kolam',prodIcon:'🐟',count:true,hasil:'Panen ikan'},
+    kelinci:{nama:'Kelinci',emoji:'🐰',harga:120000,dewasa:120,appetite:0.6,mess:0.8,pakanFeed:0.2,
+      mode:'produksi',prodRate:1/150,prodCap:8,prodNilai:25000,prodLabel:'ekor',prodIcon:'🐇',
+      count:true,jualDewasa:140000,hasil:'Anakan'},
+    kambing:{nama:'Kambing',emoji:'🐐',harga:1500000,dewasa:300,appetite:1.3,mess:1.2,pakanFeed:2.5,
+      mode:'produksi',prodRate:1/90,prodCap:10,prodNilai:18000,prodLabel:'L',prodIcon:'🥛',
+      count:false,jualDewasa:2200000,hasil:'Susu'},
+    sapi:{nama:'Sapi',emoji:'🐄',harga:8000000,dewasa:480,appetite:1.6,mess:1.4,pakanFeed:6,
+      mode:'produksi',prodRate:1/45,prodCap:12,prodNilai:13000,prodLabel:'L',prodIcon:'🥛',
+      count:false,jualDewasa:11000000,hasil:'Susu'}
+  };
+  var SHOP_ORDER=['ayam','bebek','ikan','kelinci','kambing','sapi'];
+  var NAMA={
+    ayam:['Jago','Petok','Kentaki','Kokok','Jagoan'],
+    bebek:['Donal','Wekwek','Kwek','Bebi','Mentari'],
+    ikan:['Kolam Timur','Kolam Barat','Empang Asri','Tambak Jaya','Kolam Nila','Si Sirip'],
+    kelinci:['Momo','Bugs','Lompat','Nibbles','Kapas'],
+    kambing:['Mbek','Jenggot','Etawa','Gibas','Kumis'],
+    sapi:['Belang','Gembul','Lembu','Dasih','Moo']
+  };
+  var CAP=12;
+  var PAKAN_HARGA=4000;
 
-  function bindSeg(id,cb){var el=$(id);if(!el)return;
-    el.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){
-      el.querySelectorAll('button').forEach(function(x){x.classList.remove('on');});
-      this.classList.add('on');if(cb)cb(this.dataset.v);});});}
-  function segSet(id,val){var el=$(id);if(!el)return;
-    el.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.v===String(val));});}
-  function bindSw(id,cb,init){var el=$(id);if(!el)return;
-    if(init!==undefined)el.classList.toggle('on',!!init);
-    el.addEventListener('click',function(){this.classList.toggle('on');if(cb)cb(this.classList.contains('on'));});}
-  function nf(n,d){return (Number(n)||0).toLocaleString('id-ID',
-    {minimumFractionDigits:d||0,maximumFractionDigits:d===undefined?0:d});}
-  function esc(s){return String(s).replace(/[&<>"]/g,function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-  function fnameSafe(s){return (String(s||'lahan').trim()||'lahan').toLowerCase()
-    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'lahan';}
+  /* ---------- CUACA ---------- */
+  var CUACA={
+    cerah:{nama:'Cerah',ikon:'☀️',fa:'fa-sun',col:'#d97706',
+      mKenyang:1,mBersih:1,mSenang:0.9,senangRegen:0.35,ikan:1,risk:0,
+      ket:'Cuaca cerah — ternak nyaman dan senang.'},
+    berawan:{nama:'Berawan',ikon:'⛅',fa:'fa-cloud-sun',col:'#6b7280',
+      mKenyang:1,mBersih:1,mSenang:1,senangRegen:0,ikan:1,risk:0,
+      ket:'Langit berawan — kondisi netral, aman.'},
+    hujan:{nama:'Hujan',ikon:'🌧️',fa:'fa-cloud-rain',col:'#2563eb',
+      mKenyang:1,mBersih:1.7,mSenang:1.1,senangRegen:0,ikan:1.3,risk:0.016,
+      ket:'Hujan — kandang cepat becek, tapi kolam ikan tumbuh subur. Risiko sakit naik.'},
+    panas:{nama:'Panas Terik',ikon:'🔥',fa:'fa-temperature-high',col:'#dc2626',
+      mKenyang:1.5,mBersih:1,mSenang:1.4,senangRegen:0,ikan:0.75,risk:0.02,
+      ket:'Panas terik — ternak cepat lapar & gerah, kolam menghangat. Sediakan pakan & obat.'},
+    badai:{nama:'Badai',ikon:'⛈️',fa:'fa-cloud-bolt',col:'#7c3aed',
+      mKenyang:1.15,mBersih:1.6,mSenang:1.9,senangRegen:0,ikan:0.9,risk:0.03,sehatDrain:0.008,
+      ket:'Badai — ternak stres, kandang kotor, mudah sakit. Jaga kebersihan & siapkan obat.'}
+  };
 
-  /* ---------------- state ---------------- */
-  var state=load({mode:'gps',ubin:14.0625,auto:false,pts:[],saved:[]});
-  if(!Array.isArray(state.saved)) state.saved=[];
-  var pts=Array.isArray(state.pts)?state.pts.slice():[];   // {lat,lng,acc}
-  var gpsOn=false, watchId=null, lastFix=null;
+  var D_KENYANG=100/(20*60);
+  var D_BERSIH =100/(30*60);
+  var D_SENANG =100/(40*60);
 
-  /* ---------------- geodesi + shoelace ---------------- */
-  function mPerDeg(lat){
-    var p=lat*Math.PI/180;
-    return {
-      lat:111132.92-559.82*Math.cos(2*p)+1.175*Math.cos(4*p)-0.0023*Math.cos(6*p),
-      lng:111412.84*Math.cos(p)-93.5*Math.cos(3*p)+0.118*Math.cos(5*p)
-    };
-  }
-  function project(list){
-    if(!list.length)return [];
-    var lat0=0,lng0=0,i;
-    for(i=0;i<list.length;i++){lat0+=list[i].lat;lng0+=list[i].lng;}
-    lat0/=list.length; lng0/=list.length;
-    var m=mPerDeg(lat0);
-    return list.map(function(p){return {x:(p.lng-lng0)*m.lng, y:(p.lat-lat0)*m.lat};});
-  }
-  function shoelace(xy){
-    var n=xy.length,a=0,i,j; if(n<3)return 0;
-    for(i=0;i<n;i++){j=(i+1)%n; a+=xy[i].x*xy[j].y-xy[j].x*xy[i].y;}
-    return Math.abs(a)/2;
-  }
-  function perim(xy,closed){
-    var n=xy.length,d=0,i,j; if(n<2)return 0;
-    var lim=closed?n:n-1;
-    for(i=0;i<lim;i++){j=(i+1)%n;var dx=xy[j].x-xy[i].x,dy=xy[j].y-xy[i].y;d+=Math.sqrt(dx*dx+dy*dy);}
-    return d;
-  }
-  function distLL(a,b){
-    var m=mPerDeg((a.lat+b.lat)/2);
-    var dx=(b.lng-a.lng)*m.lng, dy=(b.lat-a.lat)*m.lat;
-    return Math.sqrt(dx*dx+dy*dy);
+  /* ---------- STATE ---------- */
+  var state=load({uang:1000000,pakan:30,obat:3,vitamin:2,cuaca:'cerah',cuacaUntil:0,
+    hewan:[],seq:0,last:Date.now(),seen:false});
+  if(!state.last) state.last=Date.now();
+
+  /* ---------- SINERGI PERTANIAN TERPADU ---------- */
+  function synergy(){
+    var t={};
+    state.hewan.forEach(function(a){ if(a.alive) t[a.type]=true; });
+    var jenis=Object.keys(t), n=jenis.length;
+    var rum=t.sapi||t.kambing, ung=t.ayam||t.bebek;
+    var s={pakanMult:1,prodMult:1,fishGrow:1,cleanMult:1,passive:0,list:[]};
+    if(rum && t.ikan){ s.pakanMult*=0.8; s.list.push('Kotoran ruminansia jadi pupuk & pakan tambahan ikan — hemat pakan 20%.'); }
+    if(ung && t.ikan){ s.fishGrow*=1.25; s.list.push('Sisa pakan & kotoran unggas menyuburkan kolam — ikan tumbuh 25% lebih cepat.'); }
+    if(t.kelinci && rum){ s.passive+=1500; s.list.push('Pupuk kandang melimpah dijual rutin — +Rp 1.500/menit.'); }
+    if(n>=3){ s.prodMult*=1.15; s.list.push('Ekosistem seimbang (≥3 jenis) — semua produksi +15%.'); }
+    if(n>=5){ s.cleanMult*=0.7; s.list.push('Limbah terkelola baik (≥5 jenis) — kandang 30% lebih lama bersih.'); }
+    return s;
   }
 
-  /* ---------------- peta Leaflet (OSM) ---------------- */
-  var useLeaflet=false, map=null, layer=null, meDot=null, meRing=null;
-  function initMap(){
-    if(!window.L) return false;
-    try{
-      map=L.map('lmap',{zoomControl:true,tap:true}).setView([-7.7975,110.3688],17);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-        maxZoom:19, attribution:'&copy; OpenStreetMap'
-      }).addTo(map);
-      layer=L.layerGroup().addTo(map);
-      map.on('click',function(e){
-        if(state.mode==='map'){
-          if(pts.length && distLL(pts[pts.length-1],{lat:e.latlng.lat,lng:e.latlng.lng})<0.3) return;
-          addPoint({lat:e.latlng.lat,lng:e.latlng.lng,acc:null});
-          toast('Titik '+pts.length+' ditambah');
-        }
-      });
-      return true;
-    }catch(e){ return false; }
-  }
-  function vIcon(i,first){
-    return L.divIcon({className:'',iconSize:[20,20],iconAnchor:[10,10],
-      html:'<div class="vdot'+(first?' first':'')+'">'+(i+1)+'</div>'});
-  }
-  function drawLeaflet(){
-    if(!useLeaflet) return;
-    layer.clearLayers();
-    if(pts.length){
-      var lls=pts.map(function(p){return [p.lat,p.lng];});
-      if(pts.length>=3){
-        L.polygon(lls,{color:'#1e5a7b',weight:2,fillColor:'#6ab7ba',fillOpacity:.25,lineJoin:'round'}).addTo(layer);
+  /* ---------- SIMULASI WAKTU ---------- */
+  function step(dt,off){
+    var s=synergy();
+    var W=off?CUACA.berawan:(CUACA[state.cuaca]||CUACA.cerah);
+    var riskMul=off?0.4:1, now=Date.now();
+    state.hewan.forEach(function(a){
+      if(!a.alive) return;
+      var T=TYPES[a.type];
+      a.kenyang=clamp(a.kenyang - D_KENYANG*T.appetite*W.mKenyang*dt);
+      a.bersih =clamp(a.bersih  - D_BERSIH *T.mess*s.cleanMult*W.mBersih*dt);
+      a.senang =clamp(a.senang  - D_SENANG*W.mSenang*dt + (W.senangRegen||0)*dt);
+      if(a.sakit){
+        a.sehat=clamp(a.sehat - 0.022*dt);
       } else {
-        L.polyline(lls,{color:'#1e5a7b',weight:2,dashArray:'5 4'}).addTo(layer);
+        if(a.kenyang<15 || a.bersih<15 || a.senang<8){ a.sehat=clamp(a.sehat - 0.03*dt); }
+        else { a.sehat=clamp(a.sehat + 0.02*dt); }
+        if(W.sehatDrain) a.sehat=clamp(a.sehat - W.sehatDrain*dt);
+        var imun=a.imunUntil && now<a.imunUntil, risk=0;
+        if(a.sehat<45) risk += (45-a.sehat)/45*0.02;
+        if(a.bersih<30) risk += (30-a.bersih)/30*0.02;
+        risk += (W.risk||0);
+        if(imun) risk*=0.25;
+        risk*=riskMul;
+        if(risk>0 && Math.random() < risk*(dt/60)) a.sakit=true;
       }
-      pts.forEach(function(p,i){
-        var mk=L.marker([p.lat,p.lng],{draggable:(state.mode==='map'),icon:vIcon(i,i===0),
-          keyboard:false}).addTo(layer);
-        mk.on('dragend',function(){var ll=mk.getLatLng();pts[i].lat=ll.lat;pts[i].lng=ll.lng;render();});
-      });
+      if(a.sehat<=0){ a.alive=false; return; }
+      if(!a.sakit && a.growth<100){
+        if(a.kenyang>20 && a.sehat>20){
+          var g=100/T.dewasa*dt;
+          if(a.type==='ikan') g*=s.fishGrow*W.ikan;
+          a.growth=Math.min(100,a.growth+g);
+        }
+      } else if(!a.sakit && a.growth>=100 && T.mode==='produksi' && a.sehat>40){
+        var rate=T.prodRate*(a.sehat/100)*s.prodMult;
+        a.produk=Math.min(T.prodCap,(a.produk||0)+rate*dt);
+      }
+    });
+    state.uang += s.passive*(dt/60);
+  }
+  function runElapsed(sec){ var left=sec; while(left>0){ var c=Math.min(30,left); step(c,true); left-=c; } }
+
+  /* ---------- CUACA: pilih & jadwalkan ---------- */
+  function rollWeather(){
+    var pick,guard=0;
+    do{ var r=Math.random();
+      pick = r<.38?'cerah': r<.65?'berawan': r<.82?'hujan': r<.93?'panas':'badai';
+    } while(pick===state.cuaca && ++guard<3);
+    state.cuaca=pick; state.cuacaUntil=Date.now()+(70+Math.random()*80)*1000;
+  }
+  function ensureWeather(notify){
+    if(!state.cuacaUntil || Date.now()>state.cuacaUntil){
+      var old=state.cuaca; rollWeather();
+      if(notify && state.cuaca!==old){
+        var W=CUACA[state.cuaca];
+        toast(W.ikon+' Cuaca berubah: <b>'+W.nama+'</b>');
+      }
     }
-    if(meDot) meDot.addTo(layer);
-    if(meRing) meRing.addTo(layer);
-  }
-  function showMe(lat,lng,acc){
-    if(!useLeaflet) return;
-    if(!meDot){ meDot=L.circleMarker([lat,lng],{radius:6,color:'#fff',weight:2,
-      fillColor:'#2563eb',fillOpacity:1}); }
-    else meDot.setLatLng([lat,lng]);
-    if(!meRing){ meRing=L.circle([lat,lng],{radius:acc||8,color:'#2563eb',weight:1,
-      fillColor:'#2563eb',fillOpacity:.08}); }
-    else { meRing.setLatLng([lat,lng]); meRing.setRadius(acc||8); }
-    drawLeaflet();
-  }
-  function fitToPts(){
-    if(!useLeaflet||!pts.length) return;
-    if(pts.length===1){ map.setView([pts[0].lat,pts[0].lng],18); return; }
-    map.fitBounds(L.latLngBounds(pts.map(function(p){return [p.lat,p.lng];})).pad(0.25));
   }
 
-  /* ---------------- SVG cadangan ---------------- */
-  function drawSVG(xy){
-    var svg=$('svgmap');
-    if(xy.length===0){
-      svg.innerHTML='<text x="150" y="94" text-anchor="middle" fill="#9ca3af" font-size="12" font-family="sans-serif">Belum ada titik</text>';
-      return;
-    }
-    var xs=xy.map(function(p){return p.x;}), ys=xy.map(function(p){return p.y;});
-    var minx=Math.min.apply(null,xs),maxx=Math.max.apply(null,xs);
-    var miny=Math.min.apply(null,ys),maxy=Math.max.apply(null,ys);
-    var w=(maxx-minx)||1,h=(maxy-miny)||1,vw=300,vh=180,pad=22;
-    var sc=Math.min((vw-2*pad)/w,(vh-2*pad)/h); if(!isFinite(sc)||sc<=0)sc=1;
-    var offX=(vw-w*sc)/2-minx*sc, offY=(vh-h*sc)/2-miny*sc;
-    var P=xy.map(function(p){return {X:p.x*sc+offX,Y:vh-(p.y*sc+offY)};});
-    var d=P.map(function(p,i){return (i?'L':'M')+p.X.toFixed(1)+' '+p.Y.toFixed(1);}).join(' ');
-    var shape=pts.length>=3
-      ? '<path d="'+d+' Z" fill="rgba(106,183,186,.22)" stroke="#1e5a7b" stroke-width="2" stroke-linejoin="round"/>'
-      : '<path d="'+d+'" fill="none" stroke="#1e5a7b" stroke-width="2" stroke-dasharray="4 3"/>';
-    var dots=P.map(function(p,i){return '<circle cx="'+p.X.toFixed(1)+'" cy="'+p.Y.toFixed(1)
-      +'" r="'+(i===0?5:3.5)+'" fill="'+(i===0?'#ec4899':'#1e5a7b')+'" stroke="#fff" stroke-width="1.5"/>';}).join('');
-    svg.innerHTML=shape+dots;
+  /* ---------- AKSI ---------- */
+  function pakanMultNow(){ return synergy().pakanMult; }
+  function feed(a){
+    var T=TYPES[a.type]; if(a.kenyang>=99) return false;
+    if(state.pakan<=0){ toast('Stok pakan habis — beli dulu di Toko'); return false; }
+    var perFull=T.pakanFeed*pakanMultNow();
+    var need=perFull*(100-a.kenyang)/100;
+    if(state.pakan>=need){ state.pakan-=need; a.kenyang=100; }
+    else { a.kenyang=clamp(a.kenyang + state.pakan/perFull*100); state.pakan=0; }
+    return true;
+  }
+  function harvest(a){
+    var T=TYPES[a.type];
+    if(T.mode==='panen') return 0;
+    if(a.sakit || !a.produk) return 0;
+    var got=0;
+    if(T.count){ var u=Math.floor(a.produk); if(u<1) return 0; got=u*T.prodNilai; a.produk-=u; }
+    else { if(a.produk<0.05) return 0; got=a.produk*T.prodNilai; a.produk=0; }
+    state.uang+=got; return got;
+  }
+  function panenIkan(a){
+    var T=TYPES[a.type]; if(a.growth<100){ toast('Ikan belum siap panen'); return; }
+    var got=Math.round(T.jualPanen*(a.sehat/100));
+    state.uang+=got;
+    state.hewan=state.hewan.filter(function(x){ return x.id!==a.id; });
+    toast('🐟 Panen ikan! +'+rp(got)); render(); save(state);
+  }
+  function obati(a){
+    if(!a.sakit){ toast(a.nama+' sedang sehat'); return; }
+    if(state.obat<=0){ toast('Stok obat habis — beli di Apotek'); return; }
+    state.obat--; a.sakit=false; a.sehat=clamp(a.sehat+40); a.imunUntil=Date.now()+120000;
+    toast('💊 '+a.nama+' diobati & pulih'); render(); save(state);
+  }
+  function jual(a){
+    var T=TYPES[a.type];
+    var harga=Math.round(T.jualDewasa*(a.growth>=100?1:0.5)*(a.sakit?0.6:1));
+    if(!confirm('Jual '+a.nama+' ('+T.nama+') seharga '+rp(harga)+'?')) return;
+    state.uang+=harga;
+    state.hewan=state.hewan.filter(function(x){ return x.id!==a.id; });
+    toast('Terjual! +'+rp(harga)); render(); save(state);
+  }
+  function buang(a){
+    state.hewan=state.hewan.filter(function(x){ return x.id!==a.id; });
+    toast('Kandang dibersihkan'); render(); save(state);
+  }
+  function beli(type){
+    var T=TYPES[type];
+    if(state.hewan.length>=CAP){ toast('Kandang penuh ('+CAP+' tempat)'); return; }
+    if(state.uang<T.harga){ toast('Uang belum cukup untuk '+T.nama); return; }
+    state.uang-=T.harga;
+    var pool=NAMA[type]||[T.nama];
+    state.hewan.push({id:++state.seq,type:type,nama:pool[Math.floor(Math.random()*pool.length)],
+      born:Date.now(),kenyang:85,bersih:85,senang:85,growth:0,sehat:90,produk:0,alive:true,sakit:false,imunUntil:0});
+    toast(T.emoji+' '+T.nama+' baru ditambahkan!'); render(); save(state);
+  }
+  function beliItem(jenis,jml,harga,label){
+    if(state.uang<harga){ toast('Uang belum cukup'); return; }
+    state.uang-=harga; state[jenis]=(state[jenis]||0)+jml;
+    toast('+'+jml+' '+label); render(); save(state);
+  }
+  function feedAll(){
+    if(!state.hewan.length){ toast('Belum ada ternak'); return; }
+    if(state.pakan<=0){ toast('Stok pakan habis'); return; }
+    var n=0; state.hewan.forEach(function(a){ if(a.alive && feed(a)) n++; });
+    toast(n?('Diberi pakan: '+n+' ternak'):'Semua sudah kenyang'); render(); save(state);
+  }
+  function cleanAll(){ var n=0; state.hewan.forEach(function(a){ if(a.alive && a.bersih<99){ a.bersih=100; n++; } });
+    toast(n?('Dibersihkan: '+n+' kandang'):'Semua sudah bersih'); render(); save(state); }
+  function playAll(){ var n=0; state.hewan.forEach(function(a){ if(a.alive && a.senang<99){ a.senang=100; n++; } });
+    toast(n?('Diajak main: '+n+' ternak'):'Semua sudah senang'); render(); save(state); }
+  function harvestAll(){ var total=0,n=0;
+    state.hewan.forEach(function(a){ if(a.alive){ var g=harvest(a); if(g>0){ total+=g; n++; } } });
+    toast(total?('Panen '+n+' ternak: +'+rp(total)):'Belum ada hasil siap panen'); render(); save(state); }
+  function obatiSemua(){
+    var sick=state.hewan.filter(function(a){ return a.alive && a.sakit; });
+    if(!sick.length){ toast('Tidak ada ternak yang sakit'); return; }
+    if(state.obat<=0){ toast('Stok obat habis — beli di Apotek'); return; }
+    var n=0; for(var i=0;i<sick.length;i++){ if(state.obat<=0) break;
+      state.obat--; sick[i].sakit=false; sick[i].sehat=clamp(sick[i].sehat+40); sick[i].imunUntil=Date.now()+120000; n++; }
+    toast('💊 '+n+' ternak diobati'+(state.obat<=0 && n<sick.length?' (obat habis)':'')); render(); save(state);
+  }
+  function vitaminAll(){
+    var alive=state.hewan.filter(function(a){ return a.alive; });
+    if(!alive.length){ toast('Belum ada ternak'); return; }
+    if(state.vitamin<=0){ toast('Stok vitamin habis — beli di Apotek'); return; }
+    var n=0; for(var i=0;i<alive.length;i++){ if(state.vitamin<=0) break;
+      var a=alive[i]; state.vitamin--; a.sehat=clamp(a.sehat+22); a.senang=clamp(a.senang+15); a.imunUntil=Date.now()+180000; n++; }
+    toast('💪 Vitamin ke '+n+' ternak'+(state.vitamin<=0 && n<alive.length?' (vitamin habis)':'')); render(); save(state);
   }
 
-  /* ---------------- render ---------------- */
+  /* ---------- RENDER ---------- */
+  function bar(val,color){ return '<div class="bar"><i style="width:'+clamp(val)+'%;background:'+color+'"></i></div>'; }
+  function statusOf(a){
+    if(!a.alive) return {tag:'bad',txt:'MATI',col:'#9ca3af'};
+    if(a.sakit) return {tag:'bad',txt:'SAKIT',col:'var(--red)'};
+    if(a.sehat<25) return {tag:'warn',txt:'LEMAH',col:'var(--amber)'};
+    if(a.kenyang<25) return {tag:'warn',txt:'LAPAR',col:'var(--amber)'};
+    if(a.bersih<25) return {tag:'info',txt:'KOTOR',col:'var(--blue)'};
+    if(a.senang<25) return {tag:'info',txt:'BOSAN',col:'var(--blue)'};
+    if(a.growth<100) return {tag:'info',txt:'TUMBUH',col:'var(--teal2)'};
+    return {tag:'ok',txt:'SEHAT',col:'var(--green)'};
+  }
+  function animalHTML(a){
+    var T=TYPES[a.type], st=statusOf(a);
+    var umur=Math.floor((Date.now()-a.born)/60000);
+    var happy=(a.alive && !a.sakit && a.senang>60 && a.sehat>40)?' happy':'';
+    var sickCls=(a.alive && a.sakit)?' sick':'';
+    var h='<div class="animal" style="border-left-color:'+st.col+'">';
+    h+='<div class="top"><div class="ava'+happy+sickCls+'">'+T.emoji
+      +(a.sakit&&a.alive?'<span class="sickdot">🤒</span>':'')+'</div>'
+      +'<div><div class="nm">'+a.nama+'</div>'
+      +'<div class="mt">'+T.nama+' · '+(umur<1?'baru':umur+' menit')+'</div></div>'
+      +'<span class="tag '+st.tag+'">'+st.txt+'</span></div>';
+
+    if(!a.alive){
+      h+='<div class="ripe sickmsg">Ternak ini mati karena terlalu lama tidak dirawat.</div>';
+      h+='<div class="acts"><button class="mini bury" data-act="buang" data-id="'+a.id+'"><i class="fas fa-trash"></i> Bersihkan Kandang</button></div>';
+      return h+'</div>';
+    }
+
+    h+='<div class="bars">';
+    h+='<div class="barlab"><span>🍚 Kenyang</span><span>'+Math.round(a.kenyang)+'%</span></div>'+bar(a.kenyang,'var(--amber)');
+    h+='<div class="barlab"><span>💧 Bersih</span><span>'+Math.round(a.bersih)+'%</span></div>'+bar(a.bersih,'var(--blue)');
+    h+='<div class="barlab"><span>❤️ Senang</span><span>'+Math.round(a.senang)+'%</span></div>'+bar(a.senang,'var(--pink)');
+    h+='<div class="barlab"><span>➕ Sehat</span><span>'+Math.round(a.sehat)+'%</span></div>'
+      +bar(a.sehat, a.sakit||a.sehat<30?'var(--red)':'var(--green)');
+    if(a.growth<100){
+      h+='<div class="barlab"><span>🌱 Pertumbuhan</span><span>'+Math.round(a.growth)+'%</span></div>'+bar(a.growth,'var(--teal)');
+    }
+    h+='</div>';
+
+    if(a.sakit){
+      h+='<div class="ripe sickmsg">🤒 Sedang sakit — berhenti tumbuh & berproduksi. Beri <b>obat</b> agar pulih.</div>';
+    } else if(a.growth>=100){
+      if(T.mode==='panen'){
+        h+='<div class="ripe">'+T.prodIcon+' Siap panen! Hasil ± '+rp(T.jualPanen*a.sehat/100)+'</div>';
+      } else {
+        var jml=T.count?Math.floor(a.produk):a.produk;
+        h+='<div class="ripe">'+T.prodIcon+' '+T.hasil+' siap: <b>'+nf(jml,T.count?0:1)+' '+T.prodLabel+'</b>'
+          +((a.produk>=T.prodCap)?' (penuh — segera panen!)':'')+'</div>';
+      }
+    }
+
+    h+='<div class="acts">';
+    h+='<button class="mini care" data-act="feed" data-id="'+a.id+'" title="Beri pakan"><i class="fas fa-wheat-awn"></i></button>';
+    h+='<button class="mini care" data-act="clean" data-id="'+a.id+'" title="Bersihkan"><i class="fas fa-broom"></i></button>';
+    h+='<button class="mini care" data-act="play" data-id="'+a.id+'" title="Ajak main"><i class="fas fa-heart"></i></button>';
+
+    if(a.sakit){
+      if(state.obat>0) h+='<button class="mini cure" data-act="obati" data-id="'+a.id+'"><i class="fas fa-syringe"></i> Obati</button>';
+      else h+='<button class="mini cure" disabled><i class="fas fa-syringe"></i> Obat habis</button>';
+    } else if(T.mode==='panen'){
+      if(a.growth>=100) h+='<button class="mini go" data-act="panenikan" data-id="'+a.id+'"><i class="fas fa-fish"></i> Panen</button>';
+      else h+='<button class="mini go" disabled>Tumbuh '+Math.round(a.growth)+'%</button>';
+    } else {
+      var siap = T.count ? (a.produk>=1) : (a.produk>=0.05);
+      if(siap) h+='<button class="mini go" data-act="harvest" data-id="'+a.id+'"><i class="fas fa-hand-holding-heart"></i> Panen</button>';
+      else if(a.growth<100) h+='<button class="mini go" disabled>Tumbuh '+Math.round(a.growth)+'%</button>';
+      else h+='<button class="mini go" disabled>Menghasilkan…</button>';
+      h+='<button class="mini sell" data-act="jual" data-id="'+a.id+'" title="Jual ternak"><i class="fas fa-tag"></i></button>';
+    }
+    h+='</div></div>';
+    return h;
+  }
+
   function render(){
-    var xy=project(pts);
-    var closed=pts.length>=3;
-    var A=shoelace(xy), P=perim(xy,closed);
-    var uv=state.ubin, ubin=A/uv, ha=A/10000, are=A/100, bau=ubin/500;
+    var alive=state.hewan.filter(function(a){return a.alive;});
+    var sick=alive.filter(function(a){return a.sakit;}).length;
+    var W=CUACA[state.cuaca]||CUACA.cerah;
 
-    $('area').textContent=A>0?nf(A,1):'—';
-    $('sUbin').textContent=A>0?nf(ubin,2):'—';
-    $('sHa').textContent=A>0?nf(ha,4):'—';
-    $('sKel').textContent=P>0?nf(P,1):'—';
-    $('extra').innerHTML=A>0?('&asymp; '+nf(are,2)+' are &nbsp;·&nbsp; '+nf(bau,3)+' bau')
-      :'Tandai minimal 3 titik sudut untuk mendapat luas.';
+    $('dashStats').innerHTML=
+      '<div class="stat"><b>'+rp(state.uang)+'</b><span>Uang</span></div>'+
+      '<div class="stat"><b>'+nf(state.pakan,1)+' kg</b><span>Pakan</span></div>'+
+      '<div class="stat"><b>'+alive.length+' / '+CAP+'</b><span>Ternak</span></div>';
+    $('dashStats2').innerHTML=
+      '<div class="stat"><b>'+nf(state.obat)+'</b><span>Obat</span></div>'+
+      '<div class="stat"><b>'+nf(state.vitamin)+'</b><span>Vitamin</span></div>'+
+      '<div class="stat"><b style="font-size:19px">'+W.ikon+'</b><span>'+W.nama+'</span></div>';
 
-    var accs=pts.map(function(p){return p.acc;}).filter(function(a){return a&&isFinite(a);});
-    if(A>0&&accs.length){
-      var mAcc=accs.reduce(function(s,a){return s+a;},0)/accs.length, sig=0.5*P*mAcc;
-      $('err').style.display='block';
-      $('err').innerHTML='<i class="fas fa-triangle-exclamation"></i> Perkiraan galat kasar &plusmn; '
-        +nf(sig,0)+' m&sup2; (rata-rata akurasi GPS &plusmn; '+nf(mAcc,1)+' m).';
-    } else $('err').style.display='none';
+    var noAn=!alive.length;
+    $('dashActions').innerHTML=
+      '<div class="row">'
+      +'<button class="btn primary" data-act="feedall"'+(noAn?' disabled':'')+'><i class="fas fa-wheat-awn"></i> Beri Pakan</button>'
+      +'<button class="btn teal" data-act="cleanall"'+(noAn?' disabled':'')+'><i class="fas fa-broom"></i> Bersihkan</button>'
+      +'<button class="btn ghost" data-act="playall"'+(noAn?' disabled':'')+'><i class="fas fa-heart"></i> Ajak Main</button>'
+      +'</div>'
+      +'<div class="row" style="margin-top:10px">'
+      +'<button class="btn ghost" data-act="harvestall"'+(noAn?' disabled':'')+'><i class="fas fa-basket-shopping"></i> Panen</button>'
+      +'<button class="btn heal" data-act="obatiall"'+((sick===0||state.obat<=0)?' disabled':'')+'><i class="fas fa-syringe"></i> Obati'+(sick?' <span class="badge">'+sick+'</span>':'')+'</button>'
+      +'<button class="btn heal" data-act="vitaminall"'+((noAn||state.vitamin<=0)?' disabled':'')+' style="background:#0d9488"><i class="fas fa-pills"></i> Vitamin</button>'
+      +'</div>';
 
-    $('cnt').textContent=pts.length;
-    if(useLeaflet) drawLeaflet(); else drawSVG(xy);
-    state.pts=pts; save(state);
+    if(noAn){
+      $('barn').innerHTML='<div class="empty">Kandang masih kosong.<br>Buka <b>Toko</b> di bawah dan beli ternak pertamamu (ayam paling murah).</div>';
+    } else {
+      $('barn').innerHTML=state.hewan.map(animalHTML).join('');
+    }
+
+    var sh='';
+    SHOP_ORDER.forEach(function(k){
+      var T=TYPES[k];
+      var mampu=state.uang>=T.harga && state.hewan.length<CAP;
+      var ket = T.mode==='panen' ? 'Dibesarkan lalu dipanen sekali. Modal cepat balik.'
+              : (T.hasil+' berulang · jual dewasa '+rp(T.jualDewasa));
+      sh+='<div class="shopitem"><div class="em">'+T.emoji+'</div>'
+        +'<div class="info"><b>'+T.nama+'</b><small>'+ket+'</small>'
+        +'<div class="price">'+rp(T.harga)+'</div></div>'
+        +'<button class="buy" data-act="beli" data-type="'+k+'"'+(mampu?'':' disabled')+'>Beli</button></div>';
+    });
+    sh+='<div style="height:8px"></div><span class="cap"><i class="fas fa-kit-medical"></i> Apotek — Obat &amp; Vitamin</span>';
+    sh+='<div class="row" style="margin-bottom:9px">'
+      +'<button class="btn ghost" data-act="beliitem" data-jenis="obat" data-jml="5" data-harga="125000" data-label="obat"'+(state.uang<125000?' disabled':'')+'>Obat +5 · '+rp(125000)+'</button>'
+      +'<button class="btn ghost" data-act="beliitem" data-jenis="obat" data-jml="15" data-harga="330000" data-label="obat"'+(state.uang<330000?' disabled':'')+'>Obat +15 · '+rp(330000)+'</button>'
+      +'</div>';
+    sh+='<div class="row">'
+      +'<button class="btn ghost" data-act="beliitem" data-jenis="vitamin" data-jml="5" data-harga="100000" data-label="vitamin"'+(state.uang<100000?' disabled':'')+'>Vitamin +5 · '+rp(100000)+'</button>'
+      +'<button class="btn ghost" data-act="beliitem" data-jenis="vitamin" data-jml="15" data-harga="260000" data-label="vitamin"'+(state.uang<260000?' disabled':'')+'>Vitamin +15 · '+rp(260000)+'</button>'
+      +'</div>';
+    sh+='<div style="height:10px"></div><span class="cap"><i class="fas fa-wheat-awn"></i> Pakan (Rp '+nf(PAKAN_HARGA)+'/kg)</span>';
+    sh+='<div class="row">'
+      +'<button class="btn ghost" data-act="beliitem" data-jenis="pakan" data-jml="25" data-harga="90000" data-label="kg pakan"'+(state.uang<90000?' disabled':'')+'>+25 kg · '+rp(90000)+'</button>'
+      +'<button class="btn ghost" data-act="beliitem" data-jenis="pakan" data-jml="100" data-harga="320000" data-label="kg pakan"'+(state.uang<320000?' disabled':'')+'>+100 kg · '+rp(320000)+'</button>'
+      +'</div>';
+    $('shopBody').innerHTML=sh;
+
+    var s=synergy();
+    if(s.list.length){
+      $('synBody').innerHTML=s.list.map(function(x){ return '<div class="syn"><i class="fas fa-circle-check"></i><span>'+x+'</span></div>'; }).join('');
+    } else {
+      $('synBody').innerHTML='<div class="note" style="margin-top:0">Belum ada sinergi aktif. <b>Pelihara beberapa jenis berbeda</b> sekaligus (mis. ikan + ayam, atau sapi + kelinci) untuk membuka bonus hemat pakan, pertumbuhan lebih cepat, dan pemasukan pupuk. Punya ≥3 jenis menambah produksi.</div>';
+    }
+
+    if(!$('wtabBody').dataset.done){
+      $('wtabBody').innerHTML=['cerah','berawan','hujan','panas','badai'].map(function(k){
+        var C=CUACA[k];
+        return '<div class="wtab"><div class="we">'+C.ikon+'</div><div><b>'+C.nama+'</b><p>'+C.ket+'</p></div></div>';
+      }).join('');
+      $('wtabBody').dataset.done='1';
+    }
+
+    if(scene.root) sceneSync();
   }
 
-  /* ---------------- titik ---------------- */
-  function addPoint(p,src){
-    pts.push({lat:p.lat,lng:p.lng,acc:(p.acc!=null?p.acc:null)});
+  /* ---------- KLIK (delegasi) ---------- */
+  function findAnimal(id){ id=+id; for(var i=0;i<state.hewan.length;i++) if(state.hewan[i].id===id) return state.hewan[i]; return null; }
+  document.addEventListener('click',function(ev){
+    var el=ev.target.closest('[data-act]'); if(!el) return;
+    var act=el.dataset.act, a=el.dataset.id?findAnimal(el.dataset.id):null;
+    switch(act){
+      case 'feed': if(a){ if(feed(a)) toast('🍚 '+a.nama+' diberi pakan'); render(); save(state);} break;
+      case 'clean': if(a){ a.bersih=100; toast('💧 Kandang bersih'); render(); save(state);} break;
+      case 'play': if(a){ a.senang=100; toast('❤️ '+a.nama+' senang'); render(); save(state);} break;
+      case 'obati': if(a) obati(a); break;
+      case 'harvest': if(a){ var g=harvest(a); toast(g?('Panen! +'+rp(g)):'Belum ada hasil'); render(); save(state);} break;
+      case 'panenikan': if(a) panenIkan(a); break;
+      case 'jual': if(a) jual(a); break;
+      case 'buang': if(a) buang(a); break;
+      case 'beli': beli(el.dataset.type); break;
+      case 'beliitem': beliItem(el.dataset.jenis,+el.dataset.jml,+el.dataset.harga,el.dataset.label); break;
+      case 'feedall': feedAll(); break;
+      case 'cleanall': cleanAll(); break;
+      case 'playall': playAll(); break;
+      case 'harvestall': harvestAll(); break;
+      case 'obatiall': obatiSemua(); break;
+      case 'vitaminall': vitaminAll(); break;
+      case 'reset':
+        if(confirm('Hapus semua kemajuan dan mulai peternakan dari awal?')){
+          state={uang:1000000,pakan:30,obat:3,vitamin:2,cuaca:'cerah',cuacaUntil:0,hewan:[],seq:0,last:Date.now(),seen:true};
+          ensureWeather(false); save(state); render(); toast('Peternakan direset');
+        }
+        break;
+    }
+  });
+
+  /* ---------- KEMBALI SETELAH DITINGGAL ---------- */
+  (function offlineCatchup(){
+    var now=Date.now();
+    var elapsed=Math.min((now-state.last)/1000, 24*3600);
+    state.last=now;
+    if(elapsed>60 && state.hewan.length){
+      var uangDulu=state.uang, matiDulu=state.hewan.filter(function(a){return !a.alive;}).length;
+      var sakitDulu=state.hewan.filter(function(a){return a.alive&&a.sakit;}).length;
+      runElapsed(elapsed);
+      var earn=state.uang-uangDulu;
+      var lapar=state.hewan.filter(function(a){return a.alive && a.kenyang<25;}).length;
+      var sakitBaru=state.hewan.filter(function(a){return a.alive&&a.sakit;}).length - sakitDulu;
+      var matiBaru=state.hewan.filter(function(a){return !a.alive;}).length - matiDulu;
+      var menit=Math.round(elapsed/60);
+      var msg='<b><i class="fas fa-clock"></i> Selamat datang kembali!</b> Berjalan sekitar <b>'
+        +(menit>=60?(Math.round(menit/6)/10)+' jam':menit+' menit')+'</b>.<br>';
+      var pts=[];
+      if(earn>=1) pts.push('Pemasukan pupuk +'+rp(earn));
+      pts.push('Hasil produksi menunggu dipanen');
+      if(lapar) pts.push('<b style="color:var(--amber)">'+lapar+' ternak kelaparan</b>');
+      if(sakitBaru>0) pts.push('<b style="color:var(--red)">'+sakitBaru+' ternak jatuh sakit</b> — segera obati');
+      if(matiBaru>0) pts.push('<b style="color:var(--red)">'+matiBaru+' ternak mati</b>');
+      msg+='• '+pts.join('<br>• ');
+      $('offline').innerHTML='<div class="offline">'+msg+'</div>';
+    }
+    state.seen=true; save(state);
+  })();
+
+  /* ============================================================
+     ADEGAN LAHAN — animasi kondisi & cuaca
+     ============================================================ */
+  var scene={root:null,sky:null,sun:null,rain:null,heat:null,flash:null,W:0,H:0,gTop:0,gBot:0,
+    sprites:{},flies:[],pond:null,pondfish:null,live:1,flyCount:0,lastFloat:0,tLast:0};
+
+  function hx(c){ c=c.replace('#',''); return [parseInt(c.substr(0,2),16),parseInt(c.substr(2,2),16),parseInt(c.substr(4,2),16)]; }
+  function mix(a,b,t){ var A=hx(a),B=hx(b); t=Math.max(0,Math.min(1,t));
+    return 'rgb('+Math.round(A[0]+(B[0]-A[0])*t)+','+Math.round(A[1]+(B[1]-A[1])*t)+','+Math.round(A[2]+(B[2]-A[2])*t)+')'; }
+  function avgOf(f){ var a=state.hewan.filter(function(x){return x.alive;}); if(!a.length) return 100;
+    return a.reduce(function(s,x){return s+x[f];},0)/a.length; }
+
+  function measure(){ if(!scene.root) return;
+    scene.W=scene.root.clientWidth; scene.H=scene.root.clientHeight;
+    scene.gTop=scene.H*0.56; scene.gBot=scene.H-26;
+    togglePond(state.hewan.filter(function(a){return a.alive&&a.type==='ikan';}).length); }
+
+  function sceneInit(){
+    scene.root=$('scene'); scene.sky=$('sky'); scene.sun=$('sun');
+    if(!scene.root) return;
+    var i;
+    for(i=0;i<3;i++){ var c=document.createElement('div'); c.className='cloud';
+      c.innerHTML='<i class="fas fa-cloud"></i>'; c.style.top=(6+i*15)+'px'; c.style.fontSize=(18+i*9)+'px';
+      c.style.animation='drift '+(42+i*14)+'s linear '+(-i*13)+'s infinite'; scene.root.appendChild(c); }
+    var tufts=['🌿','🌱','🌾','🌿','🌱'];
+    for(i=0;i<5;i++){ var g=document.createElement('div'); g.className='grass'; g.textContent=tufts[i];
+      g.style.left=(6+i*20)+'%'; scene.root.appendChild(g); }
+    for(i=0;i<6;i++){ var f=document.createElement('div'); f.className='fly'; f.style.display='none'; scene.root.appendChild(f);
+      scene.flies.push({el:f,ox:.3+Math.random()*.4,oy:.5+Math.random()*.4,r:8+Math.random()*10,sp:2+Math.random()*3,ph:Math.random()*6.28}); }
+    // cuaca layers
+    scene.heat=document.createElement('div'); scene.heat.className='heat'; scene.root.appendChild(scene.heat);
+    scene.rain=document.createElement('div'); scene.rain.className='rain'; scene.root.appendChild(scene.rain);
+    for(i=0;i<26;i++){ var d=document.createElement('div'); d.className='drop';
+      d.style.left=(Math.random()*100)+'%'; d.style.animationDuration=(0.45+Math.random()*0.5)+'s';
+      d.style.animationDelay=(-Math.random()*1)+'s'; d.style.opacity=(0.4+Math.random()*0.5); scene.rain.appendChild(d); }
+    scene.flash=document.createElement('div'); scene.flash.className='flash'; scene.root.appendChild(scene.flash);
+    measure(); window.addEventListener('resize',measure);
+  }
+
+  function updateSky(){
+    var d=new Date(), h=d.getHours()+d.getMinutes()/60, day=h>=6&&h<18, p, wx=state.cuaca||'cerah';
+    scene.root.classList.toggle('night',!day);
+    var top,bot;
+    if(day){ p=(h-6)/12; var edge=Math.max(0,1-Math.min(p,1-p)*4);
+      top=mix('#9fd6f5','#f7ac5e',edge); bot=mix('#d6eefb','#ffd9a3',edge); scene.sun.className='sun';
+    } else { var hn=h>=18?h-18:h+6; p=hn/12; top='#0a1730'; bot='#26406b'; scene.sun.className='sun moon'; }
+    if(wx==='berawan'){ top=mix(top,'#c3ccd6',.45); bot=mix(bot,'#d7dde3',.45); }
+    else if(wx==='hujan'){ top=mix(top,'#6b7480',.7); bot=mix(bot,'#9aa3ad',.6); }
+    else if(wx==='badai'){ top=mix(top,'#2e2b45',.78); bot=mix(bot,'#4a4a66',.7); }
+    else if(wx==='panas' && day){ top=mix(top,'#ffd08a',.4); bot=mix(bot,'#ffe6b0',.4); }
+    scene.sky.style.background='linear-gradient(to bottom,'+top+','+bot+')';
+    scene.sun.style.opacity=(wx==='hujan'||wx==='badai')?'0':'1';
+    var x=6+p*86, tp=(scene.H*0.5)-Math.sin(p*Math.PI)*(scene.H*0.42);
+    scene.sun.style.left='calc('+x+'% - 22px)'; scene.sun.style.top=tp+'px';
+  }
+
+  function togglePond(n){
+    if(!scene.root) return;
+    if(n>0 && !scene.pond){
+      scene.pond=document.createElement('div'); scene.pond.className='pond'; scene.root.appendChild(scene.pond);
+      scene.pondfish=document.createElement('div'); scene.pondfish.className='pondfish'; scene.pondfish.textContent='🐟'; scene.root.appendChild(scene.pondfish);
+    } else if(n<=0 && scene.pond){ scene.pond.remove(); scene.pondfish.remove(); scene.pond=null; scene.pondfish=null; }
+    if(scene.pond){ var w=Math.min(118,scene.W*0.34), ht=w*0.42;
+      scene.pond.style.width=w+'px'; scene.pond.style.height=ht+'px'; scene.pond.style.left='8px'; scene.pond.style.bottom='7px'; }
+  }
+
+  function spawnFloat(emoji){
+    if(!scene.root) return;
+    var el=document.createElement('div'); el.className='floaty'; el.textContent=emoji;
+    el.style.fontSize=(14+Math.random()*4)+'px';
+    el.style.left=(12+Math.random()*Math.max(20,scene.W-40))+'px'; el.style.top=(scene.gTop-6)+'px';
+    scene.root.appendChild(el); el.addEventListener('animationend',function(){ el.remove(); });
+  }
+  function flashNow(){ var f=scene.flash; if(!f) return; f.style.transition='none'; f.style.opacity='0.85';
+    requestAnimationFrame(function(){ f.style.transition='opacity .5s'; f.style.opacity='0'; }); }
+
+  function sceneSync(){
+    if(!scene.root) return;
+    if(!scene.W) measure();
+    var wx=state.cuaca||'cerah';
+    updateSky();
+    scene.root.classList.toggle('rain-on', wx==='hujan'||wx==='badai');
+    scene.root.classList.toggle('storm', wx==='badai');
+    scene.root.classList.toggle('heat-on', wx==='panas');
+    scene.root.classList.toggle('cloudy', wx==='berawan'||wx==='hujan'||wx==='badai');
+    if(wx==='badai' && Math.random()<0.22) flashNow();
+
+    var live=state.hewan.filter(function(a){return a.alive;});
+    var bersih=avgOf('bersih'), sehat=avgOf('sehat'), senang=avgOf('senang');
+    var sickAny=live.some(function(a){return a.sakit;});
+
+    scene.root.classList.toggle('dry', bersih<48 && bersih>=24);
+    scene.root.classList.toggle('mud', bersih<24 && live.length>0);
+    scene.flyCount=(live.length && bersih<48) ? Math.min(6,Math.round((48-bersih)/8)) : 0;
+    scene.live=live.length ? (0.35 + 0.65*(sehat/100)*Math.max(.35,senang/100)) : 1;
+
+    var land=live.filter(function(a){return a.type!=='ikan';}).slice(0,10);
+    togglePond(live.filter(function(a){return a.type==='ikan';}).length);
+    var ids={};
+    land.forEach(function(a){ ids[a.id]=1;
+      if(!scene.sprites[a.id]){
+        var el=document.createElement('div'); el.className='spr'; el.textContent=TYPES[a.type].emoji; scene.root.appendChild(el);
+        scene.sprites[a.id]={el:el,x:6+Math.random()*Math.max(10,scene.W-38),dir:Math.random()<.5?-1:1,
+          speed:7+Math.random()*11,phase:Math.random()*6.28,lane:Math.random()*0.82};
+      }
+      scene.sprites[a.id].el.classList.toggle('sick',!!a.sakit);
+    });
+    Object.keys(scene.sprites).forEach(function(id){ if(!ids[id]){ scene.sprites[id].el.remove(); delete scene.sprites[id]; } });
+
+    var now=Date.now();
+    if(now-scene.lastFloat>1300){
+      if(sickAny && Math.random()<.5){ spawnFloat('🤒'); scene.lastFloat=now; }
+      else {
+        var ripe=live.filter(function(a){ if(a.sakit) return false; var T=TYPES[a.type];
+          return T.mode==='produksi' ? (T.count?a.produk>=1:a.produk>=0.05) : a.growth>=100; });
+        if(ripe.length && Math.random()<.55){ spawnFloat(TYPES[ripe[0].type].prodIcon); scene.lastFloat=now; }
+        else if(senang>66 && sehat>50 && Math.random()<.3){ spawnFloat('❤️'); scene.lastFloat=now; }
+        else if(bersih>72 && live.length && wx!=='hujan' && wx!=='badai' && Math.random()<.28){ spawnFloat('🦋'); scene.lastFloat=now; }
+      }
+    }
+
+    var d=new Date(), hh=d.getHours();
+    var waktu=hh<5?'Malam':hh<10?'Pagi':hh<15?'Siang':hh<18?'Sore':'Malam';
+    var wIcon=(hh>=6&&hh<18)?'fa-sun':'fa-moon';
+    var kon,kIcon,kCol;
+    if(!live.length){ kon='Lahan kosong menanti ternak'; kIcon='fa-seedling'; kCol='var(--muted)'; }
+    else if(bersih>70){ kon='Lahan subur & bersih'; kIcon='fa-leaf'; kCol='var(--green)'; }
+    else if(bersih>48){ kon='Lahan cukup terawat'; kIcon='fa-leaf'; kCol='var(--green)'; }
+    else if(bersih>24){ kon='Mulai becek, muncul lalat'; kIcon='fa-bugs'; kCol='var(--amber)'; }
+    else { kon='Kotor & berlumpur — bersihkan!'; kIcon='fa-bugs'; kCol='var(--red)'; }
+    var Wc=CUACA[wx];
+    $('sceneCap').innerHTML=
+      '<span><i class="fas '+wIcon+'" style="color:var(--amber)"></i> <b>'+waktu+'</b></span><span class="dot">•</span>'+
+      '<span><i class="fas '+Wc.fa+'" style="color:'+Wc.col+'"></i> <b>'+Wc.nama+'</b></span><span class="dot">•</span>'+
+      '<span><i class="fas '+kIcon+'" style="color:'+kCol+'"></i> '+kon+'</span>';
+    $('weatherNote').innerHTML='<i class="fas '+Wc.fa+'" style="color:'+Wc.col+'"></i> '+Wc.ket
+      +(sickAny?' <b style="color:var(--red)">Ada ternak sakit — beri obat.</b>':'');
+  }
+
+  function sceneFrame(t){
+    requestAnimationFrame(sceneFrame);
+    if(!scene.root || !scene.W) return;
+    var dt=scene.tLast?Math.min(.05,(t-scene.tLast)/1000):0; scene.tLast=t;
+    var Wd=scene.W, sz=26;
+    for(var id in scene.sprites){
+      var s=scene.sprites[id];
+      s.x += s.dir*s.speed*scene.live*dt;
+      if(s.x<4){ s.x=4; s.dir=1; } else if(s.x>Wd-sz-4){ s.x=Wd-sz-4; s.dir=-1; }
+      if(Math.random()<0.003) s.dir*=-1;
+      var baseY=scene.gTop + s.lane*(scene.gBot-scene.gTop);
+      var bob=Math.sin(t/300+s.phase)*3*scene.live;
+      s.el.style.transform='translate('+s.x.toFixed(1)+'px,'+(baseY+bob).toFixed(1)+'px) scaleX('+(s.dir<0?-1:1)+')';
+    }
+    if(scene.pondfish && scene.pond){
+      var pw=scene.pond.offsetWidth, ph=scene.pond.offsetHeight;
+      var px=8+pw*0.5+Math.sin(t/700)*(pw*0.28), py=scene.H-7-ph*0.5+Math.sin(t/500)*3;
+      scene.pondfish.style.transform='translate('+px.toFixed(1)+'px,'+py.toFixed(1)+'px) scaleX('+(Math.sin(t/700)<0?-1:1)+')';
+    }
+    for(var i=0;i<scene.flies.length;i++){
+      var fl=scene.flies[i];
+      if(i<scene.flyCount){ fl.el.style.display='block';
+        var cx=Wd*fl.ox, cy=scene.gTop+(scene.gBot-scene.gTop)*fl.oy;
+        var fx=cx+Math.cos(t/1000*fl.sp+fl.ph)*fl.r*2, fy=cy+Math.sin(t/1000*fl.sp*1.3+fl.ph)*fl.r;
+        fl.el.style.transform='translate('+fx.toFixed(1)+'px,'+fy.toFixed(1)+'px)';
+      } else fl.el.style.display='none';
+    }
+  }
+
+  /* ---------- LOOP WAKTU ---------- */
+  ensureWeather(false);
+  var saveTick=0;
+  setInterval(function(){
+    var now=Date.now(), dt=(now-state.last)/1000; state.last=now;
+    ensureWeather(true);
+    if(dt>0 && state.hewan.length) step(dt,false);
     render();
-    if(useLeaflet && src==='gps'){ map.panTo([p.lat,p.lng]); }
-  }
-  $('mark').addEventListener('click',function(){
-    if(this.disabled)return;
-    if(!lastFix){toast('Menunggu sinyal GPS…');return;}
-    addPoint(lastFix,'gps'); toast('Sudut '+pts.length+' ditandai');
-  });
-  $('addManual').addEventListener('click',function(){
-    var la=parseFloat(String($('mlat').value).replace(',','.'));
-    var ln=parseFloat(String($('mlng').value).replace(',','.'));
-    if(!isFinite(la)||!isFinite(ln)){toast('Isi lintang & bujur dulu');return;}
-    if(la<-90||la>90||ln<-180||ln>180){toast('Koordinat di luar jangkauan');return;}
-    addPoint({lat:la,lng:ln,acc:null});
-    $('mlat').value='';$('mlng').value='';$('mlat').focus();
-    if(useLeaflet) fitToPts();
-    toast('Titik '+pts.length+' ditambah');
-  });
-  $('undo').addEventListener('click',function(){
-    if(pts.length){pts.pop();render();toast('Titik terakhir dibatalkan');}
-  });
-  $('clear').addEventListener('click',function(){
-    if(!pts.length)return;
-    if(confirm('Kosongkan semua titik lahan sekarang?')){pts=[];render();}
-  });
+    if(++saveTick>=5){ saveTick=0; save(state); }
+  },1000);
 
-  /* ---------------- GPS ---------------- */
-  function setGps(on){
-    if(on){
-      if(!('geolocation' in navigator)){toast('Perangkat tak mendukung GPS');$('swGps').classList.remove('on');return;}
-      try{
-        watchId=navigator.geolocation.watchPosition(onPos,onErr,{enableHighAccuracy:true,maximumAge:1000,timeout:20000});
-        gpsOn=true;$('gpsInfo').textContent='Mencari sinyal…';
-      }catch(e){toast('Gagal memulai GPS');$('swGps').classList.remove('on');}
-    } else {
-      if(watchId!=null){try{navigator.geolocation.clearWatch(watchId);}catch(e){}}
-      watchId=null;gpsOn=false;lastFix=null;
-      $('gpsInfo').textContent='GPS mati';$('accChip').style.display='none';
-    }
-    updateButtons();
-  }
-  function onPos(p){
-    lastFix={lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy};
-    var a=p.coords.accuracy, chip=$('accChip');
-    chip.style.display='inline-block';
-    chip.className='accchip '+(a<=8?'good':(a<=20?'':'bad'));
-    chip.innerHTML='<i class="fas fa-location-crosshairs"></i> &plusmn; '+nf(a,1)+' m';
-    $('gpsInfo').textContent=a<=8?'Sinyal bagus':(a<=20?'Sinyal cukup':'Sinyal lemah — cari tempat terbuka');
-    showMe(lastFix.lat,lastFix.lng,a);
-    if(!onPos._c && useLeaflet){ onPos._c=true; map.setView([lastFix.lat,lastFix.lng],18); }
-    updateButtons();
-    if(state.auto) autoAdd();
-  }
-  function onErr(e){
-    var msg=e.code===1?'Izin lokasi ditolak':(e.code===2?'Lokasi tak tersedia (butuh https)':'GPS lambat merespon');
-    $('gpsInfo').textContent=msg;toast(msg);
-    if(e.code===1||e.code===2){$('swGps').classList.remove('on');setGps(false);}
-  }
-  function autoAdd(){
-    if(!lastFix)return;
-    if(!pts.length||distLL(pts[pts.length-1],lastFix)>=4){addPoint(lastFix,'gps');}
-  }
-  function updateButtons(){
-    var ready=gpsOn&&!!lastFix&&state.mode==='gps';
-    var b=$('mark');b.disabled=!ready;b.style.opacity=ready?'1':'.55';
-  }
+  function flush(){ state.last=Date.now(); save(state); }
+  document.addEventListener('visibilitychange',function(){ if(document.hidden) flush(); });
+  window.addEventListener('pagehide',flush);
+  window.addEventListener('beforeunload',flush);
 
-  /* ---------------- unduh ---------------- */
-  function download(href,name){
-    var a=document.createElement('a');a.href=href;a.download=name;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-  }
-  function niceStep(px_per_m,maxpx){
-    var steps=[1,2,5,10,20,25,50,100,200,250,500,1000,2000];
-    for(var i=0;i<steps.length;i++){ if(steps[i]*px_per_m>=60 && steps[i]*px_per_m<=maxpx) return steps[i]; }
-    // fallback: largest that fits
-    for(var j=steps.length-1;j>=0;j--){ if(steps[j]*px_per_m<=maxpx) return steps[j]; }
-    return steps[0];
-  }
-  function exportPNG(){
-    if(pts.length<3){toast('Butuh minimal 3 titik');return;}
-    var xy=project(pts), A=shoelace(xy), P=perim(xy,true), uv=state.ubin;
-    var name=(String($('saveName').value)||'').trim()||'Lahan Tanpa Nama';
-    var date=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
-
-    var W=1000, headH=84, sx=40, sy=110, sw=560, sh=380;
-    var perCol=Math.ceil(pts.length/2), coordRows=perCol, coordTop=sy+sh+34;
-    var coordsH=coordRows*22+30;
-    var H=Math.max(sy+sh, 110+300)+coordsH+70;
-
-    var cv=document.createElement('canvas');
-    var scale=2; cv.width=W*scale; cv.height=H*scale;
-    cv.style.width=W+'px';
-    var ctx=cv.getContext('2d'); ctx.scale(scale,scale);
-    ctx.textBaseline='alphabetic';
-
-    // bg
-    ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
-    // header gradient
-    var g=ctx.createLinearGradient(0,0,W,0);g.addColorStop(0,'#1e5a7b');g.addColorStop(1,'#6ab7ba');
-    ctx.fillStyle=g;ctx.fillRect(0,0,W,headH);
-    ctx.fillStyle='#fff';ctx.font='800 26px '+"ui-sans-serif,system-ui,Arial";
-    ctx.fillText('Ukur Luas Lahan',40,42);
-    ctx.font='700 13px Arial';ctx.globalAlpha=.9;
-    ctx.fillText('PORTAL DIDIKHAND',40,64);ctx.globalAlpha=1;
-    ctx.textAlign='right';ctx.font='600 14px Arial';
-    ctx.fillText(name,W-40,40);
-    ctx.font='400 12px Arial';ctx.globalAlpha=.9;ctx.fillText(date,W-40,60);
-    ctx.globalAlpha=1;ctx.textAlign='left';
-
-    // sketch box
-    ctx.fillStyle='#f9fafb';ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;
-    roundRect(ctx,sx,sy,sw,sh,12);ctx.fill();ctx.stroke();
-
-    // scaling
-    var xs=xy.map(function(p){return p.x;}), ys=xy.map(function(p){return p.y;});
-    var minx=Math.min.apply(null,xs),maxx=Math.max.apply(null,xs);
-    var miny=Math.min.apply(null,ys),maxy=Math.max.apply(null,ys);
-    var bw=(maxx-minx)||1, bh=(maxy-miny)||1, inpad=54;
-    var sc=Math.min((sw-2*inpad)/bw,(sh-2*inpad)/bh); if(!isFinite(sc)||sc<=0)sc=1;
-    var padX=(sw-bw*sc)/2, padY=(sh-bh*sc)/2;
-    function PX(p){return {X:sx+padX+(p.x-minx)*sc, Y:sy+padY+(bh-(p.y-miny))*sc};}
-    var Pn=xy.map(PX);
-
-    // faint grid
-    ctx.strokeStyle='#eef2f4';ctx.lineWidth=1;
-    for(var gx=sx+20;gx<sx+sw;gx+=40){ctx.beginPath();ctx.moveTo(gx,sy+6);ctx.lineTo(gx,sy+sh-6);ctx.stroke();}
-    for(var gy=sy+20;gy<sy+sh;gy+=40){ctx.beginPath();ctx.moveTo(sx+6,gy);ctx.lineTo(sx+sw-6,gy);ctx.stroke();}
-
-    // polygon
-    ctx.beginPath();Pn.forEach(function(p,i){i?ctx.lineTo(p.X,p.Y):ctx.moveTo(p.X,p.Y);});ctx.closePath();
-    ctx.fillStyle='rgba(106,183,186,.28)';ctx.fill();
-    ctx.strokeStyle='#1e5a7b';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.stroke();
-    // vertices
-    Pn.forEach(function(p,i){
-      ctx.beginPath();ctx.arc(p.X,p.Y,i===0?8:6,0,Math.PI*2);
-      ctx.fillStyle=i===0?'#ec4899':'#1e5a7b';ctx.fill();
-      ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
-      ctx.fillStyle='#fff';ctx.font='700 10px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillText(String(i+1),p.X,p.Y+0.5);ctx.textAlign='left';ctx.textBaseline='alphabetic';
-    });
-
-    // north arrow (atas = utara)
-    var nx=sx+sw-30, ny=sy+34;
-    ctx.fillStyle='#1e5a7b';ctx.beginPath();
-    ctx.moveTo(nx,ny-16);ctx.lineTo(nx-6,ny+2);ctx.lineTo(nx+6,ny+2);ctx.closePath();ctx.fill();
-    ctx.font='800 12px Arial';ctx.textAlign='center';ctx.fillText('U',nx,ny+16);ctx.textAlign='left';
-
-    // scale bar
-    var stepM=niceStep(sc, sw-2*inpad);
-    var barpx=stepM*sc, bx=sx+24, by=sy+sh-22;
-    ctx.strokeStyle='#374151';ctx.lineWidth=2;
-    ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+barpx,by);
-    ctx.moveTo(bx,by-4);ctx.lineTo(bx,by+4);ctx.moveTo(bx+barpx,by-4);ctx.lineTo(bx+barpx,by+4);ctx.stroke();
-    ctx.fillStyle='#374151';ctx.font='700 12px Arial';
-    ctx.fillText(nf(stepM,0)+' m',bx,by-8);
-
-    // results panel (kanan)
-    var rx=630, ry=sy;
-    ctx.fillStyle='#eef6f7';ctx.strokeStyle='#cfe6e7';roundRect(ctx,rx,ry,330,sh,12);ctx.fill();ctx.stroke();
-    var px=rx+22, py=ry+40;
-    ctx.fillStyle='#1e5a7b';ctx.font='700 12px Arial';ctx.fillText('LUAS LAHAN',px,py);
-    py+=34;ctx.font='800 34px Arial';ctx.fillText(nf(A,1)+' m²',px,py);
-    py+=30;ctx.font='400 13px Arial';ctx.fillStyle='#374151';
-    function line(label,val){ py+=26; ctx.fillStyle='#6b7280';ctx.font='400 13px Arial';ctx.fillText(label,px,py);
-      ctx.fillStyle='#111827';ctx.font='700 14px Arial';ctx.textAlign='right';ctx.fillText(val,rx+330-22,py);ctx.textAlign='left'; }
-    line('Hektar', nf(A/10000,4)+' ha');
-    line('Are', nf(A/100,2)+' are');
-    line('Ubin / Bata', nf(A/uv,2));
-    line('Bau (bahu)', nf(A/uv/500,3));
-    line('Keliling', nf(P,1)+' m');
-    line('Jumlah titik', String(pts.length));
-    py+=30;ctx.fillStyle='#9ca3af';ctx.font='400 11px Arial';
-    ctx.fillText('1 ubin = '+nf(uv,4).replace(/,?0+$/,'')+' m²',px,py);
-
-    // koordinat
-    ctx.fillStyle='#1e5a7b';ctx.font='700 12px Arial';ctx.fillText('TITIK KOORDINAT (lintang, bujur)',40,coordTop-12);
-    ctx.font='400 12px Arial';ctx.fillStyle='#374151';
-    pts.forEach(function(p,i){
-      var col=i<perCol?0:1, rowi=i<perCol?i:i-perCol;
-      var cxp=40+col*490, cyp=coordTop+rowi*22+6;
-      ctx.fillStyle='#9ca3af';ctx.fillText(('0'+(i+1)).slice(-2)+'.',cxp,cyp);
-      ctx.fillStyle='#374151';ctx.fillText(p.lat.toFixed(6)+',  '+p.lng.toFixed(6),cxp+26,cyp);
-    });
-
-    // footer
-    ctx.fillStyle='#9ca3af';ctx.font='400 11px Arial';
-    ctx.fillText('Hasil perkiraan · rumus shoelace pada proyeksi lokal WGS-84 · peta © OpenStreetMap · Portal DIDIKHAND',40,H-24);
-
-    try{
-      var url=cv.toDataURL('image/png');
-      download(url,'lahan-'+fnameSafe(name)+'.png');
-      toast('Gambar diunduh');
-    }catch(e){ toast('Gagal membuat gambar'); }
-  }
-  function roundRect(ctx,x,y,w,h,r){
-    ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
-    ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
-  }
-  function exportGeoJSON(){
-    if(pts.length<3){toast('Butuh minimal 3 titik');return;}
-    var name=(String($('saveName').value)||'').trim()||'Lahan';
-    var xy=project(pts), A=shoelace(xy);
-    var ring=pts.map(function(p){return [ +p.lng.toFixed(7), +p.lat.toFixed(7) ];});
-    ring.push(ring[0]);
-    var gj={type:'FeatureCollection',features:[{type:'Feature',
-      properties:{nama:name, luas_m2:+A.toFixed(2), luas_are:+(A/100).toFixed(2),
-        luas_hektar:+(A/10000).toFixed(4), luas_ubin_bata:+(A/state.ubin).toFixed(2),
-        luas_bau:+(A/state.ubin/500).toFixed(3), keliling_m:+perim(xy,true).toFixed(2),
-        jumlah_titik:pts.length, nilai_ubin_m2:state.ubin,
-        dibuat:new Date().toISOString(), sumber:'Portal DIDIKHAND — Ukur Luas Lahan'},
-      geometry:{type:'Polygon',coordinates:[ring]}}]};
-    var blob=new Blob([JSON.stringify(gj,null,2)],{type:'application/geo+json'});
-    download(URL.createObjectURL(blob),'lahan-'+fnameSafe(name)+'.geojson');
-    toast('GeoJSON diunduh');
-  }
-  $('dlPng').addEventListener('click',exportPNG);
-  $('dlGeo').addEventListener('click',exportGeoJSON);
-
-  /* ---------------- simpan / riwayat ---------------- */
-  $('saveBtn').addEventListener('click',function(){
-    if(pts.length<3){toast('Butuh minimal 3 titik');return;}
-    var name=(String($('saveName').value)||'').trim()||('Lahan '+(state.saved.length+1));
-    var xy=project(pts),A=shoelace(xy);
-    state.saved.unshift({id:Date.now(),name:name,area:A,ubin:A/state.ubin,perim:perim(xy,true),
-      pts:pts.slice(),date:new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})});
-    save(state);$('saveName').value='';renderList();toast('Tersimpan: '+name);
-  });
-  function renderList(){
-    var box=$('list');
-    if(!state.saved.length){box.innerHTML='<div class="empty">Belum ada lahan tersimpan.</div>';return;}
-    box.innerHTML=state.saved.map(function(s){
-      return '<div class="item"><div class="meta">'+
-        '<div class="t1">'+esc(s.name)+'</div>'+
-        '<div class="t2">'+nf(s.area,1)+' m&sup2; · '+nf(s.ubin,2)+' ubin/bata · '+esc(s.date)+'</div>'+
-        '<div style="margin-top:7px">'+
-          '<button class="mini" data-load="'+s.id+'"><i class="fas fa-rotate-left"></i> Muat</button>'+
-          '<button class="mini del" data-del="'+s.id+'"><i class="fas fa-trash"></i> Hapus</button>'+
-        '</div></div>'+
-        '<div class="stat" style="min-width:56px"><b>'+nf(s.area/10000,3)+'</b><span>hektar</span></div></div>';
-    }).join('');
-  }
-  $('list').addEventListener('click',function(e){
-    var lb=e.target.closest('[data-load]'), db=e.target.closest('[data-del]');
-    if(lb){
-      var s=state.saved.filter(function(x){return String(x.id)===lb.getAttribute('data-load');})[0];
-      if(s){pts=s.pts.slice();render();if(useLeaflet)fitToPts();toast('Dimuat: '+s.name);
-        window.scrollTo({top:0,behavior:'smooth'});}
-    } else if(db){
-      var id=db.getAttribute('data-del');
-      state.saved=state.saved.filter(function(x){return String(x.id)!==id;});
-      save(state);renderList();toast('Dihapus');
-    }
-  });
-
-  /* ---------------- mode & pengaturan ---------------- */
-  function refreshHint(){
-    var h=$('mapHint');
-    if(!useLeaflet){
-      h.innerHTML='<i class="fas fa-wifi"></i> Peta OpenStreetMap tak dapat dimuat (perlu internet). '+
-        'Gunakan <b>Jalan Keliling (GPS)</b> atau <b>entri koordinat manual</b> di bawah.';
-    } else if(state.mode==='map'){
-      h.innerHTML='<i class="fas fa-hand-pointer"></i> <b>Ketuk peta</b> di tiap sudut lahan secara berurutan. '+
-        'Titik bisa <b>digeser</b> untuk memperbaiki.';
-    } else {
-      h.innerHTML='<i class="fas fa-circle-info"></i> Titik biru = posisi Anda. Susuri batas lahan, tekan '+
-        '<b>Tandai Sudut</b> di tiap patok.';
-    }
-  }
-  function applyMode(){
-    var gps=state.mode==='gps';
-    $('gpsBox').style.display=gps?'':'none';
-    if(!gps&&gpsOn){$('swGps').classList.remove('on');setGps(false);}
-    if(useLeaflet){ drawLeaflet(); setTimeout(function(){map.invalidateSize();},60); }
-    refreshHint(); updateButtons();
-  }
-  bindSeg('modeSeg',function(v){state.mode=v;save(state);applyMode();});
-  bindSeg('ubinSeg',function(v){state.ubin=parseFloat(v);save(state);render();});
-  bindSw('swGps',setGps,false);
-  bindSw('swAuto',function(on){state.auto=on;save(state);},state.auto);
-
-  /* ---------------- init ---------------- */
-  if(window.L){
-    $('lmap').style.display='block';
-    useLeaflet=initMap();
-    if(useLeaflet){ $('svgwrap').style.display='none';
-      setTimeout(function(){map.invalidateSize();if(pts.length)fitToPts();},200);
-    } else { $('lmap').style.display='none'; }
-  }
-  segSet('modeSeg',state.mode);
-  segSet('ubinSeg',state.ubin);
-  applyMode();
-  renderList();
+  sceneInit();
   render();
+  requestAnimationFrame(sceneFrame);
 })();
 </script>
 </body>
