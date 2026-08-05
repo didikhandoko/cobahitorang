@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 
-<title>Ternak Digital — DIDIKHAND</title>
+<title>Tombol Panik — DIDIKHAND</title>
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231e5a7b'/%3E%3Cstop offset='1' stop-color='%236ab7ba'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='system-ui,sans-serif' font-size='27' font-weight='700' fill='%23fff' text-anchor='middle'%3EDH%3C/text%3E%3C/svg%3E">
 
@@ -19,8 +19,8 @@
      ============================================================ */
   :root{
     --bg:#f9fafb; --card:#ffffff; --teal:#1e5a7b; --teal2:#6ab7ba;
-    --pink:#ec4899; --pink6:#db2777; --ink:#1f2937; --sub:#374151; --muted:#9ca3af;
-    --line:#e5e7eb; --line2:#f3f4f6;
+    --pink:#ec4899; --pink6:#db2777; --ink:#1f2937; --sub:#374151;
+    --muted:#9ca3af; --line:#e5e7eb; --line2:#f3f4f6;
     --green:#16a34a; --blue:#2563eb; --amber:#d97706; --red:#dc2626;
     --shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04);
     --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
@@ -50,22 +50,52 @@
   .cap{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
     font-weight:700;margin-bottom:9px;display:block;}
 
+  label.fld{display:block;margin-bottom:14px;}
+  input[type=text],input[type=tel],select,textarea{
+    width:100%;background:#f9fafb;border:1px solid var(--line);color:var(--ink);
+    border-radius:12px;padding:12px;font-size:15px;font-family:inherit;line-height:1.5;}
+  textarea{resize:vertical;min-height:90px;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--teal2);
+    box-shadow:0 0 0 3px rgba(106,183,186,.25);background:#fff;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  label.slide{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted);}
+  input[type=range]{-webkit-appearance:none;appearance:none;flex:1;width:100%;height:6px;
+    border-radius:5px;background:#e5e7eb;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;
+    border-radius:50%;background:var(--pink);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border:2px solid #fff;
+    border-radius:50%;background:var(--pink);}
+
+  .seg{display:flex;background:#f3f4f6;border:1px solid var(--line);border-radius:11px;
+    padding:3px;gap:3px;margin-bottom:12px;}
+  .seg button{flex:1;background:transparent;border:0;color:var(--muted);padding:11px 6px;
+    border-radius:8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;}
+  .seg button.on{background:var(--teal);color:#fff;box-shadow:0 4px 10px -4px rgba(30,90,123,.6);}
+
+  .opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;
+    border-bottom:1px solid var(--line2);}
+  .opt:last-child{border-bottom:0;}
+  .opt span{font-size:14px;color:var(--sub);}
+  .opt small{color:var(--muted);font-size:11px;display:block;margin-top:2px;}
+  .sw{width:50px;height:28px;border-radius:999px;background:#e5e7eb;border:1px solid var(--line);
+    position:relative;flex:0 0 auto;cursor:pointer;transition:.2s;}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s;}
+  .sw.on{background:var(--teal);border-color:var(--teal);} .sw.on::after{left:24px;}
+
   .row{display:flex;gap:10px;flex-wrap:wrap;}
-  .btn{flex:1;min-width:104px;border:0;border-radius:12px;padding:13px;font-size:14px;
+  .btn{flex:1;min-width:120px;border:0;border-radius:12px;padding:14px;font-size:15px;
     font-weight:800;font-family:inherit;cursor:pointer;text-align:center;text-decoration:none;
-    display:inline-flex;align-items:center;justify-content:center;gap:7px;}
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;}
   .btn.primary{background:var(--pink);color:#fff;box-shadow:0 8px 15px -6px rgba(236,72,153,.5);}
   .btn.primary:active{background:var(--pink6);}
   .btn.ghost{background:#fff;color:var(--sub);border:1px solid var(--line);}
   .btn.teal{background:var(--teal);color:#fff;}
-  .btn.heal{background:#0ea5a5;color:#fff;}
-  .btn:disabled{background:#eef0f2;color:var(--muted);box-shadow:none;cursor:default;border-color:var(--line2);}
-  .badge{background:rgba(255,255,255,.28);border-radius:999px;padding:1px 7px;font-size:11px;}
+  .btn.block{width:100%;flex:none;}
 
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-  .stat{background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:9px 6px;text-align:center;}
-  .stat b{display:block;font-size:16px;color:var(--ink);line-height:1.15;}
-  .stat span{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .result{background:#eef6f7;border:1px solid #cfe6e7;border-radius:12px;padding:14px;
+    color:var(--teal);font-size:13px;line-height:1.7;}
 
   details{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:4px 16px;
     margin-bottom:14px;box-shadow:var(--shadow);}
@@ -79,226 +109,156 @@
   .note b{color:var(--sub);}
   .disc{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:12px;
     padding:12px;font-size:11.5px;line-height:1.7;}
-  .empty{text-align:center;color:var(--muted);font-size:13px;padding:20px 6px;line-height:1.7;}
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;
     background:var(--teal);color:#fff;padding:11px 18px;border-radius:12px;font-weight:800;
-    font-size:13px;box-shadow:var(--shadow);transition:.25s;z-index:60;pointer-events:none;max-width:90%;text-align:center;}
+    font-size:13px;box-shadow:var(--shadow);transition:.25s;z-index:50;pointer-events:none;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
   footer{text-align:center;padding:18px 6px 6px;color:var(--muted);font-size:10px;
     letter-spacing:.14em;text-transform:uppercase;line-height:1.9;}
   footer b{color:var(--teal);font-weight:800;}
 
-  /* ---------- BANNER OFFLINE & CUACA ---------- */
-  .offline{background:#eef6f7;border:1px solid #cfe6e7;color:var(--teal);border-radius:12px;
-    padding:12px;font-size:12px;line-height:1.7;margin-bottom:14px;box-shadow:var(--shadow);}
-  .wbanner{border-radius:12px;padding:11px 13px;font-size:12.5px;font-weight:700;line-height:1.5;
-    margin-bottom:14px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;}
-  .wbanner i{font-size:18px;flex:0 0 auto;}
-
-  /* ---------- KARTU HEWAN ---------- */
-  .animal{border:1px solid var(--line);border-left-width:5px;border-radius:14px;padding:12px;
-    margin-bottom:11px;background:#fff;}
-  .animal .top{display:flex;align-items:center;gap:12px;}
-  .ava{width:48px;height:48px;border-radius:13px;background:#f3f4f6;display:flex;align-items:center;
-    justify-content:center;font-size:27px;flex:0 0 auto;position:relative;}
-  .ava.happy{animation:bob 1.7s ease-in-out infinite;}
-  .ava.sick{filter:grayscale(.55) saturate(.6);}
-  .ava .sickdot{position:absolute;top:-4px;right:-4px;font-size:15px;}
-  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-  .animal .nm{font-size:15px;font-weight:800;color:var(--ink);}
-  .animal .mt{font-size:11px;color:var(--muted);margin-top:1px;}
-  .tag{display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;
-    margin-left:auto;flex:0 0 auto;}
-  .tag.ok{background:#dcfce7;color:#166534;} .tag.info{background:#dbeafe;color:#1e40af;}
-  .tag.warn{background:#fef3c7;color:#92400e;} .tag.bad{background:#fee2e2;color:#991b1b;}
-
-  .bars{margin-top:11px;}
-  .barlab{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);
-    text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-top:7px;}
-  .bar{height:7px;background:#eef0f2;border-radius:999px;overflow:hidden;margin-top:3px;}
-  .bar>i{display:block;height:100%;border-radius:999px;transition:width .5s linear;}
-
-  .ripe{font-size:12px;font-weight:800;color:var(--green);margin-top:10px;
-    background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:8px 10px;}
-  .ripe.sickmsg{color:#991b1b;background:#fef2f2;border-color:#fecaca;}
-  .acts{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;}
-  .mini{border:0;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:800;
-    font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
-  .mini.care{background:#f3f4f6;color:var(--sub);flex:0 0 auto;}
-  .mini.care:active{background:#e5e7eb;}
-  .mini.go{background:var(--pink);color:#fff;flex:1;justify-content:center;
-    box-shadow:0 6px 12px -6px rgba(236,72,153,.5);}
-  .mini.go:active{background:var(--pink6);}
-  .mini.go:disabled{background:#eef0f2;color:var(--muted);box-shadow:none;cursor:default;}
-  .mini.cure{background:#0ea5a5;color:#fff;flex:1;justify-content:center;
-    box-shadow:0 6px 12px -6px rgba(14,165,165,.5);}
-  .mini.cure:disabled{background:#eef0f2;color:var(--muted);box-shadow:none;cursor:default;}
-  .mini.sell{background:var(--teal);color:#fff;flex:0 0 auto;}
-  .mini.bury{background:#fee2e2;color:#991b1b;flex:1;justify-content:center;}
-
-  .shopitem{display:flex;align-items:center;gap:12px;padding:11px;border:1px solid var(--line);
-    border-radius:12px;margin-bottom:9px;}
-  .shopitem .em{font-size:27px;flex:0 0 auto;width:40px;text-align:center;}
-  .shopitem .info{flex:1;min-width:0;}
-  .shopitem .info b{font-size:14px;color:var(--ink);}
-  .shopitem .info small{display:block;font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5;}
-  .shopitem .price{font-size:12px;font-weight:800;color:var(--teal);margin-top:3px;}
-  .buy{border:0;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:800;
-    font-family:inherit;cursor:pointer;background:var(--pink);color:#fff;flex:0 0 auto;
-    box-shadow:0 6px 12px -6px rgba(236,72,153,.5);}
-  .buy:active{background:var(--pink6);}
-  .buy:disabled{background:#eef0f2;color:var(--muted);box-shadow:none;cursor:default;}
-
-  .syn{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line2);}
-  .syn:last-child{border-bottom:0;}
-  .syn i{color:var(--green);margin-top:2px;flex:0 0 auto;}
-  .syn span{font-size:12.5px;color:var(--sub);line-height:1.55;}
-
-  .wtab{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line2);}
-  .wtab:last-child{border-bottom:0;}
-  .wtab .we{font-size:20px;flex:0 0 auto;width:26px;text-align:center;}
-  .wtab b{font-size:12.5px;color:var(--ink);} .wtab p{margin:2px 0 0;font-size:11.5px;color:var(--muted);line-height:1.5;}
-
-  /* ---------- LAHAN (adegan animasi) ---------- */
-  .scene{position:relative;height:190px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#bfe3f2;}
-  .scene .sky{position:absolute;inset:0;transition:background 2s linear;z-index:0;}
-  .scene .stars{position:absolute;inset:0;opacity:0;transition:opacity 1.5s;z-index:0;
-    background-image:radial-gradient(1.4px 1.4px at 20% 22%,#fff,transparent),
-      radial-gradient(1.2px 1.2px at 42% 15%,#fff,transparent),
-      radial-gradient(1.5px 1.5px at 66% 26%,#fff,transparent),
-      radial-gradient(1.2px 1.2px at 80% 14%,#fff,transparent),
-      radial-gradient(1.3px 1.3px at 33% 34%,#fff,transparent),
-      radial-gradient(1.2px 1.2px at 88% 32%,#fff,transparent);}
-  .scene.night .stars{opacity:.9;}
-  .scene .sun{position:absolute;width:44px;height:44px;border-radius:50%;z-index:1;
-    background:radial-gradient(circle at 50% 45%,#fff6c8,#ffd54a 58%,#ffb300);
-    box-shadow:0 0 34px rgba(255,193,7,.55);transition:top 2s linear,left 2s linear,opacity 1.5s;}
-  .scene .sun.moon{background:radial-gradient(circle at 38% 38%,#fdfdf5,#dbe1ee 72%);
-    box-shadow:0 0 24px rgba(220,230,255,.5);}
-  .scene .cloud{position:absolute;color:#fff;opacity:.92;z-index:2;filter:drop-shadow(0 2px 3px rgba(0,0,0,.06));}
-  .scene.night .cloud{opacity:.28;} .scene.cloudy .cloud{opacity:1;}
-  .scene .ground{position:absolute;left:0;right:0;bottom:0;height:44%;z-index:1;
-    background:linear-gradient(#7cc36a,#57a44c);border-top:2px solid rgba(0,0,0,.06);transition:background 2s;}
-  .scene.dry .ground{background:linear-gradient(#c7b06a,#a5893f);}
-  .scene.mud .ground{background:linear-gradient(#9a7947,#6b5030);}
-  .scene .grass{position:absolute;bottom:2px;font-size:15px;opacity:.85;z-index:2;pointer-events:none;}
-  .scene .pond{position:absolute;border-radius:50%;z-index:2;
-    background:radial-gradient(circle at 50% 35%,#a7d9f0,#3f9ccb 70%,#2a7aa6);
-    border:2px solid #2b7aa8;box-shadow:inset 0 3px 6px rgba(255,255,255,.4);}
-  .scene .pondfish{position:absolute;font-size:16px;z-index:3;pointer-events:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2));}
-  .scene .spr{position:absolute;left:0;top:0;font-size:26px;z-index:3;will-change:transform;filter:drop-shadow(0 3px 2px rgba(0,0,0,.22));}
-  .scene .spr.sick{filter:grayscale(.55) saturate(.55) drop-shadow(0 3px 2px rgba(0,0,0,.22));}
-  .scene .fly{position:absolute;width:4px;height:4px;border-radius:50%;background:#2a2018;opacity:.75;z-index:4;pointer-events:none;}
-  .scene .heat{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;transition:opacity .8s;
-    background:linear-gradient(0deg,rgba(255,140,50,.14),rgba(255,215,120,.05));}
-  .scene.heat-on .heat{opacity:1;}
-  .scene .rain{position:absolute;inset:0;overflow:hidden;z-index:6;pointer-events:none;opacity:0;transition:opacity .6s;}
-  .scene.rain-on .rain{opacity:1;}
-  .scene .drop{position:absolute;top:-14%;width:2px;height:13px;border-radius:2px;
-    background:linear-gradient(rgba(255,255,255,0),rgba(200,224,244,.9));animation:fall linear infinite;}
-  .scene.storm .drop{animation-duration:.33s !important;height:16px;}
-  @keyframes fall{to{transform:translateY(200px)}}
-  .scene .flash{position:absolute;inset:0;z-index:7;background:#fff;opacity:0;pointer-events:none;}
-  .scene .floaty{position:absolute;z-index:8;pointer-events:none;animation:floaty 2.4s ease-out forwards;}
-  @keyframes floaty{0%{opacity:0;transform:translateY(0) scale(.6)}18%{opacity:1}100%{opacity:0;transform:translateY(-46px) scale(1.15)}}
-  @keyframes drift{from{left:-72px}to{left:112%}}
-  .scenecap{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--sub);align-items:center;}
-  .scenecap b{color:var(--ink);font-weight:800;} .scenecap .dot{color:var(--muted);}
+  /* ---------- TOMBOL PANIK (khusus aplikasi ini) ---------- */
+  .panicWrap{text-align:center;}
+  .panic{position:relative;width:236px;height:236px;margin:8px auto 2px;
+    touch-action:none;user-select:none;-webkit-user-select:none;}
+  .panic .ring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+  .panic .ring .track{fill:none;stroke:#fce7f3;stroke-width:12;}
+  .panic .ring .prog{fill:none;stroke:var(--pink);stroke-width:12;stroke-linecap:round;
+    stroke-dasharray:603.19;stroke-dashoffset:603.19;transition:stroke-dashoffset .04s linear;}
+  .panic .core{position:absolute;inset:22px;border-radius:50%;background:var(--pink);color:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+    box-shadow:0 12px 24px -8px rgba(236,72,153,.6);cursor:pointer;
+    transition:transform .1s,background .1s;}
+  .panic .core i{font-size:46px;}
+  .panic .core b{font-size:16px;font-weight:800;}
+  .panic .core small{font-size:11px;opacity:.92;padding:0 18px;}
+  .panic.holding .core{background:var(--pink6);transform:scale(.96);}
+  @keyframes pip{0%,100%{box-shadow:0 12px 24px -8px rgba(236,72,153,.6),0 0 0 0 rgba(236,72,153,.32)}
+    50%{box-shadow:0 12px 24px -8px rgba(236,72,153,.6),0 0 0 16px rgba(236,72,153,0)}}
+  .panic:not(.holding).armed .core{animation:pip 2.4s ease-out infinite;}
+  .status{font-size:13px;color:var(--sub);min-height:20px;margin-top:6px;font-weight:600;}
+  .status.ok{color:var(--green);} .status.warn{color:var(--amber);} .status.bad{color:var(--red);}
+  .msgbox{white-space:pre-wrap;word-break:break-word;background:#fff;border:1px solid var(--line);
+    border-radius:12px;padding:12px;font-size:13px;color:var(--sub);line-height:1.6;}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <div class="logo"><i class="fas fa-tractor"></i></div>
+    <div class="logo"><i class="fas fa-shield-halved"></i></div>
     <div>
-      <h1>Ternak Digital</h1>
+      <h1>Tombol Panik</h1>
       <div class="sub">Didikhand</div>
     </div>
     <a class="back" href="index.html" title="Kembali ke portal"><i class="fas fa-home"></i></a>
   </header>
 
-  <div id="offline"></div>
-  <div id="wbanner"></div>
-
-  <!-- LAHAN (adegan animasi) -->
-  <div class="card">
-    <span class="cap"><i class="fas fa-mountain-sun"></i> Kondisi Lahan &amp; Cuaca</span>
-    <div class="scene" id="scene">
-      <div class="sky" id="sky"></div>
-      <div class="stars"></div>
-      <div class="sun" id="sun"></div>
-      <div class="ground"></div>
+  <!-- TOMBOL UTAMA -->
+  <div class="card panicWrap">
+    <span class="cap">Darurat · Tekan &amp; Tahan</span>
+    <div class="panic" id="panic">
+      <svg class="ring" viewBox="0 0 220 220">
+        <circle class="track" cx="110" cy="110" r="96"></circle>
+        <circle class="prog" id="prog" cx="110" cy="110" r="96"></circle>
+      </svg>
+      <div class="core" id="core">
+        <i class="fas fa-triangle-exclamation"></i>
+        <b>TAHAN</b>
+        <small id="coreHint">tahan untuk kirim</small>
+      </div>
     </div>
-    <div class="scenecap" id="sceneCap"></div>
-    <div class="note" id="weatherNote" style="margin-top:6px"></div>
+    <div class="status" id="status">Siap. Tekan dan tahan tombol untuk mengirim.</div>
   </div>
 
-  <!-- DASHBOARD -->
+  <!-- AKSI CEPAT -->
   <div class="card">
-    <span class="cap">Peternakan Kamu</span>
-    <div class="stats" id="dashStats" style="margin-bottom:10px"></div>
-    <div class="stats" id="dashStats2"></div>
-    <div id="dashActions" style="margin-top:12px"></div>
+    <div class="row">
+      <a class="btn teal" href="tel:112"><i class="fas fa-phone-volume"></i> Telepon 112</a>
+      <button class="btn ghost" id="btnPreview"><i class="fas fa-eye"></i> Pratinjau pesan</button>
+    </div>
+    <p class="note" style="margin-bottom:0"><b>112</b> = nomor darurat nasional Indonesia (polisi/ambulans/pemadam). Untuk keadaan mengancam jiwa, menelepon sering lebih cepat daripada pesan.</p>
   </div>
 
-  <!-- KANDANG -->
+  <!-- HASIL / PESAN TERAKHIR -->
+  <div class="card" id="resultCard" style="display:none">
+    <span class="cap" id="resultCap">Pratinjau pesan</span>
+    <div class="msgbox" id="resultMsg">—</div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn primary" id="btnResend"><i class="fab fa-whatsapp"></i> Kirim ulang</button>
+      <button class="btn ghost" id="btnCopy"><i class="fas fa-copy"></i> Salin</button>
+      <a class="btn ghost" id="btnMaps" href="#" target="_blank" rel="noopener"><i class="fas fa-map-location-dot"></i> Buka Maps</a>
+    </div>
+  </div>
+
+  <!-- PENGATURAN -->
   <div class="card">
-    <span class="cap">Kandang, Kolam &amp; Kesehatan</span>
-    <div id="barn"></div>
+    <span class="cap">Kontak Darurat &amp; Pesan</span>
+
+    <label class="fld">
+      <span class="cap">Nama Anda (opsional)</span>
+      <input type="text" id="nama" placeholder="mis. Sari">
+    </label>
+
+    <div class="row2">
+      <label class="fld"><span class="cap">Nama kontak</span>
+        <input type="text" id="ctcName" placeholder="mis. Ibu"></label>
+      <label class="fld"><span class="cap">Nomor HP</span>
+        <input type="tel" id="ctcNum" placeholder="0812xxxxxxx" inputmode="tel"></label>
+    </div>
+    <p class="note" id="numHint" style="margin-top:-6px">Masukkan nomor tujuan.</p>
+
+    <div class="fld">
+      <span class="cap">Kirim lewat</span>
+      <div class="seg" id="segMethod">
+        <button data-v="wa" class="on"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+        <button data-v="sms"><i class="fas fa-comment-sms"></i> SMS</button>
+      </div>
+    </div>
+
+    <label class="fld">
+      <span class="cap">Isi pesan darurat</span>
+      <textarea id="msg"></textarea>
+    </label>
+    <p class="note" style="margin-top:-6px">Lokasi &amp; waktu ditambahkan otomatis di bawah pesan ini.</p>
+
+    <div class="opt">
+      <div><span>Sertakan lokasi GPS</span><small>Butuh izin lokasi &amp; koneksi HTTPS</small></div>
+      <div class="sw on" id="swLoc"></div>
+    </div>
+    <div class="opt">
+      <div><span>Getar saat aktif</span><small>Umpan balik diam-diam; matikan untuk benar-benar senyap</small></div>
+      <div class="sw" id="swVib"></div>
+    </div>
+
+    <label class="fld" style="margin-top:14px;margin-bottom:4px">
+      <span class="cap">Lama tahan · <span id="holdVal" style="color:var(--pink)">1,3</span> detik</span>
+      <input type="range" id="holdRange" min="8" max="30" value="13">
+    </label>
+    <p class="note" style="margin-top:0">Makin lama = makin kecil kemungkinan tak sengaja terpicu.</p>
   </div>
 
-  <!-- TOKO -->
-  <details id="shop">
-    <summary>Toko — Ternak, Pakan &amp; Apotek</summary>
-    <div id="shopBody" style="padding-bottom:10px"></div>
-  </details>
-
-  <!-- PERTANIAN TERPADU -->
-  <div class="card">
-    <span class="cap"><i class="fas fa-recycle"></i> Pertanian Terpadu</span>
-    <div id="synBody"></div>
-  </div>
-
-  <!-- CUACA & PENYAKIT -->
   <details>
-    <summary>Cuaca &amp; Penyakit</summary>
-    <div id="wtabBody" style="padding-bottom:8px"></div>
+    <summary>Cara pakai</summary>
     <p class="note" style="margin-top:0">
-      <b>Penyakit.</b> Ternak bisa jatuh <b>sakit</b> bila kesehatan/kebersihan rendah, dan
-      risikonya meningkat saat hujan, panas terik, atau badai. Ternak sakit berhenti tumbuh &amp;
-      berproduksi dan kesehatannya terus turun. <b>Obat</b> menyembuhkan &amp; memberi kekebalan
-      sementara; <b>vitamin</b> menaikkan kesehatan dan mencegah sakit.</p>
-  </details>
-
-  <!-- PANDUAN -->
-  <details>
-    <summary>Cara Bermain</summary>
-    <div class="note" style="margin-top:0;line-height:1.9">
-      <b>Tujuan.</b> Rawat ternak agar sehat, panen hasilnya, jual, lalu kembangkan peternakan sampai mampu membeli sapi.<br>
-      <b>Rawat 3 hal:</b> <i class="fas fa-wheat-awn" style="color:var(--amber)"></i> kenyang,
-      <i class="fas fa-droplet" style="color:var(--blue)"></i> kebersihan,
-      <i class="fas fa-heart" style="color:var(--pink)"></i> senang — semuanya turun seiring waktu.<br>
-      <b>Kesehatan</b> naik bila semuanya terjaga. Bila dibiarkan, ternak melemah lalu bisa <b>sakit</b> —
-      butuh <b>obat</b> untuk sembuh. Sediakan stok obat &amp; vitamin dari <b>Apotek</b>.<br>
-      <b>Cuaca berubah-ubah</b> dan memengaruhi peternakan: hujan bikin kandang cepat kotor tapi kolam
-      ikan subur; panas bikin cepat lapar; badai bikin ternak stres &amp; mudah sakit.<br>
-      <b>Panen.</b> Ayam/bebek → telur, sapi/kambing → susu, kelinci → anakan (berulang).
-      <b>Ikan</b> dibesarkan lalu dipanen sekali (hasil besar).<br>
-      <b>Terus berjalan</b> walau aplikasi ditutup — saat kembali, ternak lebih lapar &amp; hasil menunggu.
-    </div>
+      1. Isi <b>nama &amp; nomor kontak darurat</b> dan pilih WhatsApp/SMS. Semua tersimpan di perangkat ini.<br>
+      2. Saat butuh bantuan, <b>tekan &amp; tahan</b> lingkaran sampai cincin penuh.<br>
+      3. Aplikasi mengambil lokasi, menyusun pesan, lalu <b>langsung membuka WhatsApp/SMS</b> dengan isi sudah terketik — Anda tinggal menekan <b>Kirim</b> satu kali.<br>
+      4. <b>Uji coba dulu</b> ke nomor Anda sendiri agar tahu persis alurnya sebelum benar-benar darurat.
+    </p>
   </details>
 
   <div class="card">
     <p class="disc" style="margin:0"><i class="fas fa-circle-info"></i>
-      <b>Catatan.</b> Ini <b>simulasi/permainan edukatif</b>, bukan panduan usaha atau pengobatan nyata.
-      Harga, waktu tumbuh, cuaca, penyakit, dan hasil sengaja dipercepat &amp; disederhanakan agar seru.
-      Konsep <b>pertanian terpadu</b> digambarkan ringkas. Semua kemajuan tersimpan di perangkat ini saja.</p>
-  </div>
-
-  <div class="row" style="margin-top:2px">
-    <button class="btn ghost" data-act="reset" style="min-width:100%;color:var(--red)">
-      <i class="fas fa-rotate-left"></i> Mulai Ulang Peternakan</button>
+      <b>Batasan penting.</b> Peramban tidak dapat mengirim pesan sepenuhnya otomatis di latar belakang.
+      Aplikasi ini menyiapkan pesan + lokasi lalu membuka WhatsApp/SMS dengan isi sudah terketik —
+      penekanan <b>Kirim</b> terakhir tetap manual. Pengiriman yang benar-benar senyap-otomatis
+      membutuhkan server pengirim (di luar cakupan aplikasi satu berkas). GPS hanya jalan di
+      <b>https://</b> (di didikhand.vercel.app otomatis aman) dan perlu izin lokasi; bila ditolak,
+      pesan tetap terkirim tanpa koordinat. <b>Jangan jadikan ini satu-satunya pengaman</b> — untuk
+      keadaan mengancam jiwa, telepon <b>112</b>.
+    </p>
   </div>
 
   <footer>
@@ -310,641 +270,248 @@
 
 <script>
 (function(){
-  /* ---------- HELPER (pola template DIDIKHAND) ---------- */
   var $=function(id){ return document.getElementById(id); };
   var _tt=null;
-  function toast(msg){ var t=$('toast'); t.innerHTML=msg; t.classList.add('show');
-    clearTimeout(_tt); _tt=setTimeout(function(){ t.classList.remove('show'); },2100); }
-  var KEY='dh-ternak';
+  function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(_tt); _tt=setTimeout(function(){ t.classList.remove('show'); },1800); }
+
+  var KEY='dh-panik';
   function save(o){ try{ localStorage.setItem(KEY,JSON.stringify(o)); }catch(e){} }
   function load(def){ try{ var s=localStorage.getItem(KEY); return s?Object.assign({},def,JSON.parse(s)):def; }catch(e){ return def; } }
-  function nf(n,dec){ return (Number(n)||0).toLocaleString('id-ID',{maximumFractionDigits:dec===undefined?0:dec}); }
-  function rp(n){ return 'Rp '+nf(Math.round(n)); }
-  var clamp=function(v){ return Math.max(0,Math.min(100,v)); };
+  var LKEY='dh-panik-last';
+  function saveLast(o){ try{ localStorage.setItem(LKEY,JSON.stringify(o)); }catch(e){} }
+  function loadLast(){ try{ var s=localStorage.getItem(LKEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
 
-  /* ---------- DATA JENIS TERNAK ---------- */
-  var TYPES={
-    ayam:{nama:'Ayam',emoji:'🐔',harga:50000,dewasa:90,appetite:0.7,mess:0.9,pakanFeed:0.25,
-      mode:'produksi',prodRate:1/60,prodCap:20,prodNilai:2500,prodLabel:'butir',prodIcon:'🥚',
-      count:true,jualDewasa:65000,hasil:'Telur'},
-    bebek:{nama:'Bebek',emoji:'🦆',harga:75000,dewasa:120,appetite:0.8,mess:1.1,pakanFeed:0.3,
-      mode:'produksi',prodRate:1/80,prodCap:20,prodNilai:3500,prodLabel:'butir',prodIcon:'🥚',
-      count:true,jualDewasa:90000,hasil:'Telur bebek'},
-    ikan:{nama:'Ikan',emoji:'🐟',harga:250000,dewasa:300,appetite:0.9,mess:1.2,pakanFeed:1.5,
-      mode:'panen',jualPanen:520000,prodLabel:'kolam',prodIcon:'🐟',count:true,hasil:'Panen ikan'},
-    kelinci:{nama:'Kelinci',emoji:'🐰',harga:120000,dewasa:120,appetite:0.6,mess:0.8,pakanFeed:0.2,
-      mode:'produksi',prodRate:1/150,prodCap:8,prodNilai:25000,prodLabel:'ekor',prodIcon:'🐇',
-      count:true,jualDewasa:140000,hasil:'Anakan'},
-    kambing:{nama:'Kambing',emoji:'🐐',harga:1500000,dewasa:300,appetite:1.3,mess:1.2,pakanFeed:2.5,
-      mode:'produksi',prodRate:1/90,prodCap:10,prodNilai:18000,prodLabel:'L',prodIcon:'🥛',
-      count:false,jualDewasa:2200000,hasil:'Susu'},
-    sapi:{nama:'Sapi',emoji:'🐄',harga:8000000,dewasa:480,appetite:1.6,mess:1.4,pakanFeed:6,
-      mode:'produksi',prodRate:1/45,prodCap:12,prodNilai:13000,prodLabel:'L',prodIcon:'🥛',
-      count:false,jualDewasa:11000000,hasil:'Susu'}
-  };
-  var SHOP_ORDER=['ayam','bebek','ikan','kelinci','kambing','sapi'];
-  var NAMA={
-    ayam:['Jago','Petok','Kentaki','Kokok','Jagoan'],
-    bebek:['Donal','Wekwek','Kwek','Bebi','Mentari'],
-    ikan:['Kolam Timur','Kolam Barat','Empang Asri','Tambak Jaya','Kolam Nila','Si Sirip'],
-    kelinci:['Momo','Bugs','Lompat','Nibbles','Kapas'],
-    kambing:['Mbek','Jenggot','Etawa','Gibas','Kumis'],
-    sapi:['Belang','Gembul','Lembu','Dasih','Moo']
-  };
-  var CAP=12;
-  var PAKAN_HARGA=4000;
-
-  /* ---------- CUACA ---------- */
-  var CUACA={
-    cerah:{nama:'Cerah',ikon:'☀️',fa:'fa-sun',col:'#d97706',
-      mKenyang:1,mBersih:1,mSenang:0.9,senangRegen:0.35,ikan:1,risk:0,
-      ket:'Cuaca cerah — ternak nyaman dan senang.'},
-    berawan:{nama:'Berawan',ikon:'⛅',fa:'fa-cloud-sun',col:'#6b7280',
-      mKenyang:1,mBersih:1,mSenang:1,senangRegen:0,ikan:1,risk:0,
-      ket:'Langit berawan — kondisi netral, aman.'},
-    hujan:{nama:'Hujan',ikon:'🌧️',fa:'fa-cloud-rain',col:'#2563eb',
-      mKenyang:1,mBersih:1.7,mSenang:1.1,senangRegen:0,ikan:1.3,risk:0.016,
-      ket:'Hujan — kandang cepat becek, tapi kolam ikan tumbuh subur. Risiko sakit naik.'},
-    panas:{nama:'Panas Terik',ikon:'🔥',fa:'fa-temperature-high',col:'#dc2626',
-      mKenyang:1.5,mBersih:1,mSenang:1.4,senangRegen:0,ikan:0.75,risk:0.02,
-      ket:'Panas terik — ternak cepat lapar & gerah, kolam menghangat. Sediakan pakan & obat.'},
-    badai:{nama:'Badai',ikon:'⛈️',fa:'fa-cloud-bolt',col:'#7c3aed',
-      mKenyang:1.15,mBersih:1.6,mSenang:1.9,senangRegen:0,ikan:0.9,risk:0.03,sehatDrain:0.008,
-      ket:'Badai — ternak stres, kandang kotor, mudah sakit. Jaga kebersihan & siapkan obat.'}
-  };
-
-  var D_KENYANG=100/(20*60);
-  var D_BERSIH =100/(30*60);
-  var D_SENANG =100/(40*60);
-
-  /* ---------- STATE ---------- */
-  var state=load({uang:1000000,pakan:30,obat:3,vitamin:2,cuaca:'cerah',cuacaUntil:0,
-    hewan:[],seq:0,last:Date.now(),seen:false});
-  if(!state.last) state.last=Date.now();
-
-  /* ---------- SINERGI PERTANIAN TERPADU ---------- */
-  function synergy(){
-    var t={};
-    state.hewan.forEach(function(a){ if(a.alive) t[a.type]=true; });
-    var jenis=Object.keys(t), n=jenis.length;
-    var rum=t.sapi||t.kambing, ung=t.ayam||t.bebek;
-    var s={pakanMult:1,prodMult:1,fishGrow:1,cleanMult:1,passive:0,list:[]};
-    if(rum && t.ikan){ s.pakanMult*=0.8; s.list.push('Kotoran ruminansia jadi pupuk & pakan tambahan ikan — hemat pakan 20%.'); }
-    if(ung && t.ikan){ s.fishGrow*=1.25; s.list.push('Sisa pakan & kotoran unggas menyuburkan kolam — ikan tumbuh 25% lebih cepat.'); }
-    if(t.kelinci && rum){ s.passive+=1500; s.list.push('Pupuk kandang melimpah dijual rutin — +Rp 1.500/menit.'); }
-    if(n>=3){ s.prodMult*=1.15; s.list.push('Ekosistem seimbang (≥3 jenis) — semua produksi +15%.'); }
-    if(n>=5){ s.cleanMult*=0.7; s.list.push('Limbah terkelola baik (≥5 jenis) — kandang 30% lebih lama bersih.'); }
-    return s;
-  }
-
-  /* ---------- SIMULASI WAKTU ---------- */
-  function step(dt,off){
-    var s=synergy();
-    var W=off?CUACA.berawan:(CUACA[state.cuaca]||CUACA.cerah);
-    var riskMul=off?0.4:1, now=Date.now();
-    state.hewan.forEach(function(a){
-      if(!a.alive) return;
-      var T=TYPES[a.type];
-      a.kenyang=clamp(a.kenyang - D_KENYANG*T.appetite*W.mKenyang*dt);
-      a.bersih =clamp(a.bersih  - D_BERSIH *T.mess*s.cleanMult*W.mBersih*dt);
-      a.senang =clamp(a.senang  - D_SENANG*W.mSenang*dt + (W.senangRegen||0)*dt);
-      if(a.sakit){
-        a.sehat=clamp(a.sehat - 0.022*dt);
-      } else {
-        if(a.kenyang<15 || a.bersih<15 || a.senang<8){ a.sehat=clamp(a.sehat - 0.03*dt); }
-        else { a.sehat=clamp(a.sehat + 0.02*dt); }
-        if(W.sehatDrain) a.sehat=clamp(a.sehat - W.sehatDrain*dt);
-        var imun=a.imunUntil && now<a.imunUntil, risk=0;
-        if(a.sehat<45) risk += (45-a.sehat)/45*0.02;
-        if(a.bersih<30) risk += (30-a.bersih)/30*0.02;
-        risk += (W.risk||0);
-        if(imun) risk*=0.25;
-        risk*=riskMul;
-        if(risk>0 && Math.random() < risk*(dt/60)) a.sakit=true;
-      }
-      if(a.sehat<=0){ a.alive=false; return; }
-      if(!a.sakit && a.growth<100){
-        if(a.kenyang>20 && a.sehat>20){
-          var g=100/T.dewasa*dt;
-          if(a.type==='ikan') g*=s.fishGrow*W.ikan;
-          a.growth=Math.min(100,a.growth+g);
-        }
-      } else if(!a.sakit && a.growth>=100 && T.mode==='produksi' && a.sehat>40){
-        var rate=T.prodRate*(a.sehat/100)*s.prodMult;
-        a.produk=Math.min(T.prodCap,(a.produk||0)+rate*dt);
-      }
+  function bindSeg(id,cb){
+    var el=$(id); if(!el) return;
+    el.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){
+        el.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+        this.classList.add('on'); if(cb) cb(this.dataset.v);
+      });
     });
-    state.uang += s.passive*(dt/60);
   }
-  function runElapsed(sec){ var left=sec; while(left>0){ var c=Math.min(30,left); step(c,true); left-=c; } }
-
-  /* ---------- CUACA: pilih & jadwalkan ---------- */
-  function rollWeather(){
-    var pick,guard=0;
-    do{ var r=Math.random();
-      pick = r<.38?'cerah': r<.65?'berawan': r<.82?'hujan': r<.93?'panas':'badai';
-    } while(pick===state.cuaca && ++guard<3);
-    state.cuaca=pick; state.cuacaUntil=Date.now()+(70+Math.random()*80)*1000;
-  }
-  function ensureWeather(notify){
-    if(!state.cuacaUntil || Date.now()>state.cuacaUntil){
-      var old=state.cuaca; rollWeather();
-      if(notify && state.cuaca!==old){
-        var W=CUACA[state.cuaca];
-        toast(W.ikon+' Cuaca berubah: <b>'+W.nama+'</b>');
-      }
-    }
-  }
-
-  /* ---------- AKSI ---------- */
-  function pakanMultNow(){ return synergy().pakanMult; }
-  function feed(a){
-    var T=TYPES[a.type]; if(a.kenyang>=99) return false;
-    if(state.pakan<=0){ toast('Stok pakan habis — beli dulu di Toko'); return false; }
-    var perFull=T.pakanFeed*pakanMultNow();
-    var need=perFull*(100-a.kenyang)/100;
-    if(state.pakan>=need){ state.pakan-=need; a.kenyang=100; }
-    else { a.kenyang=clamp(a.kenyang + state.pakan/perFull*100); state.pakan=0; }
-    return true;
-  }
-  function harvest(a){
-    var T=TYPES[a.type];
-    if(T.mode==='panen') return 0;
-    if(a.sakit || !a.produk) return 0;
-    var got=0;
-    if(T.count){ var u=Math.floor(a.produk); if(u<1) return 0; got=u*T.prodNilai; a.produk-=u; }
-    else { if(a.produk<0.05) return 0; got=a.produk*T.prodNilai; a.produk=0; }
-    state.uang+=got; return got;
-  }
-  function panenIkan(a){
-    var T=TYPES[a.type]; if(a.growth<100){ toast('Ikan belum siap panen'); return; }
-    var got=Math.round(T.jualPanen*(a.sehat/100));
-    state.uang+=got;
-    state.hewan=state.hewan.filter(function(x){ return x.id!==a.id; });
-    toast('🐟 Panen ikan! +'+rp(got)); render(); save(state);
-  }
-  function obati(a){
-    if(!a.sakit){ toast(a.nama+' sedang sehat'); return; }
-    if(state.obat<=0){ toast('Stok obat habis — beli di Apotek'); return; }
-    state.obat--; a.sakit=false; a.sehat=clamp(a.sehat+40); a.imunUntil=Date.now()+120000;
-    toast('💊 '+a.nama+' diobati & pulih'); render(); save(state);
-  }
-  function jual(a){
-    var T=TYPES[a.type];
-    var harga=Math.round(T.jualDewasa*(a.growth>=100?1:0.5)*(a.sakit?0.6:1));
-    if(!confirm('Jual '+a.nama+' ('+T.nama+') seharga '+rp(harga)+'?')) return;
-    state.uang+=harga;
-    state.hewan=state.hewan.filter(function(x){ return x.id!==a.id; });
-    toast('Terjual! +'+rp(harga)); render(); save(state);
-  }
-  function buang(a){
-    state.hewan=state.hewan.filter(function(x){ return x.id!==a.id; });
-    toast('Kandang dibersihkan'); render(); save(state);
-  }
-  function beli(type){
-    var T=TYPES[type];
-    if(state.hewan.length>=CAP){ toast('Kandang penuh ('+CAP+' tempat)'); return; }
-    if(state.uang<T.harga){ toast('Uang belum cukup untuk '+T.nama); return; }
-    state.uang-=T.harga;
-    var pool=NAMA[type]||[T.nama];
-    state.hewan.push({id:++state.seq,type:type,nama:pool[Math.floor(Math.random()*pool.length)],
-      born:Date.now(),kenyang:85,bersih:85,senang:85,growth:0,sehat:90,produk:0,alive:true,sakit:false,imunUntil:0});
-    toast(T.emoji+' '+T.nama+' baru ditambahkan!'); render(); save(state);
-  }
-  function beliItem(jenis,jml,harga,label){
-    if(state.uang<harga){ toast('Uang belum cukup'); return; }
-    state.uang-=harga; state[jenis]=(state[jenis]||0)+jml;
-    toast('+'+jml+' '+label); render(); save(state);
-  }
-  function feedAll(){
-    if(!state.hewan.length){ toast('Belum ada ternak'); return; }
-    if(state.pakan<=0){ toast('Stok pakan habis'); return; }
-    var n=0; state.hewan.forEach(function(a){ if(a.alive && feed(a)) n++; });
-    toast(n?('Diberi pakan: '+n+' ternak'):'Semua sudah kenyang'); render(); save(state);
-  }
-  function cleanAll(){ var n=0; state.hewan.forEach(function(a){ if(a.alive && a.bersih<99){ a.bersih=100; n++; } });
-    toast(n?('Dibersihkan: '+n+' kandang'):'Semua sudah bersih'); render(); save(state); }
-  function playAll(){ var n=0; state.hewan.forEach(function(a){ if(a.alive && a.senang<99){ a.senang=100; n++; } });
-    toast(n?('Diajak main: '+n+' ternak'):'Semua sudah senang'); render(); save(state); }
-  function harvestAll(){ var total=0,n=0;
-    state.hewan.forEach(function(a){ if(a.alive){ var g=harvest(a); if(g>0){ total+=g; n++; } } });
-    toast(total?('Panen '+n+' ternak: +'+rp(total)):'Belum ada hasil siap panen'); render(); save(state); }
-  function obatiSemua(){
-    var sick=state.hewan.filter(function(a){ return a.alive && a.sakit; });
-    if(!sick.length){ toast('Tidak ada ternak yang sakit'); return; }
-    if(state.obat<=0){ toast('Stok obat habis — beli di Apotek'); return; }
-    var n=0; for(var i=0;i<sick.length;i++){ if(state.obat<=0) break;
-      state.obat--; sick[i].sakit=false; sick[i].sehat=clamp(sick[i].sehat+40); sick[i].imunUntil=Date.now()+120000; n++; }
-    toast('💊 '+n+' ternak diobati'+(state.obat<=0 && n<sick.length?' (obat habis)':'')); render(); save(state);
-  }
-  function vitaminAll(){
-    var alive=state.hewan.filter(function(a){ return a.alive; });
-    if(!alive.length){ toast('Belum ada ternak'); return; }
-    if(state.vitamin<=0){ toast('Stok vitamin habis — beli di Apotek'); return; }
-    var n=0; for(var i=0;i<alive.length;i++){ if(state.vitamin<=0) break;
-      var a=alive[i]; state.vitamin--; a.sehat=clamp(a.sehat+22); a.senang=clamp(a.senang+15); a.imunUntil=Date.now()+180000; n++; }
-    toast('💪 Vitamin ke '+n+' ternak'+(state.vitamin<=0 && n<alive.length?' (vitamin habis)':'')); render(); save(state);
-  }
-
-  /* ---------- RENDER ---------- */
-  function bar(val,color){ return '<div class="bar"><i style="width:'+clamp(val)+'%;background:'+color+'"></i></div>'; }
-  function statusOf(a){
-    if(!a.alive) return {tag:'bad',txt:'MATI',col:'#9ca3af'};
-    if(a.sakit) return {tag:'bad',txt:'SAKIT',col:'var(--red)'};
-    if(a.sehat<25) return {tag:'warn',txt:'LEMAH',col:'var(--amber)'};
-    if(a.kenyang<25) return {tag:'warn',txt:'LAPAR',col:'var(--amber)'};
-    if(a.bersih<25) return {tag:'info',txt:'KOTOR',col:'var(--blue)'};
-    if(a.senang<25) return {tag:'info',txt:'BOSAN',col:'var(--blue)'};
-    if(a.growth<100) return {tag:'info',txt:'TUMBUH',col:'var(--teal2)'};
-    return {tag:'ok',txt:'SEHAT',col:'var(--green)'};
-  }
-  function animalHTML(a){
-    var T=TYPES[a.type], st=statusOf(a);
-    var umur=Math.floor((Date.now()-a.born)/60000);
-    var happy=(a.alive && !a.sakit && a.senang>60 && a.sehat>40)?' happy':'';
-    var sickCls=(a.alive && a.sakit)?' sick':'';
-    var h='<div class="animal" style="border-left-color:'+st.col+'">';
-    h+='<div class="top"><div class="ava'+happy+sickCls+'">'+T.emoji
-      +(a.sakit&&a.alive?'<span class="sickdot">🤒</span>':'')+'</div>'
-      +'<div><div class="nm">'+a.nama+'</div>'
-      +'<div class="mt">'+T.nama+' · '+(umur<1?'baru':umur+' menit')+'</div></div>'
-      +'<span class="tag '+st.tag+'">'+st.txt+'</span></div>';
-
-    if(!a.alive){
-      h+='<div class="ripe sickmsg">Ternak ini mati karena terlalu lama tidak dirawat.</div>';
-      h+='<div class="acts"><button class="mini bury" data-act="buang" data-id="'+a.id+'"><i class="fas fa-trash"></i> Bersihkan Kandang</button></div>';
-      return h+'</div>';
-    }
-
-    h+='<div class="bars">';
-    h+='<div class="barlab"><span>🍚 Kenyang</span><span>'+Math.round(a.kenyang)+'%</span></div>'+bar(a.kenyang,'var(--amber)');
-    h+='<div class="barlab"><span>💧 Bersih</span><span>'+Math.round(a.bersih)+'%</span></div>'+bar(a.bersih,'var(--blue)');
-    h+='<div class="barlab"><span>❤️ Senang</span><span>'+Math.round(a.senang)+'%</span></div>'+bar(a.senang,'var(--pink)');
-    h+='<div class="barlab"><span>➕ Sehat</span><span>'+Math.round(a.sehat)+'%</span></div>'
-      +bar(a.sehat, a.sakit||a.sehat<30?'var(--red)':'var(--green)');
-    if(a.growth<100){
-      h+='<div class="barlab"><span>🌱 Pertumbuhan</span><span>'+Math.round(a.growth)+'%</span></div>'+bar(a.growth,'var(--teal)');
-    }
-    h+='</div>';
-
-    if(a.sakit){
-      h+='<div class="ripe sickmsg">🤒 Sedang sakit — berhenti tumbuh & berproduksi. Beri <b>obat</b> agar pulih.</div>';
-    } else if(a.growth>=100){
-      if(T.mode==='panen'){
-        h+='<div class="ripe">'+T.prodIcon+' Siap panen! Hasil ± '+rp(T.jualPanen*a.sehat/100)+'</div>';
-      } else {
-        var jml=T.count?Math.floor(a.produk):a.produk;
-        h+='<div class="ripe">'+T.prodIcon+' '+T.hasil+' siap: <b>'+nf(jml,T.count?0:1)+' '+T.prodLabel+'</b>'
-          +((a.produk>=T.prodCap)?' (penuh — segera panen!)':'')+'</div>';
-      }
-    }
-
-    h+='<div class="acts">';
-    h+='<button class="mini care" data-act="feed" data-id="'+a.id+'" title="Beri pakan"><i class="fas fa-wheat-awn"></i></button>';
-    h+='<button class="mini care" data-act="clean" data-id="'+a.id+'" title="Bersihkan"><i class="fas fa-broom"></i></button>';
-    h+='<button class="mini care" data-act="play" data-id="'+a.id+'" title="Ajak main"><i class="fas fa-heart"></i></button>';
-
-    if(a.sakit){
-      if(state.obat>0) h+='<button class="mini cure" data-act="obati" data-id="'+a.id+'"><i class="fas fa-syringe"></i> Obati</button>';
-      else h+='<button class="mini cure" disabled><i class="fas fa-syringe"></i> Obat habis</button>';
-    } else if(T.mode==='panen'){
-      if(a.growth>=100) h+='<button class="mini go" data-act="panenikan" data-id="'+a.id+'"><i class="fas fa-fish"></i> Panen</button>';
-      else h+='<button class="mini go" disabled>Tumbuh '+Math.round(a.growth)+'%</button>';
-    } else {
-      var siap = T.count ? (a.produk>=1) : (a.produk>=0.05);
-      if(siap) h+='<button class="mini go" data-act="harvest" data-id="'+a.id+'"><i class="fas fa-hand-holding-heart"></i> Panen</button>';
-      else if(a.growth<100) h+='<button class="mini go" disabled>Tumbuh '+Math.round(a.growth)+'%</button>';
-      else h+='<button class="mini go" disabled>Menghasilkan…</button>';
-      h+='<button class="mini sell" data-act="jual" data-id="'+a.id+'" title="Jual ternak"><i class="fas fa-tag"></i></button>';
-    }
-    h+='</div></div>';
-    return h;
-  }
-
-  function render(){
-    var alive=state.hewan.filter(function(a){return a.alive;});
-    var sick=alive.filter(function(a){return a.sakit;}).length;
-    var W=CUACA[state.cuaca]||CUACA.cerah;
-
-    $('dashStats').innerHTML=
-      '<div class="stat"><b>'+rp(state.uang)+'</b><span>Uang</span></div>'+
-      '<div class="stat"><b>'+nf(state.pakan,1)+' kg</b><span>Pakan</span></div>'+
-      '<div class="stat"><b>'+alive.length+' / '+CAP+'</b><span>Ternak</span></div>';
-    $('dashStats2').innerHTML=
-      '<div class="stat"><b>'+nf(state.obat)+'</b><span>Obat</span></div>'+
-      '<div class="stat"><b>'+nf(state.vitamin)+'</b><span>Vitamin</span></div>'+
-      '<div class="stat"><b style="font-size:19px">'+W.ikon+'</b><span>'+W.nama+'</span></div>';
-
-    var noAn=!alive.length;
-    $('dashActions').innerHTML=
-      '<div class="row">'
-      +'<button class="btn primary" data-act="feedall"'+(noAn?' disabled':'')+'><i class="fas fa-wheat-awn"></i> Beri Pakan</button>'
-      +'<button class="btn teal" data-act="cleanall"'+(noAn?' disabled':'')+'><i class="fas fa-broom"></i> Bersihkan</button>'
-      +'<button class="btn ghost" data-act="playall"'+(noAn?' disabled':'')+'><i class="fas fa-heart"></i> Ajak Main</button>'
-      +'</div>'
-      +'<div class="row" style="margin-top:10px">'
-      +'<button class="btn ghost" data-act="harvestall"'+(noAn?' disabled':'')+'><i class="fas fa-basket-shopping"></i> Panen</button>'
-      +'<button class="btn heal" data-act="obatiall"'+((sick===0||state.obat<=0)?' disabled':'')+'><i class="fas fa-syringe"></i> Obati'+(sick?' <span class="badge">'+sick+'</span>':'')+'</button>'
-      +'<button class="btn heal" data-act="vitaminall"'+((noAn||state.vitamin<=0)?' disabled':'')+' style="background:#0d9488"><i class="fas fa-pills"></i> Vitamin</button>'
-      +'</div>';
-
-    if(noAn){
-      $('barn').innerHTML='<div class="empty">Kandang masih kosong.<br>Buka <b>Toko</b> di bawah dan beli ternak pertamamu (ayam paling murah).</div>';
-    } else {
-      $('barn').innerHTML=state.hewan.map(animalHTML).join('');
-    }
-
-    var sh='';
-    SHOP_ORDER.forEach(function(k){
-      var T=TYPES[k];
-      var mampu=state.uang>=T.harga && state.hewan.length<CAP;
-      var ket = T.mode==='panen' ? 'Dibesarkan lalu dipanen sekali. Modal cepat balik.'
-              : (T.hasil+' berulang · jual dewasa '+rp(T.jualDewasa));
-      sh+='<div class="shopitem"><div class="em">'+T.emoji+'</div>'
-        +'<div class="info"><b>'+T.nama+'</b><small>'+ket+'</small>'
-        +'<div class="price">'+rp(T.harga)+'</div></div>'
-        +'<button class="buy" data-act="beli" data-type="'+k+'"'+(mampu?'':' disabled')+'>Beli</button></div>';
+  function bindSw(id,cb,initial){
+    var el=$(id); if(!el) return;
+    if(initial!==undefined) el.classList.toggle('on',!!initial);
+    el.addEventListener('click',function(){
+      this.classList.toggle('on'); if(cb) cb(this.classList.contains('on'));
     });
-    sh+='<div style="height:8px"></div><span class="cap"><i class="fas fa-kit-medical"></i> Apotek — Obat &amp; Vitamin</span>';
-    sh+='<div class="row" style="margin-bottom:9px">'
-      +'<button class="btn ghost" data-act="beliitem" data-jenis="obat" data-jml="5" data-harga="125000" data-label="obat"'+(state.uang<125000?' disabled':'')+'>Obat +5 · '+rp(125000)+'</button>'
-      +'<button class="btn ghost" data-act="beliitem" data-jenis="obat" data-jml="15" data-harga="330000" data-label="obat"'+(state.uang<330000?' disabled':'')+'>Obat +15 · '+rp(330000)+'</button>'
-      +'</div>';
-    sh+='<div class="row">'
-      +'<button class="btn ghost" data-act="beliitem" data-jenis="vitamin" data-jml="5" data-harga="100000" data-label="vitamin"'+(state.uang<100000?' disabled':'')+'>Vitamin +5 · '+rp(100000)+'</button>'
-      +'<button class="btn ghost" data-act="beliitem" data-jenis="vitamin" data-jml="15" data-harga="260000" data-label="vitamin"'+(state.uang<260000?' disabled':'')+'>Vitamin +15 · '+rp(260000)+'</button>'
-      +'</div>';
-    sh+='<div style="height:10px"></div><span class="cap"><i class="fas fa-wheat-awn"></i> Pakan (Rp '+nf(PAKAN_HARGA)+'/kg)</span>';
-    sh+='<div class="row">'
-      +'<button class="btn ghost" data-act="beliitem" data-jenis="pakan" data-jml="25" data-harga="90000" data-label="kg pakan"'+(state.uang<90000?' disabled':'')+'>+25 kg · '+rp(90000)+'</button>'
-      +'<button class="btn ghost" data-act="beliitem" data-jenis="pakan" data-jml="100" data-harga="320000" data-label="kg pakan"'+(state.uang<320000?' disabled':'')+'>+100 kg · '+rp(320000)+'</button>'
-      +'</div>';
-    $('shopBody').innerHTML=sh;
-
-    var s=synergy();
-    if(s.list.length){
-      $('synBody').innerHTML=s.list.map(function(x){ return '<div class="syn"><i class="fas fa-circle-check"></i><span>'+x+'</span></div>'; }).join('');
-    } else {
-      $('synBody').innerHTML='<div class="note" style="margin-top:0">Belum ada sinergi aktif. <b>Pelihara beberapa jenis berbeda</b> sekaligus (mis. ikan + ayam, atau sapi + kelinci) untuk membuka bonus hemat pakan, pertumbuhan lebih cepat, dan pemasukan pupuk. Punya ≥3 jenis menambah produksi.</div>';
-    }
-
-    if(!$('wtabBody').dataset.done){
-      $('wtabBody').innerHTML=['cerah','berawan','hujan','panas','badai'].map(function(k){
-        var C=CUACA[k];
-        return '<div class="wtab"><div class="we">'+C.ikon+'</div><div><b>'+C.nama+'</b><p>'+C.ket+'</p></div></div>';
-      }).join('');
-      $('wtabBody').dataset.done='1';
-    }
-
-    if(scene.root) sceneSync();
   }
 
-  /* ---------- KLIK (delegasi) ---------- */
-  function findAnimal(id){ id=+id; for(var i=0;i<state.hewan.length;i++) if(state.hewan[i].id===id) return state.hewan[i]; return null; }
-  document.addEventListener('click',function(ev){
-    var el=ev.target.closest('[data-act]'); if(!el) return;
-    var act=el.dataset.act, a=el.dataset.id?findAnimal(el.dataset.id):null;
-    switch(act){
-      case 'feed': if(a){ if(feed(a)) toast('🍚 '+a.nama+' diberi pakan'); render(); save(state);} break;
-      case 'clean': if(a){ a.bersih=100; toast('💧 Kandang bersih'); render(); save(state);} break;
-      case 'play': if(a){ a.senang=100; toast('❤️ '+a.nama+' senang'); render(); save(state);} break;
-      case 'obati': if(a) obati(a); break;
-      case 'harvest': if(a){ var g=harvest(a); toast(g?('Panen! +'+rp(g)):'Belum ada hasil'); render(); save(state);} break;
-      case 'panenikan': if(a) panenIkan(a); break;
-      case 'jual': if(a) jual(a); break;
-      case 'buang': if(a) buang(a); break;
-      case 'beli': beli(el.dataset.type); break;
-      case 'beliitem': beliItem(el.dataset.jenis,+el.dataset.jml,+el.dataset.harga,el.dataset.label); break;
-      case 'feedall': feedAll(); break;
-      case 'cleanall': cleanAll(); break;
-      case 'playall': playAll(); break;
-      case 'harvestall': harvestAll(); break;
-      case 'obatiall': obatiSemua(); break;
-      case 'vitaminall': vitaminAll(); break;
-      case 'reset':
-        if(confirm('Hapus semua kemajuan dan mulai peternakan dari awal?')){
-          state={uang:1000000,pakan:30,obat:3,vitamin:2,cuaca:'cerah',cuacaUntil:0,hewan:[],seq:0,last:Date.now(),seen:true};
-          ensureWeather(false); save(state); render(); toast('Peternakan direset');
-        }
-        break;
+  var DEFMSG='🆘 DARURAT — saya sedang dalam keadaan bahaya dan butuh bantuan segera. Tolong hubungi saya atau datang ke lokasi ini.';
+
+  var state=load({nama:'',ctcName:'',ctcNum:'',method:'wa',msg:DEFMSG,loc:true,vib:false,hold:1.3});
+
+  /* ---------- isi ulang form dari state ---------- */
+  $('nama').value=state.nama;
+  $('ctcName').value=state.ctcName;
+  $('ctcNum').value=state.ctcNum;
+  $('msg').value=state.msg||DEFMSG;
+  $('holdRange').value=Math.round(state.hold*10);
+  $('holdVal').textContent=state.hold.toFixed(1).replace('.',',');
+  $('swLoc').classList.toggle('on',!!state.loc);
+  $('swVib').classList.toggle('on',!!state.vib);
+  $('segMethod').querySelectorAll('button').forEach(function(b){ b.classList.toggle('on',b.dataset.v===state.method); });
+
+  /* ---------- normalisasi nomor ---------- */
+  function waNum(raw){
+    var d=(raw||'').replace(/\D/g,''); if(!d) return '';
+    if(d.charAt(0)==='0') d='62'+d.slice(1);
+    else if(d.charAt(0)==='8') d='62'+d;   // nomor lokal tanpa 0 (asumsi Indonesia)
+    return d;
+  }
+  function smsNum(raw){ return (raw||'').replace(/[^\d+]/g,''); }
+
+  function refreshHint(){
+    var h=$('numHint');
+    if(!state.ctcNum){ h.innerHTML='Masukkan nomor tujuan.'; return; }
+    if(state.method==='wa'){
+      var w=waNum(state.ctcNum);
+      h.innerHTML= w ? 'Nomor WhatsApp terbaca: <b>+'+w+'</b> — pastikan benar (kode negara 62 = Indonesia).'
+                     : 'Nomor belum valid.';
+    } else {
+      h.innerHTML='SMS akan dikirim ke: <b>'+smsNum(state.ctcNum)+'</b>';
+    }
+  }
+  refreshHint();
+
+  /* ---------- validasi ---------- */
+  function ready(){ return !!(state.ctcNum && (state.method==='wa'? waNum(state.ctcNum): smsNum(state.ctcNum))); }
+  function reflectArmed(){ $('panic').classList.toggle('armed', ready()); }
+  reflectArmed();
+
+  /* ---------- listener form (auto-simpan) ---------- */
+  $('nama').addEventListener('input',function(){ state.nama=this.value.trim(); save(state); });
+  $('ctcName').addEventListener('input',function(){ state.ctcName=this.value.trim(); save(state); });
+  $('ctcNum').addEventListener('input',function(){ state.ctcNum=this.value.trim(); save(state); refreshHint(); reflectArmed(); });
+  $('msg').addEventListener('input',function(){ state.msg=this.value; save(state); });
+  bindSeg('segMethod',function(v){ state.method=v; save(state); refreshHint(); reflectArmed();
+    $('btnResend').innerHTML = v==='wa' ? '<i class="fab fa-whatsapp"></i> Kirim ulang' : '<i class="fas fa-comment-sms"></i> Kirim ulang'; });
+  bindSw('swLoc',function(on){ state.loc=on; save(state); }, state.loc);
+  bindSw('swVib',function(on){ state.vib=on; save(state); }, state.vib);
+  $('holdRange').addEventListener('input',function(){
+    state.hold=(+this.value)/10; $('holdVal').textContent=state.hold.toFixed(1).replace('.',',');
+    save(state);
+  });
+
+  /* ---------- lokasi ---------- */
+  var coords=null, coordsAcc=null;
+  function acquire(){
+    coords=null; coordsAcc=null;
+    if(!state.loc) return;
+    if(!('geolocation' in navigator)) return;
+    navigator.geolocation.getCurrentPosition(function(p){
+      coords={lat:p.coords.latitude,lng:p.coords.longitude}; coordsAcc=p.coords.accuracy;
+    },function(){ /* diabaikan; pesan tetap dikirim tanpa lokasi */ },
+    {enableHighAccuracy:true,timeout:8000,maximumAge:15000});
+  }
+
+  function timeStr(){
+    try{ return new Date().toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit',year:'numeric'}); }
+    catch(e){ return new Date().toString(); }
+  }
+  function mapsLink(){ return coords? 'https://maps.google.com/?q='+coords.lat.toFixed(6)+','+coords.lng.toFixed(6) : ''; }
+
+  function buildMsg(){
+    var lines=[ (state.msg||DEFMSG).trim() ];
+    if(state.nama) lines.push('Nama: '+state.nama);
+    if(state.loc){
+      if(coords){
+        lines.push('📍 Lokasi saya: '+mapsLink());
+        if(coordsAcc) lines.push('(perkiraan akurasi ±'+Math.round(coordsAcc)+' m)');
+      } else {
+        lines.push('📍 Lokasi: tidak tersedia (GPS mati/ditolak/di luar HTTPS)');
+      }
+    }
+    lines.push('🕒 '+timeStr());
+    return lines.join('\n');
+  }
+
+  function deepLink(msg){
+    var enc=encodeURIComponent(msg);
+    if(state.method==='wa') return 'https://wa.me/'+waNum(state.ctcNum)+'?text='+enc;
+    return 'sms:'+smsNum(state.ctcNum)+'?body='+enc;
+  }
+
+  function setStatus(txt,cls){ var s=$('status'); s.textContent=txt; s.className='status'+(cls?' '+cls:''); }
+
+  function showResult(msg,cap){
+    $('resultCard').style.display='';
+    $('resultCap').textContent=cap||'Pesan darurat terakhir';
+    $('resultMsg').textContent=msg;
+    var ml=mapsLink();
+    var mb=$('btnMaps');
+    if(ml){ mb.href=ml; mb.style.display=''; } else { mb.style.display='none'; }
+  }
+
+  /* ---------- kirim ---------- */
+  var sending=false;
+  function doSend(){
+    if(sending) return; sending=true;
+    var finish=function(){
+      var msg=buildMsg();
+      saveLast({msg:msg, maps:mapsLink(), t:Date.now()});
+      showResult(msg,'Terkirim — periksa WhatsApp/SMS lalu tekan Kirim');
+      setStatus('Membuka '+(state.method==='wa'?'WhatsApp':'SMS')+'… tekan Kirim di sana.','ok');
+      // buka aplikasi pesan dengan isi sudah terketik
+      window.location.href=deepLink(msg);
+      setTimeout(function(){ sending=false; },1200);
+    };
+    if(state.loc && !coords){
+      setStatus('Mengambil lokasi…');
+      var waited=0, iv=setInterval(function(){
+        waited+=200;
+        if(coords||waited>=1600){ clearInterval(iv); finish(); }
+      },200);
+    } else finish();
+  }
+
+  /* ---------- interaksi tekan-tahan ---------- */
+  var panic=$('panic'), core=$('core'), prog=$('prog');
+  var C=603.19, holdStart=0, tid=null, raf=null, fired=false;
+  function setRing(p){ prog.style.strokeDashoffset=(C*(1-p)).toFixed(1); }
+
+  function tick(){
+    var p=Math.min(1,(performance.now()-holdStart)/(state.hold*1000));
+    setRing(p);
+    if(p<1) raf=requestAnimationFrame(tick);
+  }
+  function start(e){
+    if(e.cancelable) e.preventDefault();
+    if(!ready()){ toast('Isi nomor kontak darurat dulu'); setStatus('Belum ada kontak darurat.','warn'); return; }
+    fired=false;
+    acquire();                       // mulai ambil lokasi lebih awal
+    holdStart=performance.now();
+    panic.classList.add('holding');
+    $('coreHint').textContent='tahan… lepas untuk batal';
+    setStatus('Menahan…');
+    cancelAnimationFrame(raf); tick();
+    clearTimeout(tid);
+    tid=setTimeout(function(){ fired=true; onFull(); }, state.hold*1000);
+  }
+  function cancel(){
+    clearTimeout(tid); cancelAnimationFrame(raf);
+    panic.classList.remove('holding'); setRing(0);
+    $('coreHint').textContent='tahan untuk kirim';
+    if(!fired) setStatus('Dibatalkan. Tekan &amp; tahan lagi untuk mengirim.');
+  }
+  function onFull(){
+    cancelAnimationFrame(raf); setRing(1);
+    panic.classList.remove('holding');
+    $('coreHint').textContent='terkirim';
+    if(state.vib && navigator.vibrate){ try{ navigator.vibrate([40,30,60]); }catch(e){} }
+    doSend();
+    setTimeout(function(){ setRing(0); $('coreHint').textContent='tahan untuk kirim'; },1400);
+  }
+
+  panic.addEventListener('pointerdown',start);
+  window.addEventListener('pointerup',function(){ if(panic.classList.contains('holding')) cancel(); });
+  window.addEventListener('pointercancel',function(){ if(panic.classList.contains('holding')) cancel(); });
+  panic.addEventListener('pointerleave',function(){ if(panic.classList.contains('holding')) cancel(); });
+  panic.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+
+  /* ---------- tombol lain ---------- */
+  $('btnPreview').addEventListener('click',function(){
+    if(!ready()){ toast('Isi nomor kontak darurat dulu'); return; }
+    setStatus('Menyusun pratinjau…');
+    acquire();
+    setTimeout(function(){
+      showResult(buildMsg(),'Pratinjau pesan (belum dikirim)');
+      setStatus(coords?'Pratinjau siap. Lokasi didapat.':'Pratinjau siap. Lokasi belum tersedia.', coords?'ok':'warn');
+    },1200);
+  });
+  $('btnResend').addEventListener('click',function(){
+    if(!ready()){ toast('Isi nomor kontak darurat dulu'); return; }
+    doSend();
+  });
+  $('btnCopy').addEventListener('click',function(){
+    var txt=$('resultMsg').textContent;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ toast('Pesan disalin'); },function(){ toast('Gagal menyalin'); });
+    } else {
+      var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta);
+      ta.select(); try{ document.execCommand('copy'); toast('Pesan disalin'); }catch(e){ toast('Gagal menyalin'); }
+      document.body.removeChild(ta);
     }
   });
 
-  /* ---------- KEMBALI SETELAH DITINGGAL ---------- */
-  (function offlineCatchup(){
-    var now=Date.now();
-    var elapsed=Math.min((now-state.last)/1000, 24*3600);
-    state.last=now;
-    if(elapsed>60 && state.hewan.length){
-      var uangDulu=state.uang, matiDulu=state.hewan.filter(function(a){return !a.alive;}).length;
-      var sakitDulu=state.hewan.filter(function(a){return a.alive&&a.sakit;}).length;
-      runElapsed(elapsed);
-      var earn=state.uang-uangDulu;
-      var lapar=state.hewan.filter(function(a){return a.alive && a.kenyang<25;}).length;
-      var sakitBaru=state.hewan.filter(function(a){return a.alive&&a.sakit;}).length - sakitDulu;
-      var matiBaru=state.hewan.filter(function(a){return !a.alive;}).length - matiDulu;
-      var menit=Math.round(elapsed/60);
-      var msg='<b><i class="fas fa-clock"></i> Selamat datang kembali!</b> Berjalan sekitar <b>'
-        +(menit>=60?(Math.round(menit/6)/10)+' jam':menit+' menit')+'</b>.<br>';
-      var pts=[];
-      if(earn>=1) pts.push('Pemasukan pupuk +'+rp(earn));
-      pts.push('Hasil produksi menunggu dipanen');
-      if(lapar) pts.push('<b style="color:var(--amber)">'+lapar+' ternak kelaparan</b>');
-      if(sakitBaru>0) pts.push('<b style="color:var(--red)">'+sakitBaru+' ternak jatuh sakit</b> — segera obati');
-      if(matiBaru>0) pts.push('<b style="color:var(--red)">'+matiBaru+' ternak mati</b>');
-      msg+='• '+pts.join('<br>• ');
-      $('offline').innerHTML='<div class="offline">'+msg+'</div>';
-    }
-    state.seen=true; save(state);
-  })();
-
-  /* ============================================================
-     ADEGAN LAHAN — animasi kondisi & cuaca
-     ============================================================ */
-  var scene={root:null,sky:null,sun:null,rain:null,heat:null,flash:null,W:0,H:0,gTop:0,gBot:0,
-    sprites:{},flies:[],pond:null,pondfish:null,live:1,flyCount:0,lastFloat:0,tLast:0};
-
-  function hx(c){ c=c.replace('#',''); return [parseInt(c.substr(0,2),16),parseInt(c.substr(2,2),16),parseInt(c.substr(4,2),16)]; }
-  function mix(a,b,t){ var A=hx(a),B=hx(b); t=Math.max(0,Math.min(1,t));
-    return 'rgb('+Math.round(A[0]+(B[0]-A[0])*t)+','+Math.round(A[1]+(B[1]-A[1])*t)+','+Math.round(A[2]+(B[2]-A[2])*t)+')'; }
-  function avgOf(f){ var a=state.hewan.filter(function(x){return x.alive;}); if(!a.length) return 100;
-    return a.reduce(function(s,x){return s+x[f];},0)/a.length; }
-
-  function measure(){ if(!scene.root) return;
-    scene.W=scene.root.clientWidth; scene.H=scene.root.clientHeight;
-    scene.gTop=scene.H*0.56; scene.gBot=scene.H-26;
-    togglePond(state.hewan.filter(function(a){return a.alive&&a.type==='ikan';}).length); }
-
-  function sceneInit(){
-    scene.root=$('scene'); scene.sky=$('sky'); scene.sun=$('sun');
-    if(!scene.root) return;
-    var i;
-    for(i=0;i<3;i++){ var c=document.createElement('div'); c.className='cloud';
-      c.innerHTML='<i class="fas fa-cloud"></i>'; c.style.top=(6+i*15)+'px'; c.style.fontSize=(18+i*9)+'px';
-      c.style.animation='drift '+(42+i*14)+'s linear '+(-i*13)+'s infinite'; scene.root.appendChild(c); }
-    var tufts=['🌿','🌱','🌾','🌿','🌱'];
-    for(i=0;i<5;i++){ var g=document.createElement('div'); g.className='grass'; g.textContent=tufts[i];
-      g.style.left=(6+i*20)+'%'; scene.root.appendChild(g); }
-    for(i=0;i<6;i++){ var f=document.createElement('div'); f.className='fly'; f.style.display='none'; scene.root.appendChild(f);
-      scene.flies.push({el:f,ox:.3+Math.random()*.4,oy:.5+Math.random()*.4,r:8+Math.random()*10,sp:2+Math.random()*3,ph:Math.random()*6.28}); }
-    // cuaca layers
-    scene.heat=document.createElement('div'); scene.heat.className='heat'; scene.root.appendChild(scene.heat);
-    scene.rain=document.createElement('div'); scene.rain.className='rain'; scene.root.appendChild(scene.rain);
-    for(i=0;i<26;i++){ var d=document.createElement('div'); d.className='drop';
-      d.style.left=(Math.random()*100)+'%'; d.style.animationDuration=(0.45+Math.random()*0.5)+'s';
-      d.style.animationDelay=(-Math.random()*1)+'s'; d.style.opacity=(0.4+Math.random()*0.5); scene.rain.appendChild(d); }
-    scene.flash=document.createElement('div'); scene.flash.className='flash'; scene.root.appendChild(scene.flash);
-    measure(); window.addEventListener('resize',measure);
+  /* ---------- pulihkan pesan terakhir bila baru dikirim ---------- */
+  var last=loadLast();
+  if(last && (Date.now()-last.t)<15*60*1000){
+    coords = last.maps ? parseMaps(last.maps) : null;
+    showResult(last.msg,'Pesan darurat terakhir');
+    setStatus('Ada pesan darurat baru saja. Anda bisa kirim ulang bila perlu.','warn');
+  }
+  function parseMaps(u){
+    var m=(u||'').match(/q=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+    return m? {lat:parseFloat(m[1]),lng:parseFloat(m[2])} : null;
   }
 
-  function updateSky(){
-    var d=new Date(), h=d.getHours()+d.getMinutes()/60, day=h>=6&&h<18, p, wx=state.cuaca||'cerah';
-    scene.root.classList.toggle('night',!day);
-    var top,bot;
-    if(day){ p=(h-6)/12; var edge=Math.max(0,1-Math.min(p,1-p)*4);
-      top=mix('#9fd6f5','#f7ac5e',edge); bot=mix('#d6eefb','#ffd9a3',edge); scene.sun.className='sun';
-    } else { var hn=h>=18?h-18:h+6; p=hn/12; top='#0a1730'; bot='#26406b'; scene.sun.className='sun moon'; }
-    if(wx==='berawan'){ top=mix(top,'#c3ccd6',.45); bot=mix(bot,'#d7dde3',.45); }
-    else if(wx==='hujan'){ top=mix(top,'#6b7480',.7); bot=mix(bot,'#9aa3ad',.6); }
-    else if(wx==='badai'){ top=mix(top,'#2e2b45',.78); bot=mix(bot,'#4a4a66',.7); }
-    else if(wx==='panas' && day){ top=mix(top,'#ffd08a',.4); bot=mix(bot,'#ffe6b0',.4); }
-    scene.sky.style.background='linear-gradient(to bottom,'+top+','+bot+')';
-    scene.sun.style.opacity=(wx==='hujan'||wx==='badai')?'0':'1';
-    var x=6+p*86, tp=(scene.H*0.5)-Math.sin(p*Math.PI)*(scene.H*0.42);
-    scene.sun.style.left='calc('+x+'% - 22px)'; scene.sun.style.top=tp+'px';
+  /* peringatan bila bukan HTTPS (lokasi tak akan jalan) */
+  if(state.loc && location.protocol!=='https:' && location.hostname!=='localhost' && location.protocol!=='file:'){
+    setStatus('Catatan: buka lewat HTTPS agar GPS aktif.','warn');
   }
-
-  function togglePond(n){
-    if(!scene.root) return;
-    if(n>0 && !scene.pond){
-      scene.pond=document.createElement('div'); scene.pond.className='pond'; scene.root.appendChild(scene.pond);
-      scene.pondfish=document.createElement('div'); scene.pondfish.className='pondfish'; scene.pondfish.textContent='🐟'; scene.root.appendChild(scene.pondfish);
-    } else if(n<=0 && scene.pond){ scene.pond.remove(); scene.pondfish.remove(); scene.pond=null; scene.pondfish=null; }
-    if(scene.pond){ var w=Math.min(118,scene.W*0.34), ht=w*0.42;
-      scene.pond.style.width=w+'px'; scene.pond.style.height=ht+'px'; scene.pond.style.left='8px'; scene.pond.style.bottom='7px'; }
-  }
-
-  function spawnFloat(emoji){
-    if(!scene.root) return;
-    var el=document.createElement('div'); el.className='floaty'; el.textContent=emoji;
-    el.style.fontSize=(14+Math.random()*4)+'px';
-    el.style.left=(12+Math.random()*Math.max(20,scene.W-40))+'px'; el.style.top=(scene.gTop-6)+'px';
-    scene.root.appendChild(el); el.addEventListener('animationend',function(){ el.remove(); });
-  }
-  function flashNow(){ var f=scene.flash; if(!f) return; f.style.transition='none'; f.style.opacity='0.85';
-    requestAnimationFrame(function(){ f.style.transition='opacity .5s'; f.style.opacity='0'; }); }
-
-  function sceneSync(){
-    if(!scene.root) return;
-    if(!scene.W) measure();
-    var wx=state.cuaca||'cerah';
-    updateSky();
-    scene.root.classList.toggle('rain-on', wx==='hujan'||wx==='badai');
-    scene.root.classList.toggle('storm', wx==='badai');
-    scene.root.classList.toggle('heat-on', wx==='panas');
-    scene.root.classList.toggle('cloudy', wx==='berawan'||wx==='hujan'||wx==='badai');
-    if(wx==='badai' && Math.random()<0.22) flashNow();
-
-    var live=state.hewan.filter(function(a){return a.alive;});
-    var bersih=avgOf('bersih'), sehat=avgOf('sehat'), senang=avgOf('senang');
-    var sickAny=live.some(function(a){return a.sakit;});
-
-    scene.root.classList.toggle('dry', bersih<48 && bersih>=24);
-    scene.root.classList.toggle('mud', bersih<24 && live.length>0);
-    scene.flyCount=(live.length && bersih<48) ? Math.min(6,Math.round((48-bersih)/8)) : 0;
-    scene.live=live.length ? (0.35 + 0.65*(sehat/100)*Math.max(.35,senang/100)) : 1;
-
-    var land=live.filter(function(a){return a.type!=='ikan';}).slice(0,10);
-    togglePond(live.filter(function(a){return a.type==='ikan';}).length);
-    var ids={};
-    land.forEach(function(a){ ids[a.id]=1;
-      if(!scene.sprites[a.id]){
-        var el=document.createElement('div'); el.className='spr'; el.textContent=TYPES[a.type].emoji; scene.root.appendChild(el);
-        scene.sprites[a.id]={el:el,x:6+Math.random()*Math.max(10,scene.W-38),dir:Math.random()<.5?-1:1,
-          speed:7+Math.random()*11,phase:Math.random()*6.28,lane:Math.random()*0.82};
-      }
-      scene.sprites[a.id].el.classList.toggle('sick',!!a.sakit);
-    });
-    Object.keys(scene.sprites).forEach(function(id){ if(!ids[id]){ scene.sprites[id].el.remove(); delete scene.sprites[id]; } });
-
-    var now=Date.now();
-    if(now-scene.lastFloat>1300){
-      if(sickAny && Math.random()<.5){ spawnFloat('🤒'); scene.lastFloat=now; }
-      else {
-        var ripe=live.filter(function(a){ if(a.sakit) return false; var T=TYPES[a.type];
-          return T.mode==='produksi' ? (T.count?a.produk>=1:a.produk>=0.05) : a.growth>=100; });
-        if(ripe.length && Math.random()<.55){ spawnFloat(TYPES[ripe[0].type].prodIcon); scene.lastFloat=now; }
-        else if(senang>66 && sehat>50 && Math.random()<.3){ spawnFloat('❤️'); scene.lastFloat=now; }
-        else if(bersih>72 && live.length && wx!=='hujan' && wx!=='badai' && Math.random()<.28){ spawnFloat('🦋'); scene.lastFloat=now; }
-      }
-    }
-
-    var d=new Date(), hh=d.getHours();
-    var waktu=hh<5?'Malam':hh<10?'Pagi':hh<15?'Siang':hh<18?'Sore':'Malam';
-    var wIcon=(hh>=6&&hh<18)?'fa-sun':'fa-moon';
-    var kon,kIcon,kCol;
-    if(!live.length){ kon='Lahan kosong menanti ternak'; kIcon='fa-seedling'; kCol='var(--muted)'; }
-    else if(bersih>70){ kon='Lahan subur & bersih'; kIcon='fa-leaf'; kCol='var(--green)'; }
-    else if(bersih>48){ kon='Lahan cukup terawat'; kIcon='fa-leaf'; kCol='var(--green)'; }
-    else if(bersih>24){ kon='Mulai becek, muncul lalat'; kIcon='fa-bugs'; kCol='var(--amber)'; }
-    else { kon='Kotor & berlumpur — bersihkan!'; kIcon='fa-bugs'; kCol='var(--red)'; }
-    var Wc=CUACA[wx];
-    $('sceneCap').innerHTML=
-      '<span><i class="fas '+wIcon+'" style="color:var(--amber)"></i> <b>'+waktu+'</b></span><span class="dot">•</span>'+
-      '<span><i class="fas '+Wc.fa+'" style="color:'+Wc.col+'"></i> <b>'+Wc.nama+'</b></span><span class="dot">•</span>'+
-      '<span><i class="fas '+kIcon+'" style="color:'+kCol+'"></i> '+kon+'</span>';
-    $('weatherNote').innerHTML='<i class="fas '+Wc.fa+'" style="color:'+Wc.col+'"></i> '+Wc.ket
-      +(sickAny?' <b style="color:var(--red)">Ada ternak sakit — beri obat.</b>':'');
-  }
-
-  function sceneFrame(t){
-    requestAnimationFrame(sceneFrame);
-    if(!scene.root || !scene.W) return;
-    var dt=scene.tLast?Math.min(.05,(t-scene.tLast)/1000):0; scene.tLast=t;
-    var Wd=scene.W, sz=26;
-    for(var id in scene.sprites){
-      var s=scene.sprites[id];
-      s.x += s.dir*s.speed*scene.live*dt;
-      if(s.x<4){ s.x=4; s.dir=1; } else if(s.x>Wd-sz-4){ s.x=Wd-sz-4; s.dir=-1; }
-      if(Math.random()<0.003) s.dir*=-1;
-      var baseY=scene.gTop + s.lane*(scene.gBot-scene.gTop);
-      var bob=Math.sin(t/300+s.phase)*3*scene.live;
-      s.el.style.transform='translate('+s.x.toFixed(1)+'px,'+(baseY+bob).toFixed(1)+'px) scaleX('+(s.dir<0?-1:1)+')';
-    }
-    if(scene.pondfish && scene.pond){
-      var pw=scene.pond.offsetWidth, ph=scene.pond.offsetHeight;
-      var px=8+pw*0.5+Math.sin(t/700)*(pw*0.28), py=scene.H-7-ph*0.5+Math.sin(t/500)*3;
-      scene.pondfish.style.transform='translate('+px.toFixed(1)+'px,'+py.toFixed(1)+'px) scaleX('+(Math.sin(t/700)<0?-1:1)+')';
-    }
-    for(var i=0;i<scene.flies.length;i++){
-      var fl=scene.flies[i];
-      if(i<scene.flyCount){ fl.el.style.display='block';
-        var cx=Wd*fl.ox, cy=scene.gTop+(scene.gBot-scene.gTop)*fl.oy;
-        var fx=cx+Math.cos(t/1000*fl.sp+fl.ph)*fl.r*2, fy=cy+Math.sin(t/1000*fl.sp*1.3+fl.ph)*fl.r;
-        fl.el.style.transform='translate('+fx.toFixed(1)+'px,'+fy.toFixed(1)+'px)';
-      } else fl.el.style.display='none';
-    }
-  }
-
-  /* ---------- LOOP WAKTU ---------- */
-  ensureWeather(false);
-  var saveTick=0;
-  setInterval(function(){
-    var now=Date.now(), dt=(now-state.last)/1000; state.last=now;
-    ensureWeather(true);
-    if(dt>0 && state.hewan.length) step(dt,false);
-    render();
-    if(++saveTick>=5){ saveTick=0; save(state); }
-  },1000);
-
-  function flush(){ state.last=Date.now(); save(state); }
-  document.addEventListener('visibilitychange',function(){ if(document.hidden) flush(); });
-  window.addEventListener('pagehide',flush);
-  window.addEventListener('beforeunload',flush);
-
-  sceneInit();
-  render();
-  requestAnimationFrame(sceneFrame);
 })();
 </script>
 </body>
