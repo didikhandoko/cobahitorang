@@ -196,7 +196,7 @@
         <div class="t" id="startT">Ketuk untuk mulai kamera</div>
         <div class="s" id="startS">Izinkan akses kamera saat diminta. Arahkan ke objek, lalu ketuk area gambar untuk memindahkan titik ambil.</div>
       </div>
-      <div class="mag" id="mag"></div>
+      <canvas class="mag" id="mag" width="86" height="86"></canvas>
       <div class="ret" id="ret"></div>
       <div class="live" id="live">
         <div class="sw" id="liveSw"></div>
@@ -362,7 +362,9 @@
   var startBtn=$('startBtn'), flipBtn=$('flipBtn'), torchBtn=$('torchBtn'),
       pickBtn=$('pickBtn'), fileEl=$('file'), grabBtn=$('grabBtn');
 
-  var magCtx=(function(){ mag.width=86; mag.height=86; return mag.getContext('2d',{willReadFrequently:true}); })();
+  var magCtx=null;
+  try{ mag.width=86; mag.height=86; magCtx=mag.getContext('2d',{willReadFrequently:true}); }
+  catch(e){ magCtx=null; if(mag) mag.style.display='none'; }
   var samp=document.createElement('canvas'); samp.width=samp.height=9;
   var sctx=samp.getContext('2d',{willReadFrequently:true});
 
@@ -402,6 +404,7 @@
     }catch(e){ return null; }  // mis. gambar lintas-asal
   }
   function drawMag(px,py){
+    if(!magCtx) return;
     var m=srcAt(px,py); if(!m){ return; }
     magCtx.imageSmoothingEnabled=false;
     magCtx.clearRect(0,0,86,86);
@@ -529,6 +532,27 @@
     });
   }
 
+  function diagnose(){
+    if(mode!=='kamera') return;
+    if(!isSecure()){
+      setStartMsg('Perlu koneksi aman (https)','Kamera hanya jalan di https:// atau localhost.',true); return;
+    }
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      setStartMsg('Kamera tidak tersedia di browser ini','Sepertinya halaman dibuka lewat browser dalam-aplikasi (link diketuk dari dalam WA/IG/FB/TikTok). Ketuk menu ⋯ → "Buka di Chrome/Safari", atau pakai mode "Dari Foto".',true);
+      return;
+    }
+    try{
+      if(navigator.permissions && navigator.permissions.query){
+        navigator.permissions.query({name:'camera'}).then(function(p){
+          if(mode!=='kamera') return;
+          if(p.state==='denied'){
+            setStartMsg('Izin kamera diblokir','Ketuk ikon gembok/kamera di bilah alamat → izinkan Kamera → muat ulang. iPhone: Pengaturan → Safari → Kamera → Izinkan.',true);
+          }
+        }).catch(function(){});
+      }
+    }catch(e){}
+  }
+
   startBtn.addEventListener('click',function(){
     if(stage.classList.contains('live')) stopCam(); else startCam();
   });
@@ -568,7 +592,7 @@
       stage.classList.remove('foto');
       $('camCtrl').style.display='flex'; $('fotoCtrl').style.display='none';
       setStartMsg('Ketuk untuk mulai kamera','Izinkan akses kamera saat diminta. Arahkan ke objek, lalu ketuk area gambar untuk memindahkan titik ambil.',false);
-      stage.classList.remove('ready'); grabBtn.disabled=true;
+      stage.classList.remove('ready'); grabBtn.disabled=true; diagnose();
     }else{
       stopCam();
       stage.classList.add('foto');
@@ -671,6 +695,7 @@
   });
 
   renderPalette();
+  diagnose();
 
   window.addEventListener('resize',function(){
     if(stage.classList.contains('ready')){
