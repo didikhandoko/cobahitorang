@@ -107,7 +107,7 @@
   footer b{color:var(--teal);font-weight:800;}
 
   /* ---------- KHUSUS APLIKASI: PANGGUNG KAMERA (gelap) ---------- */
-  .stage{position:relative;width:100%;aspect-ratio:3/4;max-height:64vh;background:#0b1220;
+  .stage{position:relative;width:100%;aspect-ratio:3/4;max-height:64vh;min-height:280px;background:#0b1220;
     border-radius:14px;overflow:hidden;border:1px solid var(--line);
     touch-action:none;user-select:none;}
   .stage video,.stage img{position:absolute;inset:0;width:100%;height:100%;
@@ -456,6 +456,7 @@
   var dragging=false;
   stage.addEventListener('pointerdown',function(e){
     if(!stage.classList.contains('ready')) return;
+    if(mode==='kamera' && cam.paused){ try{ cam.play(); }catch(_){} }
     dragging=true; try{ stage.setPointerCapture(e.pointerId); }catch(_){}
     setRetFromEvent(e);
   });
@@ -493,10 +494,16 @@
 
   function onCam(s){
     stream=s; track=s.getVideoTracks()[0]; cam.srcObject=s;
+    try{ cam.muted=true; cam.setAttribute('playsinline',''); }catch(_){}
     var go=function(){
-      cam.play().catch(function(){});
-      stage.classList.add('live','ready');
-      stat('Kamera aktif.','ok');
+      stage.classList.add('live','ready');          // tampilkan DULU
+      try{ cam.muted=true; }catch(_){}
+      var p=null; try{ p=cam.play(); }catch(_){}     // baru putar
+      if(p && p.then){
+        p.then(function(){ stat('Kamera aktif.','ok'); })
+         .catch(function(){ try{ cam.play(); }catch(_){}
+           stat('Kamera aktif — jika gambar masih hitam, ketuk area gambar sekali.','ok'); });
+      } else stat('Kamera aktif.','ok');
       startBtn.innerHTML='<i class="fas fa-stop"></i> Stop';
       flipBtn.disabled=false;
       centerReticle(); refreshLive(); startLoop();
