@@ -222,6 +222,8 @@
     <button class="btn primary block" id="grabBtn" style="margin-top:12px" disabled>
       <i class="fas fa-crosshairs"></i> Ambil warna ini
     </button>
+
+    <div id="camStat" class="note" style="margin-top:10px;display:none"></div>
   </div>
 
   <!-- WARNA TERPILIH -->
@@ -473,12 +475,20 @@
     ic.style.color=warn?'#fca5a5':'';
   }
 
+  function stat(msg,kind){
+    var el=$('camStat'); if(!el) return;
+    if(!msg){ el.style.display='none'; el.innerHTML=''; return; }
+    el.style.display='block';
+    el.innerHTML='<b>Status kamera:</b> '+msg;
+    el.style.color = kind==='err' ? '#dc2626' : (kind==='ok' ? '#16a34a' : '#374151');
+  }
+
   function stopCam(){
     stopLoop();
     if(stream){ stream.getTracks().forEach(function(t){ t.stop(); }); stream=null; track=null; }
     stage.classList.remove('live','ready'); torchOn=false;
     startBtn.innerHTML='<i class="fas fa-power-off"></i> Mulai';
-    flipBtn.disabled=true; torchBtn.disabled=true; grabBtn.disabled=true;
+    flipBtn.disabled=true; torchBtn.disabled=true; grabBtn.disabled=true; stat('');
   }
 
   function onCam(s){
@@ -486,6 +496,7 @@
     var go=function(){
       cam.play().catch(function(){});
       stage.classList.add('live','ready');
+      stat('Kamera aktif.','ok');
       startBtn.innerHTML='<i class="fas fa-stop"></i> Stop';
       flipBtn.disabled=false;
       centerReticle(); refreshLive(); startLoop();
@@ -511,20 +522,21 @@
       t='Gagal membuka kamera';
       s='Kemungkinan browser dalam-aplikasi (IG/FB/TikTok/WA). Buka langsung di Chrome/Safari. Detail: '+name+(err&&err.message?' — '+err.message:'');
     }
-    setStartMsg(t,s,true); toast(t);
+    setStartMsg(t,s,true); toast(t); stat(t+' \u2014 '+s,'err');
   }
 
   function startCam(){
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      setStartMsg('Kamera tidak tersedia','Browser ini tak menyediakan akses kamera — sering terjadi di browser dalam-aplikasi. Buka langsung di Chrome/Safari, atau pakai mode "Dari Foto".',true);
-      toast('Kamera tidak tersedia'); return;
+      setStartMsg('Kamera tidak tersedia','Sepertinya halaman dibuka lewat browser dalam-aplikasi (link diketuk dari dalam WA/IG/FB/TikTok). Ketuk menu \u22ef \u2192 "Buka di Chrome/Safari", atau pakai mode "Dari Foto".',true);
+      toast('Kamera tidak tersedia'); stat('Kamera tidak tersedia di browser ini (kemungkinan browser dalam-aplikasi).','err'); return;
     }
     if(!isSecure()){
       setStartMsg('Perlu koneksi aman (https)','Kamera hanya jalan di https:// atau localhost. Buka lewat didikhand.vercel.app, atau pakai mode "Dari Foto".',true);
-      toast('Kamera perlu https'); return;
+      toast('Kamera perlu https'); stat('Perlu koneksi https untuk mengakses kamera.','err'); return;
     }
     stopCam();
     startBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Membuka…';
+    stat('Meminta izin\u2026 tekan \u201cIzinkan\u201d bila muncul kotak permintaan kamera.');
     var primary={ video:{ facingMode:{ideal:st.facing} }, audio:false };
     navigator.mediaDevices.getUserMedia(primary).then(onCam).catch(function(){
       // fallback paling longgar: kamera apa pun
