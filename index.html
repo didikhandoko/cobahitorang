@@ -463,6 +463,13 @@
   /* ---------- KAMERA ---------- */
   function isSecure(){ return window.isSecureContext || location.hostname==='localhost' || location.protocol==='https:'; }
 
+  function setStartMsg(t,s,warn){
+    $('startT').textContent=t; $('startS').textContent=s;
+    var ic=$('startlay').querySelector('i');
+    ic.className=warn?'fas fa-triangle-exclamation':'fas fa-camera';
+    ic.style.color=warn?'#fca5a5':'';
+  }
+
   function stopCam(){
     stopLoop();
     if(stream){ stream.getTracks().forEach(function(t){ t.stop(); }); stream=null; track=null; }
@@ -471,42 +478,54 @@
     flipBtn.disabled=true; torchBtn.disabled=true; grabBtn.disabled=true;
   }
 
+  function onCam(s){
+    stream=s; track=s.getVideoTracks()[0]; cam.srcObject=s;
+    var go=function(){
+      cam.play().catch(function(){});
+      stage.classList.add('live','ready');
+      startBtn.innerHTML='<i class="fas fa-stop"></i> Stop';
+      flipBtn.disabled=false;
+      centerReticle(); refreshLive(); startLoop();
+      try{ var cap=track.getCapabilities?track.getCapabilities():{}; torchBtn.disabled=!('torch' in cap); }
+      catch(e){ torchBtn.disabled=true; }
+    };
+    if(cam.readyState>=1) go(); else cam.onloadedmetadata=go;
+  }
+
+  function onCamErr(err){
+    stopCam();
+    var name=(err&&err.name)||'Error', t, s;
+    if(name==='NotAllowedError'||name==='SecurityError'){
+      t='Akses kamera ditolak';
+      s='Ketuk ikon gembok / kamera di bilah alamat → izinkan Kamera untuk situs ini, lalu muat ulang. Di iPhone: Pengaturan → Safari → Kamera → Izinkan.';
+    } else if(name==='NotFoundError'||name==='OverconstrainedError'){
+      t='Kamera tidak ditemukan';
+      s='Perangkat ini sepertinya tak punya kamera yang bisa dipakai browser. Gunakan mode "Dari Foto".';
+    } else if(name==='NotReadableError'||name==='TrackStartError'||name==='AbortError'){
+      t='Kamera sedang dipakai';
+      s='Tutup aplikasi atau tab lain yang memakai kamera, lalu coba lagi.';
+    } else {
+      t='Gagal membuka kamera';
+      s='Kemungkinan browser dalam-aplikasi (IG/FB/TikTok/WA). Buka langsung di Chrome/Safari. Detail: '+name+(err&&err.message?' — '+err.message:'');
+    }
+    setStartMsg(t,s,true); toast(t);
+  }
+
   function startCam(){
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      $('startT').textContent='Kamera tidak didukung'; $('startS').textContent='Browser ini tidak menyediakan akses kamera. Coba mode "Dari Foto".'; return;
+      setStartMsg('Kamera tidak tersedia','Browser ini tak menyediakan akses kamera — sering terjadi di browser dalam-aplikasi. Buka langsung di Chrome/Safari, atau pakai mode "Dari Foto".',true);
+      toast('Kamera tidak tersedia'); return;
     }
     if(!isSecure()){
-      $('startT').textContent='Perlu koneksi aman (https)';
-      $('startS').textContent='Kamera hanya jalan di https:// atau localhost. Buka lewat didikhand.vercel.app, atau pakai mode "Dari Foto".';
+      setStartMsg('Perlu koneksi aman (https)','Kamera hanya jalan di https:// atau localhost. Buka lewat didikhand.vercel.app, atau pakai mode "Dari Foto".',true);
       toast('Kamera perlu https'); return;
     }
     stopCam();
     startBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Membuka…';
-    navigator.mediaDevices.getUserMedia({
-      video:{ facingMode:{ideal:st.facing}, width:{ideal:1920}, height:{ideal:1080} }, audio:false
-    }).then(function(s){
-      stream=s; track=s.getVideoTracks()[0]; cam.srcObject=s;
-      cam.onloadedmetadata=function(){
-        cam.play();
-        stage.classList.add('live','ready');
-        startBtn.innerHTML='<i class="fas fa-stop"></i> Stop';
-        flipBtn.disabled=false;
-        centerReticle(); refreshLive(); startLoop();
-        // cek dukungan senter
-        try{
-          var cap=track.getCapabilities?track.getCapabilities():{};
-          torchBtn.disabled=!('torch' in cap);
-        }catch(e){ torchBtn.disabled=true; }
-      };
-    }).catch(function(err){
-      stage.classList.remove('live','ready');
-      startBtn.innerHTML='<i class="fas fa-power-off"></i> Mulai';
-      var msg='Gagal membuka kamera';
-      if(err && (err.name==='NotAllowedError'||err.name==='SecurityError')) msg='Akses kamera ditolak';
-      else if(err && err.name==='NotFoundError') msg='Kamera tidak ditemukan';
-      $('startT').textContent=msg;
-      $('startS').textContent='Periksa izin kamera di browser, atau gunakan mode "Dari Foto".';
-      toast(msg);
+    var primary={ video:{ facingMode:{ideal:st.facing} }, audio:false };
+    navigator.mediaDevices.getUserMedia(primary).then(onCam).catch(function(){
+      // fallback paling longgar: kamera apa pun
+      navigator.mediaDevices.getUserMedia({ video:true, audio:false }).then(onCam).catch(onCamErr);
     });
   }
 
@@ -548,8 +567,7 @@
     if(v==='kamera'){
       stage.classList.remove('foto');
       $('camCtrl').style.display='flex'; $('fotoCtrl').style.display='none';
-      $('startT').textContent='Ketuk untuk mulai kamera';
-      $('startS').textContent='Izinkan akses kamera saat diminta. Arahkan ke objek, lalu ketuk area gambar untuk memindahkan titik ambil.';
+      setStartMsg('Ketuk untuk mulai kamera','Izinkan akses kamera saat diminta. Arahkan ke objek, lalu ketuk area gambar untuk memindahkan titik ambil.',false);
       stage.classList.remove('ready'); grabBtn.disabled=true;
     }else{
       stopCam();
