@@ -7,19 +7,20 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 
-<title>Eyedropper — DIDIKHAND</title>
+<title>Kode Nada Suara — DIDIKHAND</title>
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231e5a7b'/%3E%3Cstop offset='1' stop-color='%236ab7ba'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='system-ui,sans-serif' font-size='27' font-weight='700' fill='%23fff' text-anchor='middle'%3EDH%3C/text%3E%3C/svg%3E">
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
 <style>
+  /* ============================================================
+     DESIGN TOKENS — DIDIKHAND (selaras dengan portal index.html)
+     ============================================================ */
   :root{
-    --bg:#f9fafb; --card:#ffffff;
-    --teal:#1e5a7b; --teal2:#6ab7ba;
-    --pink:#ec4899; --pink6:#db2777;
-    --ink:#1f2937; --sub:#374151; --muted:#9ca3af;
-    --line:#e5e7eb; --line2:#f3f4f6;
+    --bg:#f9fafb; --card:#ffffff; --teal:#1e5a7b; --teal2:#6ab7ba;
+    --pink:#ec4899; --pink6:#db2777; --ink:#1f2937; --sub:#374151;
+    --muted:#9ca3af; --line:#e5e7eb; --line2:#f3f4f6;
     --green:#16a34a; --blue:#2563eb; --amber:#d97706; --red:#dc2626;
     --shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04);
     --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
@@ -30,7 +31,6 @@
     padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);min-height:100vh;}
   .wrap{max-width:640px;margin:0 auto;padding:16px 16px 32px;}
 
-  /* HEADER */
   header{display:flex;align-items:center;gap:14px;margin-bottom:16px;
     background:linear-gradient(135deg,#1e5a7b 0%,#6ab7ba 100%);color:#fff;
     border-radius:16px;padding:18px;box-shadow:var(--shadow);}
@@ -45,26 +45,46 @@
     display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
   header .back:active{background:rgba(255,255,255,.28);}
 
-  /* KARTU & LABEL */
   .card{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:16px;
     margin-bottom:14px;box-shadow:var(--shadow);}
   .cap{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
     font-weight:700;margin-bottom:9px;display:block;}
 
-  input[type=text]{width:100%;background:#f9fafb;border:1px solid var(--line);color:var(--ink);
+  label.fld{display:block;margin-bottom:14px;}
+  input[type=text],input[type=number],select,textarea{
+    width:100%;background:#f9fafb;border:1px solid var(--line);color:var(--ink);
     border-radius:12px;padding:12px;font-size:15px;font-family:inherit;line-height:1.5;}
-  input:focus{outline:none;border-color:var(--teal2);box-shadow:0 0 0 3px rgba(106,183,186,.25);background:#fff;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--teal2);
+    box-shadow:0 0 0 3px rgba(106,183,186,.25);background:#fff;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 
-  /* SEGMENTED */
+  label.slide{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted);}
+  input[type=range]{-webkit-appearance:none;appearance:none;flex:1;width:100%;height:6px;
+    border-radius:5px;background:#e5e7eb;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;
+    border-radius:50%;background:var(--pink);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border:2px solid #fff;
+    border-radius:50%;background:var(--pink);}
+
   .seg{display:flex;background:#f3f4f6;border:1px solid var(--line);border-radius:11px;
     padding:3px;gap:3px;margin-bottom:12px;}
   .seg button{flex:1;background:transparent;border:0;color:var(--muted);padding:11px 6px;
     border-radius:8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;}
   .seg button.on{background:var(--teal);color:#fff;box-shadow:0 4px 10px -4px rgba(30,90,123,.6);}
 
-  /* TOMBOL */
+  .opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;
+    border-bottom:1px solid var(--line2);}
+  .opt:last-child{border-bottom:0;}
+  .opt span{font-size:14px;color:var(--sub);}
+  .opt small{color:var(--muted);font-size:11px;display:block;margin-top:2px;}
+  .sw{width:50px;height:28px;border-radius:999px;background:#e5e7eb;border:1px solid var(--line);
+    position:relative;flex:0 0 auto;cursor:pointer;transition:.2s;}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s;}
+  .sw.on{background:var(--teal);border-color:var(--teal);} .sw.on::after{left:24px;}
+
   .row{display:flex;gap:10px;flex-wrap:wrap;}
-  .btn{flex:1;min-width:110px;border:0;border-radius:12px;padding:14px;font-size:15px;
+  .btn{flex:1;min-width:120px;border:0;border-radius:12px;padding:14px;font-size:15px;
     font-weight:800;font-family:inherit;cursor:pointer;text-align:center;text-decoration:none;
     display:inline-flex;align-items:center;justify-content:center;gap:8px;}
   .btn.primary{background:var(--pink);color:#fff;box-shadow:0 8px 15px -6px rgba(236,72,153,.5);}
@@ -72,18 +92,15 @@
   .btn.ghost{background:#fff;color:var(--sub);border:1px solid var(--line);}
   .btn.teal{background:var(--teal);color:#fff;}
   .btn.block{width:100%;flex:none;}
+  .btn.sm{min-width:0;flex:1;padding:11px 8px;font-size:13px;font-weight:700;}
   .btn:disabled{opacity:.45;cursor:not-allowed;}
 
   .result{background:#eef6f7;border:1px solid #cfe6e7;border-radius:12px;padding:14px;
     color:var(--teal);font-size:13px;line-height:1.7;}
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
   .stat{background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;}
-  .stat b{display:block;font-size:16px;color:var(--ink);}
+  .stat b{display:block;font-size:18px;color:var(--ink);}
   .stat span{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
-
-  .tag{display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;}
-  .tag.ok{background:#dcfce7;color:#166534;} .tag.info{background:#dbeafe;color:#1e40af;}
-  .tag.warn{background:#fef3c7;color:#92400e;} .tag.bad{background:#fee2e2;color:#991b1b;}
 
   details{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:4px 16px;
     margin-bottom:14px;box-shadow:var(--shadow);}
@@ -97,195 +114,252 @@
   .note b{color:var(--sub);}
   .disc{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:12px;
     padding:12px;font-size:11.5px;line-height:1.7;}
-  .empty{text-align:center;color:var(--muted);font-size:13px;padding:18px 0;}
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;
     background:var(--teal);color:#fff;padding:11px 18px;border-radius:12px;font-weight:800;
     font-size:13px;box-shadow:var(--shadow);transition:.25s;z-index:50;pointer-events:none;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
   footer{text-align:center;padding:18px 6px 6px;color:var(--muted);font-size:10px;
     letter-spacing:.14em;text-transform:uppercase;line-height:1.9;}
   footer b{color:var(--teal);font-weight:800;}
 
-  /* ---------- KHUSUS APLIKASI: PANGGUNG KAMERA (gelap) ---------- */
-  .stage{position:relative;width:100%;aspect-ratio:3/4;max-height:64vh;min-height:280px;background:#0b1220;
-    border-radius:14px;overflow:hidden;border:1px solid var(--line);
-    touch-action:none;user-select:none;}
-  .stage video,.stage img{position:absolute;inset:0;width:100%;height:100%;
-    object-fit:cover;display:none;}
-  .stage.live video{display:block;}
-  .stage.foto img{display:block;}
-  /* overlay mulai */
-  .startlay{position:absolute;inset:0;display:flex;flex-direction:column;gap:8px;
-    align-items:center;justify-content:center;color:#cbd5e1;text-align:center;padding:20px;z-index:4;}
-  .startlay i{font-size:34px;color:var(--teal2);}
-  .startlay .t{font-size:13px;font-weight:700;}
-  .startlay .s{font-size:11px;color:#94a3b8;max-width:230px;line-height:1.6;}
-  .stage.live .startlay,.stage.foto .startlay{display:none;}
-  /* reticle */
-  .ret{position:absolute;width:46px;height:46px;margin:-23px 0 0 -23px;left:50%;top:50%;
-    border-radius:50%;border:2px solid rgba(255,255,255,.9);
-    box-shadow:0 0 0 2px rgba(0,0,0,.35),inset 0 0 0 1px rgba(0,0,0,.3);
-    pointer-events:none;z-index:3;display:none;}
-  .ret::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;
-    margin:-3px 0 0 -3px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.5);}
-  .stage.ready .ret{display:block;}
-  /* kaca pembesar */
-  .mag{position:absolute;width:86px;height:86px;border-radius:50%;z-index:5;display:none;
-    border:3px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.5);background:#000;
-    pointer-events:none;image-rendering:pixelated;}
-  .stage.ready .mag{display:block;}
-  /* chip float readout */
-  .live{position:absolute;left:10px;bottom:10px;z-index:6;display:none;align-items:center;gap:9px;
-    background:rgba(11,18,32,.72);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);
-    border-radius:12px;padding:8px 11px;}
-  .stage.ready .live{display:flex;}
-  .live .sw{width:26px;height:26px;border-radius:7px;border:1px solid rgba(255,255,255,.5);flex:0 0 auto;}
-  .live .hx{color:#fff;font-weight:800;font-size:14px;letter-spacing:.03em;
-    font-family:ui-monospace,Menlo,Consolas,monospace;}
-  .live .rgb{color:#cbd5e1;font-size:10px;margin-top:1px;}
+  /* ---------- KHUSUS APLIKASI: LAYAR DETEKSI ---------- */
+  .stage{background:linear-gradient(160deg,#12313f 0%,#1e5a7b 100%);border-radius:16px;
+    padding:22px 16px 18px;text-align:center;color:#fff;box-shadow:var(--shadow);margin-bottom:14px;}
+  .stage .big{font-size:64px;font-weight:800;line-height:1;letter-spacing:.02em;
+    min-height:70px;display:flex;align-items:center;justify-content:center;}
+  .stage .big.idle{color:rgba(255,255,255,.35);}
+  .stage .sub2{font-size:13px;color:rgba(255,255,255,.85);margin-top:6px;font-weight:600;min-height:18px;}
+  .stage .freq{font-size:11px;color:rgba(255,255,255,.55);margin-top:2px;letter-spacing:.1em;min-height:15px;}
+  /* meteran cents (setelan nada) */
+  .tuner{position:relative;height:34px;margin:14px 6px 4px;}
+  .tuner .track{position:absolute;top:14px;left:0;right:0;height:6px;border-radius:5px;
+    background:rgba(255,255,255,.15);}
+  .tuner .mid{position:absolute;top:8px;left:50%;width:2px;height:18px;background:rgba(255,255,255,.6);
+    transform:translateX(-50%);border-radius:2px;}
+  .tuner .ind{position:absolute;top:6px;width:14px;height:22px;border-radius:6px;background:var(--pink);
+    transform:translateX(-50%);transition:left .07s linear, background .1s;left:50%;
+    box-shadow:0 2px 6px rgba(0,0,0,.35);}
+  .tuner.lock .ind{background:var(--green);}
+  .tuner .lbl{position:absolute;bottom:-2px;font-size:9px;color:rgba(255,255,255,.45);}
+  .tuner .lbl.l{left:0;} .tuner .lbl.r{right:0;}
+  /* meteran level suara */
+  .level{height:8px;border-radius:5px;background:rgba(255,255,255,.15);overflow:hidden;margin:6px 6px 0;}
+  .level i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#6ab7ba,#ec4899);
+    border-radius:5px;transition:width .06s linear;}
 
-  /* baris kode warna */
-  .swbig{width:100%;height:74px;border-radius:12px;border:1px solid var(--line);margin-bottom:12px;
-    background:#e5e7eb;transition:background .15s;}
-  .codeline{display:flex;align-items:center;gap:10px;background:#f9fafb;border:1px solid var(--line);
-    border-radius:12px;padding:11px 12px;margin-bottom:9px;}
-  .codeline .k{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
-    font-weight:800;width:38px;flex:0 0 auto;}
-  .codeline .v{flex:1;min-width:0;font-size:15px;font-weight:800;color:var(--ink);
-    font-family:ui-monospace,Menlo,Consolas,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .cbtn{border:1px solid var(--line);background:#fff;color:var(--teal);border-radius:9px;
-    width:38px;height:38px;flex:0 0 auto;cursor:pointer;font-size:14px;}
-  .cbtn:active{background:#eef6f7;}
+  /* status rekam */
+  .recdot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#fff;
+    margin-right:2px;opacity:.4;}
+  .rec-on .recdot{background:#fff;opacity:1;animation:blink 1s infinite;}
+  @keyframes blink{50%{opacity:.25;}}
 
-  /* palet */
-  .palgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:9px;}
-  .paldot{position:relative;border-radius:11px;height:58px;border:1px solid var(--line);cursor:pointer;
-    display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;overflow:hidden;}
-  .paldot .lab{font-size:9px;font-weight:800;background:rgba(255,255,255,.85);color:#111;
-    padding:1px 5px;border-radius:999px;font-family:ui-monospace,Menlo,Consolas,monospace;}
-  .paldot .x{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;
-    background:rgba(0,0,0,.55);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;}
+  /* keluaran kode */
+  .codeout{background:#0f172a;color:#e2e8f0;border-radius:12px;padding:14px;min-height:64px;
+    font-size:22px;line-height:1.9;word-break:break-word;letter-spacing:.03em;white-space:pre-wrap;
+    font-family:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;}
+  .codeout.nk{font-size:15px;line-height:1.8;letter-spacing:.01em;}
+  .codeout .hdr{color:#93c5fd;font-size:12.5px;font-family:var(--font);letter-spacing:0;
+    display:block;margin-bottom:5px;}
+  .codeout .ph{color:#64748b;font-size:13px;font-family:var(--font);letter-spacing:0;}
+  .codeout .bar{color:#f59e0b;font-weight:800;}
+  .codeout .rest{color:#64748b;}
+  .miniseg{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  /* tampil hanya di mode ringtone */
+  .nkonly{display:none;} body.nkmode .nkonly{display:block;}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <div class="logo"><i class="fas fa-eye-dropper"></i></div>
+    <div class="logo"><i class="fas fa-music"></i></div>
     <div>
-      <h1>Eyedropper</h1>
+      <h1>Kode Nada Suara</h1>
       <div class="sub">Didikhand</div>
     </div>
     <a class="back" href="index.html" title="Kembali ke portal"><i class="fas fa-home"></i></a>
   </header>
 
-  <!-- PANGGUNG -->
-  <div class="card">
-    <span class="cap">Pratinjau</span>
+  <!-- LAYAR DETEKSI LANGSUNG -->
+  <div class="stage">
+    <div class="big idle" id="bigNote">—</div>
+    <div class="sub2" id="noteName">Mulai mikrofon lalu senandungkan satu nada</div>
+    <div class="freq" id="noteFreq">&nbsp;</div>
+    <div class="tuner" id="tuner">
+      <div class="track"></div>
+      <div class="mid"></div>
+      <div class="ind" id="tunerInd"></div>
+      <div class="lbl l">-50</div>
+      <div class="lbl r">+50</div>
+    </div>
+    <div class="level"><i id="levelBar"></i></div>
+  </div>
 
-    <div class="seg" id="mode">
-      <button data-v="kamera" class="on"><i class="fas fa-camera"></i> Kamera</button>
-      <button data-v="foto"><i class="fas fa-image"></i> Dari Foto</button>
+  <div class="row" style="margin-bottom:14px">
+    <button class="btn primary" id="micBtn"><i class="fas fa-microphone"></i> Mulai Mikrofon</button>
+  </div>
+
+  <!-- REKAM & KELUARAN -->
+  <div class="card">
+    <span class="cap">Kode Nada</span>
+    <div class="codeout" id="codeOut"><span class="ph">Tekan “Rekam”, lalu nyanyikan melodinya. Kode not muncul di sini.</span></div>
+    <div class="note" id="nkWarn" style="display:none;color:var(--amber);margin-top:8px"></div>
+
+    <div class="stats" style="margin-top:12px">
+      <div class="stat"><b id="stNada">0</b><span>Nada</span></div>
+      <div class="stat"><b id="stBar">0</b><span>Bar</span></div>
+      <div class="stat"><b id="stJeda">0</b><span>Jeda</span></div>
     </div>
 
-    <div class="stage" id="stage">
-      <video id="cam" playsinline muted autoplay></video>
-      <img id="photo" alt="">
-      <div class="startlay" id="startlay">
-        <i class="fas fa-camera"></i>
-        <div class="t" id="startT">Ketuk untuk mulai kamera</div>
-        <div class="s" id="startS">Izinkan akses kamera saat diminta. Arahkan ke objek, lalu ketuk area gambar untuk memindahkan titik ambil.</div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn teal" id="recBtn"><span class="recdot"></span> Rekam</button>
+      <button class="btn ghost" id="copyBtn"><i class="fas fa-copy"></i> Salin</button>
+    </div>
+    <div class="miniseg">
+      <button class="btn ghost sm" id="barBtn"><i class="fas fa-grip-lines-vertical"></i> Bar |</button>
+      <button class="btn ghost sm" id="restBtn">0 Jeda</button>
+      <button class="btn ghost sm" id="undoBtn"><i class="fas fa-delete-left"></i> Hapus</button>
+      <button class="btn ghost sm" id="clearBtn"><i class="fas fa-trash"></i> Kosongkan</button>
+    </div>
+  </div>
+
+  <!-- PENGATURAN -->
+  <div class="card">
+    <span class="cap">Pengaturan</span>
+
+    <div class="fld">
+      <span class="cap">Jenis notasi (tampilan &amp; kode)</span>
+      <div class="seg" id="segNotasi">
+        <button data-v="angka" class="on">Angka 1–7</button>
+        <button data-v="solfa">Do Re Mi</button>
+        <button data-v="huruf">Huruf C–B</button>
       </div>
-      <canvas class="mag" id="mag" width="86" height="86"></canvas>
-      <div class="ret" id="ret"></div>
-      <div class="live" id="live">
-        <div class="sw" id="liveSw"></div>
-        <div>
-          <div class="hx" id="liveHx">#------</div>
-          <div class="rgb" id="liveRgb">rgb(–, –, –)</div>
+    </div>
+
+    <div class="fld">
+      <span class="cap">Format keluaran kode</span>
+      <div class="seg" id="segFmt">
+        <button data-v="sel" class="on">Notasi terpilih</button>
+        <button data-v="nokia">Ringtone (Composer)</button>
+      </div>
+      <div class="note" id="fmtNote" style="margin-top:2px"></div>
+    </div>
+
+    <label class="fld" id="doWrap">
+      <span class="cap">Nada dasar (do =)</span>
+      <select id="doKey">
+        <option value="0">C (do = C)</option>
+        <option value="1">C# / Db</option>
+        <option value="2">D</option>
+        <option value="3">D# / Eb</option>
+        <option value="4">E</option>
+        <option value="5">F</option>
+        <option value="6">F# / Gb</option>
+        <option value="7">G</option>
+        <option value="8">G# / Ab</option>
+        <option value="9">A</option>
+        <option value="10">A# / Bb</option>
+        <option value="11">B</option>
+      </select>
+    </label>
+
+    <label class="fld">
+      <span class="cap">Kepekaan suara · <span id="ambVal" style="color:var(--pink)">12</span></span>
+      <label class="slide"><i class="fas fa-volume-low"></i>
+        <input type="range" id="ambang" min="3" max="40" value="12">
+        <i class="fas fa-volume-high"></i></label>
+      <div class="note" style="margin-top:4px">Kecil = lebih peka (menangkap suara pelan). Besar = anti-berisik.</div>
+    </label>
+
+    <label class="fld">
+      <span class="cap">Kestabilan nada · <span id="stbVal" style="color:var(--pink)">3</span></span>
+      <label class="slide"><i class="fas fa-bolt"></i>
+        <input type="range" id="stabil" min="2" max="8" value="3">
+        <i class="fas fa-anchor"></i></label>
+      <div class="note" style="margin-top:4px">Berapa lama satu nada harus ditahan sebelum dicatat. Besar = lebih akurat, tapi harus lebih sabar.</div>
+    </label>
+
+    <div class="opt">
+      <div><span>Catat jeda sebagai 0</span><small>Saat ada diam/napas, sisipkan angka 0</small></div>
+      <div class="sw on" id="swJeda"></div>
+    </div>
+  </div>
+
+  <!-- PENGATURAN RINGTONE (hanya muncul saat format = Ringtone) -->
+  <div class="card nkonly" id="nkCard">
+    <span class="cap"><i class="fas fa-bell"></i> Pengaturan Ringtone (Composer)</span>
+
+    <label class="fld">
+      <span class="cap">Judul lagu</span>
+      <input type="text" id="nkTitle" placeholder="Kode Nada" value="Kode Nada">
+    </label>
+
+    <div class="row2">
+      <label class="fld">
+        <span class="cap">Tempo (BPM)</span>
+        <input type="number" id="nkTempo" min="40" max="300" value="120" inputmode="numeric">
+      </label>
+      <div class="fld">
+        <span class="cap">Durasi tiap nada</span>
+        <div class="seg" id="segDur">
+          <button data-v="4">1/4</button>
+          <button data-v="8" class="on">1/8</button>
+          <button data-v="16">1/16</button>
         </div>
       </div>
     </div>
 
-    <!-- Kontrol KAMERA -->
-    <div class="row" id="camCtrl" style="margin-top:12px">
-      <button class="btn teal" id="startBtn"><i class="fas fa-power-off"></i> Mulai</button>
-      <button class="btn ghost" id="flipBtn" disabled><i class="fas fa-camera-rotate"></i> Balik</button>
-      <button class="btn ghost" id="torchBtn" disabled><i class="fas fa-bolt"></i> Senter</button>
+    <div class="fld" style="margin-bottom:0">
+      <span class="cap">Geser oktaf · <span id="shVal" style="color:var(--pink)">0</span></span>
+      <div class="seg" id="segShift">
+        <button data-v="-2">−2</button>
+        <button data-v="-1">−1</button>
+        <button data-v="0" class="on">0</button>
+        <button data-v="1">+1</button>
+        <button data-v="2">+2</button>
+      </div>
+      <div class="note" style="margin-top:2px">Composer hanya menerima <b>oktaf 1–9</b> (a1 = A4). Bila suaramu terlalu rendah/tinggi, geser agar nada masuk jangkauan.</div>
     </div>
-    <!-- Kontrol FOTO -->
-    <div class="row" id="fotoCtrl" style="margin-top:12px;display:none">
-      <button class="btn teal" id="pickBtn"><i class="fas fa-folder-open"></i> Pilih Foto</button>
-    </div>
-    <input type="file" id="file" accept="image/*" style="display:none">
-
-    <button class="btn primary block" id="grabBtn" style="margin-top:12px" disabled>
-      <i class="fas fa-crosshairs"></i> Ambil warna ini
-    </button>
-
-    <div id="camStat" class="note" style="margin-top:10px;display:none"></div>
-  </div>
-
-  <!-- WARNA TERPILIH -->
-  <div class="card">
-    <span class="cap">Warna terpilih</span>
-    <div class="swbig" id="detSw"></div>
-
-    <div class="codeline">
-      <span class="k">Hex</span>
-      <span class="v" id="detHex">#______</span>
-      <button class="cbtn" data-copy="hex" title="Salin HEX"><i class="fas fa-copy"></i></button>
-    </div>
-    <div class="codeline">
-      <span class="k">RGB</span>
-      <span class="v" id="detRgb">rgb(–, –, –)</span>
-      <button class="cbtn" data-copy="rgb" title="Salin RGB"><i class="fas fa-copy"></i></button>
-    </div>
-    <div class="codeline">
-      <span class="k">HSL</span>
-      <span class="v" id="detHsl">hsl(–, –, –)</span>
-      <button class="cbtn" data-copy="hsl" title="Salin HSL"><i class="fas fa-copy"></i></button>
-    </div>
-
-    <div class="stats" style="margin-top:4px">
-      <div class="stat"><b id="stName">—</b><span>Nama perkiraan</span></div>
-      <div class="stat"><b id="stLum">—</b><span>Kecerahan</span></div>
-      <div class="stat"><b id="stTxt">—</b><span>Teks di atasnya</span></div>
-    </div>
-  </div>
-
-  <!-- PALET -->
-  <div class="card">
-    <span class="cap" style="display:flex;justify-content:space-between;align-items:center">
-      <span>Palet tersimpan</span>
-      <span id="palCount" style="color:var(--teal)">0</span>
-    </span>
-    <div id="palWrap">
-      <div class="empty" id="palEmpty">Belum ada warna. Tekan <b>Ambil warna ini</b> untuk menyimpan.</div>
-      <div class="palgrid" id="palGrid"></div>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <button class="btn ghost" id="copyAll"><i class="fas fa-list"></i> Salin semua HEX</button>
-      <button class="btn ghost" id="clearAll"><i class="fas fa-trash"></i> Kosongkan</button>
-    </div>
-    <p class="note">Ketuk kotak warna untuk menyalin HEX-nya, atau tombol ✕ untuk menghapus. Palet tersimpan di perangkat ini.</p>
   </div>
 
   <details>
-    <summary>Cara pakai</summary>
+    <summary>Cara pakai &amp; keterangan</summary>
     <p class="note" style="margin-top:0">
-      <b>1.</b> Pilih mode <b>Kamera</b> lalu tekan <b>Mulai</b>, atau <b>Dari Foto</b> untuk mengambil dari gambar tersimpan.<br>
-      <b>2.</b> Ketuk / geser di area gambar untuk memindahkan titik lingkaran ke warna yang diincar. Kaca pembesar membantu presisi.<br>
-      <b>3.</b> Tekan <b>Ambil warna ini</b> untuk mengunci warna → muncul di kartu <b>Warna terpilih</b> dan masuk palet.<br>
-      <b>4.</b> Salin kode HEX / RGB / HSL dengan tombol salin di sampingnya.
+      <b>Cara terbaik:</b> pegang HP dekat mulut, senandungkan (“nununu…”) atau nyanyikan
+      <b>satu nada per waktu</b> dengan jelas. Aplikasi ini menangkap <b>satu suara</b> —
+      belum bisa akor/banyak nada sekaligus. Bersiul juga bisa.
+    </p>
+    <p class="note">
+      <b>Titik oktaf (notasi angka/solfa):</b> titik di atas angka = satu oktaf lebih tinggi
+      (mis. 1&#775;), titik di bawah = satu oktaf lebih rendah (mis. 1&#803;). Tanpa titik = oktaf tengah.
+    </p>
+    <p class="note">
+      <b>Nada yang sama berturut-turut:</b> beri jeda/napas singkat di antaranya agar terbaca
+      sebagai dua nada (mis. “5 5”). Kalau tanpa jeda, akan terhitung satu nada panjang.
+    </p>
+    <p class="note">
+      <b>Tombol manual:</b> <b>Bar |</b> menyisipkan garis birama, <b>0 Jeda</b> menambah tanda diam,
+      <b>Hapus</b> membuang not terakhir. Mengubah notasi/nada dasar akan menulis ulang seluruh kode
+      secara otomatis.
+    </p>
+    <p class="note">
+      <b>Kirim ke Composer Ringtone:</b> pada <b>Format keluaran kode</b> pilih <b>Ringtone (Composer)</b>.
+      Kode berubah jadi gaya Nokia (mis. <b>8e2 8#d2 4a1</b>) beserta baris judul &amp; tempo.
+      Tekan <b>Salin</b>, buka aplikasi <b>Composer Ringtone</b>, tempel di kotak kode, lalu <b>Muat Kode</b>.
+      Semua nada diberi <b>durasi sama</b> (aplikasi ini tidak merekam panjang nada) — atur panjangnya
+      lewat <b>Durasi tiap nada</b>, dan rapikan sendiri di Composer bila perlu. Composer hanya kenal
+      oktaf 1–9; pakai <b>Geser oktaf</b> agar suara rendah/tinggi tetap masuk.
     </p>
   </details>
 
   <div class="card">
-    <p class="disc" style="margin:0"><i class="fas fa-triangle-exclamation"></i>
-      <b>Catatan &amp; batasan.</b>
-      Kamera & pemilihan foto hanya berjalan di alamat <b>https://</b> (contoh: didikhand.vercel.app) atau <b>localhost</b> — di file lokal biasa kamera akan diblokir browser.
-      Kode warna bersifat <b>perkiraan</b>: sangat dipengaruhi cahaya ruangan, bayangan, serta <i>white balance</i> & filter kamera. Untuk warna yang tepat (mis. mencocokkan cat), gunakan pencahayaan merata dan bandingkan beberapa pengambilan. "Nama perkiraan" hanyalah label warna terdekat, bukan nama resmi/merek.</p>
+    <p class="disc" style="margin:0"><i class="fas fa-circle-info"></i>
+      <b>Catatan &amp; batasan.</b> Perlu izin mikrofon dan alamat <b>https://</b> (di Vercel sudah aman;
+      di file lokal buka lewat <b>localhost</b>). Deteksi nada dari suara bersifat <b>perkiraan</b> —
+      akurasi turun bila ramai/bergema, suara sengau, atau di ujung jangkauan suara. Hasil sebaiknya
+      diperiksa telinga sebelum dipakai. Tidak ada data yang dikirim ke mana pun; semua diproses di HP.
+    </p>
   </div>
 
   <footer>
@@ -297,15 +371,14 @@
 
 <script>
 (function(){
+  /* ---------- HELPER (dari template) ---------- */
   var $=function(id){ return document.getElementById(id); };
   var _tt=null;
   function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show');
     clearTimeout(_tt); _tt=setTimeout(function(){ t.classList.remove('show'); },1800); }
-
-  var KEY='dh-eyedropper';
+  var KEY='dh-kodenada';
   function save(o){ try{ localStorage.setItem(KEY,JSON.stringify(o)); }catch(e){} }
   function load(def){ try{ var s=localStorage.getItem(KEY); return s?Object.assign({},def,JSON.parse(s)):def; }catch(e){ return def; } }
-
   function bindSeg(id,cb){
     var el=$(id); if(!el) return;
     el.querySelectorAll('button').forEach(function(b){
@@ -315,413 +388,343 @@
       });
     });
   }
-
-  /* ---------- util warna ---------- */
-  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
-  function hex2(n){ n=clamp(Math.round(n),0,255).toString(16); return n.length<2?'0'+n:n; }
-  function toHex(r,g,b){ return '#'+(hex2(r)+hex2(g)+hex2(b)).toUpperCase(); }
-  function toRgb(r,g,b){ return 'rgb('+Math.round(r)+', '+Math.round(g)+', '+Math.round(b)+')'; }
-  function rgb2hsl(r,g,b){
-    r/=255; g/=255; b/=255;
-    var mx=Math.max(r,g,b),mn=Math.min(r,g,b),h,s,l=(mx+mn)/2,d=mx-mn;
-    if(d===0){ h=0; s=0; }
-    else{
-      s=l>0.5? d/(2-mx-mn) : d/(mx+mn);
-      switch(mx){
-        case r: h=(g-b)/d+(g<b?6:0); break;
-        case g: h=(b-r)/d+2; break;
-        default: h=(r-g)/d+4;
-      }
-      h/=6;
-    }
-    return [Math.round(h*360),Math.round(s*100),Math.round(l*100)];
-  }
-  function toHsl(r,g,b){ var h=rgb2hsl(r,g,b); return 'hsl('+h[0]+', '+h[1]+'%, '+h[2]+'%)'; }
-  // luminance relatif (0..255) untuk memutuskan teks gelap/terang
-  function lumaByte(r,g,b){ return 0.2126*r+0.7152*g+0.0722*b; }
-
-  // Nama warna perkiraan (label terdekat, bukan resmi)
-  var NAMES=[
-    ['Hitam',17,17,17],['Putih',248,250,252],['Abu-abu',107,114,128],['Perak',192,196,204],
-    ['Merah',225,29,29],['Merah tua',127,29,29],['Merah muda',236,72,153],['Pink',249,168,212],
-    ['Oranye',249,115,22],['Coklat',124,72,20],['Krem',245,230,200],['Kuning',234,179,8],
-    ['Emas',212,175,55],['Hijau',22,163,74],['Hijau tua',20,83,45],['Hijau muda',132,204,22],
-    ['Toska',20,184,166],['Biru muda',56,189,248],['Biru',37,99,235],['Biru tua',30,58,138],
-    ['Ungu',124,58,237],['Lavender',196,181,253]
-  ];
-  function nearestName(r,g,b){
-    var best=1e12,nm='—';
-    for(var i=0;i<NAMES.length;i++){
-      var n=NAMES[i], dr=r-n[1],dg=g-n[2],db=b-n[3];
-      var d=dr*dr*0.7+dg*dg*1.0+db*db*0.5; // sedikit membobot hijau (mata lebih peka)
-      if(d<best){ best=d; nm=n[0]; }
-    }
-    return nm;
-  }
-
-  /* ---------- elemen ---------- */
-  var stage=$('stage'), cam=$('cam'), photo=$('photo'), ret=$('ret'), mag=$('mag'), live=$('live');
-  var startBtn=$('startBtn'), flipBtn=$('flipBtn'), torchBtn=$('torchBtn'),
-      pickBtn=$('pickBtn'), fileEl=$('file'), grabBtn=$('grabBtn');
-
-  var magCtx=null;
-  try{ mag.width=86; mag.height=86; magCtx=mag.getContext('2d',{willReadFrequently:true}); }
-  catch(e){ magCtx=null; if(mag) mag.style.display='none'; }
-  var samp=document.createElement('canvas'); samp.width=samp.height=9;
-  var sctx=samp.getContext('2d',{willReadFrequently:true});
-
-  var st=load({palette:[], mode:'kamera', facing:'environment'});
-
-  var mode=st.mode||'kamera';
-  var stream=null, track=null, torchOn=false;
-  var rx=0, ry=0;            // posisi reticle (px dalam stage)
-  var liveColor=null;        // {r,g,b} bacaan langsung di titik reticle
-  var loopId=null;
-
-  /* ---------- pemetaan koordinat (object-fit: cover) ---------- */
-  function srcSize(){
-    if(mode==='kamera') return [cam.videoWidth||0, cam.videoHeight||0];
-    return [photo.naturalWidth||0, photo.naturalHeight||0];
-  }
-  function srcAt(px,py){
-    var d=srcSize(), vw=d[0], vh=d[1];
-    if(!vw||!vh) return null;
-    var cw=stage.clientWidth, ch=stage.clientHeight;
-    var scale=Math.max(cw/vw, ch/vh);
-    var dw=vw*scale, dh=vh*scale, ox=(cw-dw)/2, oy=(ch-dh)/2;
-    var sx=clamp((px-ox)/scale,0,vw-1), sy=clamp((py-oy)/scale,0,vh-1);
-    return {sx:sx, sy:sy, vw:vw, vh:vh};
-  }
-  function source(){ return mode==='kamera'?cam:photo; }
-
-  /* ---------- ambil warna di titik reticle ---------- */
-  function readAt(px,py){
-    var m=srcAt(px,py); if(!m) return null;
-    try{
-      // rata-rata kotak 9x9 agar stabil
-      sctx.drawImage(source(), m.sx-4, m.sy-4, 9, 9, 0,0,9,9);
-      var data=sctx.getImageData(0,0,9,9).data, r=0,g=0,bl=0,c=0;
-      for(var i=0;i<data.length;i+=4){ r+=data[i]; g+=data[i+1]; bl+=data[i+2]; c++; }
-      return {r:r/c, g:g/c, b:bl/c};
-    }catch(e){ return null; }  // mis. gambar lintas-asal
-  }
-  function drawMag(px,py){
-    if(!magCtx) return;
-    var m=srcAt(px,py); if(!m){ return; }
-    magCtx.imageSmoothingEnabled=false;
-    magCtx.clearRect(0,0,86,86);
-    var src=source(), z=22; // ambil 22px sumber → diperbesar
-    try{ magCtx.drawImage(src, m.sx-z/2, m.sy-z/2, z, z, 0,0,86,86); }catch(e){}
-    // bidik tengah
-    magCtx.strokeStyle='rgba(255,255,255,.9)'; magCtx.lineWidth=1;
-    magCtx.strokeRect(86/2-4,86/2-4,8,8);
-    magCtx.strokeStyle='rgba(0,0,0,.5)';
-    magCtx.strokeRect(86/2-5,86/2-5,10,10);
-  }
-
-  function positionOverlays(){
-    ret.style.left=rx+'px'; ret.style.top=ry+'px'; ret.style.marginLeft='-23px'; ret.style.marginTop='-23px';
-    // kaca pembesar di atas reticle, dijaga dalam bingkai
-    var mx=clamp(rx-43, 4, stage.clientWidth-90);
-    var my=ry-100; if(my<4) my=ry+30; my=clamp(my,4,stage.clientHeight-90);
-    mag.style.left=mx+'px'; mag.style.top=my+'px';
-  }
-
-  function refreshLive(){
-    if(!stage.classList.contains('ready')) return;
-    var c=readAt(rx,ry);
-    if(c){
-      liveColor=c;
-      var hx=toHex(c.r,c.g,c.b);
-      $('liveSw').style.background=hx;
-      $('liveHx').textContent=hx;
-      $('liveRgb').textContent=toRgb(c.r,c.g,c.b);
-      drawMag(rx,ry);
-      grabBtn.disabled=false;
-    }
-    positionOverlays();
-  }
-
-  function startLoop(){ stopLoop(); loopId=setInterval(function(){ if(mode==='kamera') refreshLive(); }, 90); }
-  function stopLoop(){ if(loopId){ clearInterval(loopId); loopId=null; } }
-
-  /* ---------- interaksi geser titik ---------- */
-  function setRetFromEvent(e){
-    var r=stage.getBoundingClientRect();
-    var cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
-    var cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
-    rx=clamp(cx,0,stage.clientWidth); ry=clamp(cy,0,stage.clientHeight);
-    refreshLive();
-  }
-  var dragging=false;
-  stage.addEventListener('pointerdown',function(e){
-    if(!stage.classList.contains('ready')) return;
-    if(mode==='kamera' && cam.paused){ try{ cam.play(); }catch(_){} }
-    dragging=true; try{ stage.setPointerCapture(e.pointerId); }catch(_){}
-    setRetFromEvent(e);
-  });
-  stage.addEventListener('pointermove',function(e){ if(dragging) setRetFromEvent(e); });
-  stage.addEventListener('pointerup',function(){ dragging=false; if(mode==='foto') refreshLive(); });
-  stage.addEventListener('pointercancel',function(){ dragging=false; });
-
-  function centerReticle(){ rx=stage.clientWidth/2; ry=stage.clientHeight/2; }
-
-  /* ---------- KAMERA ---------- */
-  function isSecure(){ return window.isSecureContext || location.hostname==='localhost' || location.protocol==='https:'; }
-
-  function setStartMsg(t,s,warn){
-    $('startT').textContent=t; $('startS').textContent=s;
-    var ic=$('startlay').querySelector('i');
-    ic.className=warn?'fas fa-triangle-exclamation':'fas fa-camera';
-    ic.style.color=warn?'#fca5a5':'';
-  }
-
-  function stat(msg,kind){
-    var el=$('camStat'); if(!el) return;
-    if(!msg){ el.style.display='none'; el.innerHTML=''; return; }
-    el.style.display='block';
-    el.innerHTML='<b>Status kamera:</b> '+msg;
-    el.style.color = kind==='err' ? '#dc2626' : (kind==='ok' ? '#16a34a' : '#374151');
-  }
-
-  function stopCam(){
-    stopLoop();
-    if(stream){ stream.getTracks().forEach(function(t){ t.stop(); }); stream=null; track=null; }
-    stage.classList.remove('live','ready'); torchOn=false;
-    startBtn.innerHTML='<i class="fas fa-power-off"></i> Mulai';
-    flipBtn.disabled=true; torchBtn.disabled=true; grabBtn.disabled=true; stat('');
-  }
-
-  function onCam(s){
-    stream=s; track=s.getVideoTracks()[0]; cam.srcObject=s;
-    try{ cam.muted=true; cam.setAttribute('playsinline',''); }catch(_){}
-    var go=function(){
-      stage.classList.add('live','ready');          // tampilkan DULU
-      try{ cam.muted=true; }catch(_){}
-      var p=null; try{ p=cam.play(); }catch(_){}     // baru putar
-      if(p && p.then){
-        p.then(function(){ stat('Kamera aktif.','ok'); })
-         .catch(function(){ try{ cam.play(); }catch(_){}
-           stat('Kamera aktif — jika gambar masih hitam, ketuk area gambar sekali.','ok'); });
-      } else stat('Kamera aktif.','ok');
-      startBtn.innerHTML='<i class="fas fa-stop"></i> Stop';
-      flipBtn.disabled=false;
-      centerReticle(); refreshLive(); startLoop();
-      try{ var cap=track.getCapabilities?track.getCapabilities():{}; torchBtn.disabled=!('torch' in cap); }
-      catch(e){ torchBtn.disabled=true; }
-    };
-    if(cam.readyState>=1) go(); else cam.onloadedmetadata=go;
-  }
-
-  function onCamErr(err){
-    stopCam();
-    var name=(err&&err.name)||'Error', t, s;
-    if(name==='NotAllowedError'||name==='SecurityError'){
-      t='Akses kamera ditolak';
-      s='Ketuk ikon gembok / kamera di bilah alamat → izinkan Kamera untuk situs ini, lalu muat ulang. Di iPhone: Pengaturan → Safari → Kamera → Izinkan.';
-    } else if(name==='NotFoundError'||name==='OverconstrainedError'){
-      t='Kamera tidak ditemukan';
-      s='Perangkat ini sepertinya tak punya kamera yang bisa dipakai browser. Gunakan mode "Dari Foto".';
-    } else if(name==='NotReadableError'||name==='TrackStartError'||name==='AbortError'){
-      t='Kamera sedang dipakai';
-      s='Tutup aplikasi atau tab lain yang memakai kamera, lalu coba lagi.';
-    } else {
-      t='Gagal membuka kamera';
-      s='Kemungkinan browser dalam-aplikasi (IG/FB/TikTok/WA). Buka langsung di Chrome/Safari. Detail: '+name+(err&&err.message?' — '+err.message:'');
-    }
-    setStartMsg(t,s,true); toast(t); stat(t+' \u2014 '+s,'err');
-  }
-
-  function startCam(){
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      setStartMsg('Kamera tidak tersedia','Sepertinya halaman dibuka lewat browser dalam-aplikasi (link diketuk dari dalam WA/IG/FB/TikTok). Ketuk menu \u22ef \u2192 "Buka di Chrome/Safari", atau pakai mode "Dari Foto".',true);
-      toast('Kamera tidak tersedia'); stat('Kamera tidak tersedia di browser ini (kemungkinan browser dalam-aplikasi).','err'); return;
-    }
-    if(!isSecure()){
-      setStartMsg('Perlu koneksi aman (https)','Kamera hanya jalan di https:// atau localhost. Buka lewat didikhand.vercel.app, atau pakai mode "Dari Foto".',true);
-      toast('Kamera perlu https'); stat('Perlu koneksi https untuk mengakses kamera.','err'); return;
-    }
-    stopCam();
-    startBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Membuka…';
-    stat('Meminta izin\u2026 tekan \u201cIzinkan\u201d bila muncul kotak permintaan kamera.');
-    var primary={ video:{ facingMode:{ideal:st.facing} }, audio:false };
-    navigator.mediaDevices.getUserMedia(primary).then(onCam).catch(function(){
-      // fallback paling longgar: kamera apa pun
-      navigator.mediaDevices.getUserMedia({ video:true, audio:false }).then(onCam).catch(onCamErr);
+  function bindSw(id,cb,initial){
+    var el=$(id); if(!el) return;
+    if(initial!==undefined) el.classList.toggle('on',!!initial);
+    el.addEventListener('click',function(){
+      this.classList.toggle('on'); if(cb) cb(this.classList.contains('on'));
     });
   }
 
-  function diagnose(){
-    if(mode!=='kamera') return;
-    if(!isSecure()){
-      setStartMsg('Perlu koneksi aman (https)','Kamera hanya jalan di https:// atau localhost.',true); return;
+  /* ---------- TABEL NADA ---------- */
+  var NOTE=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  var DEG =['1','1#','2','3b','3','4','4#','5','5#','6','7b','7'];
+  var SOL =['do','do#','re','mib','mi','fa','fa#','sol','sol#','la','sib','si'];
+  var DOTUP='\u0307', DOTDN='\u0323';
+
+  function midiName(m){ return NOTE[((m%12)+12)%12] + (Math.floor(m/12)-1); }
+  function octDots(reg){
+    if(reg>0) return DOTUP.repeat(Math.min(reg,3));
+    if(reg<0) return DOTDN.repeat(Math.min(-reg,3));
+    return '';
+  }
+  // token untuk satu midi sesuai pengaturan sekarang
+  function tokenFor(m){
+    if(state.notasi==='huruf') return midiName(m);
+    var sem=(((m-state.doKey)%12)+12)%12;
+    var reg=Math.floor((m-state.doKey)/12)-5;
+    var base=(state.notasi==='solfa')?SOL[sem]:DEG[sem];
+    return base+octDots(reg);
+  }
+  // token format Ringtone Nokia/RTTTL untuk Composer: mis. "8e2", "4#d2", oktaf 1-9 (a1=A4)
+  function nokiaTok(m){
+    var idx=((m%12)+12)%12, name=NOTE[idx];
+    var oct=Math.floor(m/12)-4, clamped=false;
+    if(oct<1){ oct=1; clamped=true; } else if(oct>9){ oct=9; clamped=true; }
+    var t=String(state.nkDur);
+    if(name.length>1) t+='#';
+    t+=name[0].toLowerCase()+oct;
+    return {tok:t, clamped:clamped};
+  }
+  // frekuensi -> {midi, cents}
+  function freqToNote(freq){
+    var num=12*(Math.log(freq/440)/Math.log(2))+69;
+    var midi=Math.round(num);
+    var cents=Math.round((num-midi)*100);
+    return {midi:midi, cents:cents};
+  }
+
+  /* ---------- DETEKSI PITCH (autokorelasi) ---------- */
+  function detectPitch(buf, sr){
+    var SIZE=buf.length, i, rms=0;
+    for(i=0;i<SIZE;i++){ var v=buf[i]; rms+=v*v; }
+    rms=Math.sqrt(rms/SIZE);
+    if(rms<state._thr) return {freq:-1, rms:rms};
+    var minLag=Math.max(2,Math.floor(sr/2000));   // ~2000 Hz
+    var maxLag=Math.min(SIZE-2,Math.floor(sr/60)); // ~60 Hz
+    var c0=0; for(i=0;i<SIZE;i++) c0+=buf[i]*buf[i];
+    if(c0<=0) return {freq:-1, rms:rms};
+    var lag, best=0, bestLag=-1, corr=new Float32Array(maxLag+2);
+    for(lag=minLag;lag<=maxLag;lag++){
+      var sum=0, n=SIZE-lag;
+      for(i=0;i<n;i++) sum+=buf[i]*buf[i+lag];
+      corr[lag]=sum;
+      if(sum>best){ best=sum; bestLag=lag; }
     }
+    if(bestLag<1) return {freq:-1, rms:rms};
+    if(best/c0<0.4) return {freq:-1, rms:rms};   // keyakinan kurang
+    // interpolasi parabola untuk halus
+    var l=bestLag, x1=corr[l-1]||0, x2=corr[l], x3=corr[l+1]||0;
+    var a=(x1+x3-2*x2)/2, b=(x3-x1)/2, shift=0;
+    if(a!==0) shift=-b/(2*a);
+    if(shift>1||shift<-1) shift=0;
+    var freq=sr/(l+shift);
+    return {freq:freq, rms:rms};
+  }
+
+  /* ---------- STATE ---------- */
+  var state=load({notasi:'angka', fmt:'sel', doKey:0, ambang:12, stabil:3, jedaNol:true,
+                  nkDur:8, nkTempo:120, nkTitle:'Kode Nada', nkShift:0});
+  state._thr=state.ambang/1000;
+
+  /* ---------- AUDIO ---------- */
+  var audioCtx=null, analyser=null, micStream=null, srcNode=null, rafId=null, buf=null;
+  var running=false, autoRec=false;
+
+  function startMic(){
+    if(running) return;
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      setStartMsg('Kamera tidak tersedia di browser ini','Sepertinya halaman dibuka lewat browser dalam-aplikasi (link diketuk dari dalam WA/IG/FB/TikTok). Ketuk menu ⋯ → "Buka di Chrome/Safari", atau pakai mode "Dari Foto".',true);
+      toast('Perangkat tidak mendukung mikrofon');
+      $('noteName').textContent='Perangkat/browser tidak mendukung akses mikrofon.';
       return;
     }
-    try{
-      if(navigator.permissions && navigator.permissions.query){
-        navigator.permissions.query({name:'camera'}).then(function(p){
-          if(mode!=='kamera') return;
-          if(p.state==='denied'){
-            setStartMsg('Izin kamera diblokir','Ketuk ikon gembok/kamera di bilah alamat → izinkan Kamera → muat ulang. iPhone: Pengaturan → Safari → Kamera → Izinkan.',true);
-          }
-        }).catch(function(){});
+    navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})
+    .then(function(stream){
+      micStream=stream;
+      audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+      if(audioCtx.state==='suspended') audioCtx.resume();
+      srcNode=audioCtx.createMediaStreamSource(stream);
+      analyser=audioCtx.createAnalyser();
+      analyser.fftSize=2048;
+      srcNode.connect(analyser);
+      buf=new Float32Array(analyser.fftSize);
+      running=true;
+      var b=$('micBtn');
+      b.classList.remove('primary'); b.classList.add('ghost');
+      b.innerHTML='<i class="fas fa-stop"></i> Hentikan Mikrofon';
+      $('noteName').textContent='Dengarkan… senandungkan satu nada dengan jelas.';
+      if(autoRec){ autoRec=false; setRecording(true); }
+      loop();
+    })
+    .catch(function(err){
+      autoRec=false;
+      toast('Mikrofon ditolak / perlu HTTPS');
+      $('noteName').textContent='Izin mikrofon ditolak, atau halaman bukan https/localhost.';
+    });
+  }
+  function stopMic(){
+    running=false;
+    if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+    if(micStream) micStream.getTracks().forEach(function(t){ t.stop(); });
+    if(audioCtx){ try{ audioCtx.close(); }catch(e){} }
+    audioCtx=null; analyser=null; micStream=null; srcNode=null; buf=null;
+    setRecording(false);
+    var b=$('micBtn');
+    b.classList.remove('ghost'); b.classList.add('primary');
+    b.innerHTML='<i class="fas fa-microphone"></i> Mulai Mikrofon';
+    resetLive();
+    $('noteName').textContent='Mikrofon berhenti.';
+  }
+
+  /* ---------- LOOP ANALISIS ---------- */
+  var lastBig='', lastName='', lastFreq='';
+  function loop(){
+    if(!running) return;
+    analyser.getFloatTimeDomainData(buf);
+    var res=detectPitch(buf, audioCtx.sampleRate);
+    updateLive(res);
+    if(recording) handleRecord(res);
+    rafId=requestAnimationFrame(loop);
+  }
+
+  function updateLive(res){
+    // meter level
+    var lv=Math.min(100, Math.round((res.rms||0)*350));
+    $('levelBar').style.width=lv+'%';
+    if(res.freq>0){
+      var n=freqToNote(res.freq);
+      var big=tokenFor(n.midi);
+      var name=midiName(n.midi)+' · '+res.freq.toFixed(1)+' Hz';
+      if(big!==lastBig){ $('bigNote').textContent=big; $('bigNote').classList.remove('idle'); lastBig=big; }
+      if(name!==lastName){ $('noteName').textContent=midiName(n.midi); $('noteFreq').textContent=res.freq.toFixed(1)+' Hz'; lastName=name; }
+      // tuner cents
+      var c=Math.max(-50,Math.min(50,n.cents));
+      $('tunerInd').style.left=(50+c)+'%';
+      $('tuner').classList.toggle('lock', Math.abs(n.cents)<8);
+    } else {
+      if(lastBig!==''){ $('bigNote').textContent='—'; $('bigNote').classList.add('idle'); lastBig=''; }
+      $('noteFreq').innerHTML='&nbsp;';
+      $('tunerInd').style.left='50%';
+      $('tuner').classList.remove('lock');
+      if(running && !recording) $('noteName').textContent='Diam… menunggu suara.';
+    }
+  }
+  function resetLive(){
+    $('bigNote').textContent='—'; $('bigNote').classList.add('idle');
+    $('noteFreq').innerHTML='&nbsp;'; $('levelBar').style.width='0%';
+    $('tunerInd').style.left='50%'; $('tuner').classList.remove('lock');
+    lastBig=''; lastName='';
+  }
+
+  /* ---------- REKAM ---------- */
+  var recording=false, recorded=[], candidate=null, candCount=0, committed=null, silence=0;
+  var RESTGAP=15;
+
+  function toggleRecord(){
+    if(!running){ autoRec=true; startMic(); return; }
+    setRecording(!recording);
+  }
+  function setRecording(on){
+    recording=on;
+    var b=$('recBtn');
+    if(on){
+      b.classList.add('rec-on'); b.classList.remove('ghost'); b.classList.add('primary');
+      b.innerHTML='<span class="recdot"></span> Merekam…';
+      candidate=null; candCount=0; committed=null; silence=0;
+      $('noteName').textContent='Merekam… mulai bernyanyi.';
+    } else {
+      b.classList.remove('rec-on'); b.classList.remove('primary'); b.classList.add('teal');
+      b.innerHTML='<span class="recdot"></span> Rekam';
+    }
+  }
+  function stabilFrames(){ return state.stabil; }
+
+  function handleRecord(res){
+    if(res.freq>0){
+      silence=0;
+      var m=freqToNote(res.freq).midi;
+      if(candidate===m){ candCount++; } else { candidate=m; candCount=1; }
+      if(candCount===stabilFrames() && m!==committed){
+        recorded.push(m); committed=m; renderCode();
       }
-    }catch(e){}
-  }
-
-  startBtn.addEventListener('click',function(){
-    if(stage.classList.contains('live')) stopCam(); else startCam();
-  });
-  // ketuk overlay awal = mulai
-  $('startlay').addEventListener('click',function(){ if(mode==='kamera' && !stage.classList.contains('live')) startCam(); else if(mode==='foto') fileEl.click(); });
-
-  flipBtn.addEventListener('click',function(){
-    st.facing = (st.facing==='environment')?'user':'environment'; save(st);
-    if(stage.classList.contains('live')) startCam();
-    toast(st.facing==='environment'?'Kamera belakang':'Kamera depan');
-  });
-
-  torchBtn.addEventListener('click',function(){
-    if(!track) return;
-    torchOn=!torchOn;
-    track.applyConstraints({ advanced:[{ torch:torchOn }] })
-      .then(function(){ toast(torchOn?'Senter nyala':'Senter mati'); })
-      .catch(function(){ torchOn=false; toast('Senter tidak didukung'); });
-  });
-
-  /* ---------- MODE FOTO ---------- */
-  pickBtn.addEventListener('click',function(){ fileEl.click(); });
-  fileEl.addEventListener('change',function(){
-    var f=this.files && this.files[0]; if(!f) return;
-    var url=URL.createObjectURL(f);
-    photo.onload=function(){
-      URL.revokeObjectURL(url);
-      stage.classList.add('ready');
-      centerReticle(); refreshLive();
-    };
-    photo.src=url;
-  });
-
-  function applyMode(v){
-    mode=v; st.mode=v; save(st);
-    if(v==='kamera'){
-      stage.classList.remove('foto');
-      $('camCtrl').style.display='flex'; $('fotoCtrl').style.display='none';
-      setStartMsg('Ketuk untuk mulai kamera','Izinkan akses kamera saat diminta. Arahkan ke objek, lalu ketuk area gambar untuk memindahkan titik ambil.',false);
-      stage.classList.remove('ready'); grabBtn.disabled=true; diagnose();
-    }else{
-      stopCam();
-      stage.classList.add('foto');
-      $('camCtrl').style.display='none'; $('fotoCtrl').style.display='flex';
-      $('startlay').querySelector('i').className='fas fa-image';
-      $('startT').textContent='Pilih foto dari perangkat';
-      $('startS').textContent='Ketuk untuk memilih gambar, lalu ketuk area gambar untuk mengambil warnanya.';
-      if(!photo.src){ stage.classList.remove('ready'); grabBtn.disabled=true; }
-      else { stage.classList.add('ready'); refreshLive(); }
+    } else {
+      silence++;
+      if(silence===RESTGAP){
+        var last=recorded[recorded.length-1];
+        if(state.jedaNol && recorded.length && last!=='0' && last!=='|'){
+          recorded.push('0'); renderCode();
+        }
+        committed=null; candidate=null; candCount=0;
+      }
     }
   }
-  bindSeg('mode',applyMode);
-  // set posisi seg awal sesuai state
-  (function(){
-    var segEl=$('mode');
-    segEl.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===mode); });
-    if(mode==='foto') applyMode('foto');
-  })();
 
-  /* ---------- AMBIL WARNA ---------- */
-  var picked=null;
-  function showDetail(c){
-    picked=c;
-    var hx=toHex(c.r,c.g,c.b);
-    $('detSw').style.background=hx;
-    $('detHex').textContent=hx;
-    $('detRgb').textContent=toRgb(c.r,c.g,c.b);
-    $('detHsl').textContent=toHsl(c.r,c.g,c.b);
-    $('stName').textContent=nearestName(c.r,c.g,c.b);
-    var L=lumaByte(c.r,c.g,c.b);
-    $('stLum').textContent=Math.round(L/255*100)+'%';
-    $('stTxt').textContent=L>150?'Gelap':'Terang';
-    $('stTxt').style.color=L>150?'#111':'#111';
+  /* ---------- RENDER KODE ---------- */
+  var codeStr='';
+  function renderCode(){
+    var el=$('codeOut');
+    // statistik selalu dihitung dari rekaman mentah
+    var nada=0, bar=0, jeda=0;
+    recorded.forEach(function(it){ if(it==='|') bar++; else if(it==='0') jeda++; else nada++; });
+    updateStats(nada,bar,jeda);
+
+    if(!recorded.length){
+      el.classList.remove('nk');
+      el.innerHTML='<span class="ph">Tekan “Rekam”, lalu nyanyikan melodinya. Kode not muncul di sini.</span>';
+      codeStr=''; showWarn(false); return;
+    }
+
+    if(state.fmt==='nokia'){
+      // ---- Format Ringtone (Composer) ----
+      el.classList.add('nk');
+      var shift=state.nkShift*12, body=[], clamped=false;
+      recorded.forEach(function(it){
+        if(it==='|') return;                       // birama tidak dipakai di format ringtone
+        if(it==='0'){ body.push(state.nkDur+'-'); return; }
+        var r=nokiaTok(it+shift); if(r.clamped) clamped=true; body.push(r.tok);
+      });
+      var bodyStr=body.join(' ');
+      var header=(state.nkTitle||'Kode Nada')+' (Tempo='+state.nkTempo+')';
+      codeStr=header+'\n'+bodyStr;
+      el.innerHTML='<span class="hdr">'+esc(header)+'</span>'+esc(bodyStr);
+      showWarn(clamped);
+    } else {
+      // ---- Notasi terpilih (angka / do-re-mi / huruf) ----
+      el.classList.remove('nk');
+      var htmlParts=[], strParts=[];
+      recorded.forEach(function(it){
+        if(it==='|'){ htmlParts.push('<span class="bar">|</span>'); strParts.push('|'); }
+        else if(it==='0'){ htmlParts.push('<span class="rest">0</span>'); strParts.push('0'); }
+        else { var t=tokenFor(it); htmlParts.push(esc(t)); strParts.push(t); }
+      });
+      el.innerHTML=htmlParts.join(' ');
+      codeStr=strParts.join(' ');
+      showWarn(false);
+    }
   }
-  grabBtn.addEventListener('click',function(){
-    if(!liveColor) return;
-    showDetail(liveColor);
-    var hx=toHex(liveColor.r,liveColor.g,liveColor.b);
-    // masukkan ke palet (dedupe, terbaru di depan)
-    st.palette=st.palette.filter(function(x){ return x!==hx; });
-    st.palette.unshift(hx);
-    if(st.palette.length>24) st.palette.length=24;
-    save(st); renderPalette();
-    toast('Warna diambil: '+hx);
-  });
+  function showWarn(on){
+    var w=$('nkWarn'); if(!w) return;
+    if(on && state.fmt==='nokia'){
+      w.style.display='block';
+      w.innerHTML='<i class="fas fa-triangle-exclamation"></i> Sebagian nada di luar jangkauan Composer (oktaf 1–9) dan dirapatkan. Coba <b>geser oktaf</b> di pengaturan Ringtone.';
+    } else w.style.display='none';
+  }
+  function updateStats(n,b,j){
+    $('stNada').textContent=(n||0); $('stBar').textContent=(b||0); $('stJeda').textContent=(j||0);
+  }
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  /* ---------- SALIN ---------- */
-  function copyText(t,label){
-    var done=function(){ toast((label||'Disalin')+': '+t); };
+  /* ---------- TOMBOL ---------- */
+  $('micBtn').addEventListener('click',function(){ running?stopMic():startMic(); });
+  $('recBtn').addEventListener('click', toggleRecord);
+  $('barBtn').addEventListener('click',function(){ recorded.push('|'); committed=null; renderCode(); });
+  $('restBtn').addEventListener('click',function(){ recorded.push('0'); committed=null; renderCode(); });
+  $('undoBtn').addEventListener('click',function(){ recorded.pop(); committed=null; renderCode(); });
+  $('clearBtn').addEventListener('click',function(){ recorded=[]; committed=null; candidate=null; renderCode(); toast('Kode dikosongkan'); });
+  $('copyBtn').addEventListener('click',function(){
+    if(!codeStr){ toast('Belum ada nada'); return; }
     if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(t).then(done).catch(fallback);
-    } else fallback();
-    function fallback(){
-      try{ var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0';
-        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done();
-      }catch(e){ toast('Gagal menyalin'); }
-    }
+      navigator.clipboard.writeText(codeStr).then(function(){ toast('Kode disalin'); },function(){ fallbackCopy(); });
+    } else fallbackCopy();
+  });
+  function fallbackCopy(){
+    var ta=document.createElement('textarea'); ta.value=codeStr;
+    ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta);
+    ta.select(); try{ document.execCommand('copy'); toast('Kode disalin'); }catch(e){ toast('Gagal menyalin'); }
+    document.body.removeChild(ta);
   }
-  document.querySelectorAll('.cbtn').forEach(function(b){
-    b.addEventListener('click',function(){
-      if(!picked){ toast('Belum ada warna terpilih'); return; }
-      var k=this.dataset.copy, c=picked, t;
-      if(k==='hex') t=toHex(c.r,c.g,c.b);
-      else if(k==='rgb') t=toRgb(c.r,c.g,c.b);
-      else t=toHsl(c.r,c.g,c.b);
-      copyText(t, k.toUpperCase());
-    });
+
+  /* ---------- PENGATURAN ---------- */
+  function refreshDoWrap(){ $('doWrap').style.opacity=(state.notasi==='huruf')?'.45':'1'; }
+  bindSeg('segNotasi',function(v){ state.notasi=v; save(state); refreshDoWrap(); renderCode(); lastBig=''; });
+  // set posisi awal seg
+  $('segNotasi').querySelectorAll('button').forEach(function(b){
+    b.classList.toggle('on', b.dataset.v===state.notasi);
   });
 
-  /* ---------- PALET ---------- */
-  function renderPalette(){
-    var grid=$('palGrid'), empty=$('palEmpty');
-    $('palCount').textContent=st.palette.length;
-    grid.innerHTML='';
-    if(!st.palette.length){ empty.style.display='block'; return; }
-    empty.style.display='none';
-    st.palette.forEach(function(hx){
-      var d=document.createElement('div'); d.className='paldot'; d.style.background=hx;
-      var r=parseInt(hx.substr(1,2),16),g=parseInt(hx.substr(3,2),16),bl=parseInt(hx.substr(5,2),16);
-      var dark=lumaByte(r,g,bl)<130;
-      d.innerHTML='<span class="lab">'+hx.replace('#','')+'</span><span class="x"><i class="fas fa-xmark"></i></span>';
-      d.querySelector('.x').addEventListener('click',function(e){
-        e.stopPropagation();
-        st.palette=st.palette.filter(function(x){ return x!==hx; }); save(st); renderPalette();
-      });
-      d.addEventListener('click',function(){
-        copyText(hx,'HEX');
-        showDetail({r:r,g:g,b:bl}); // tampilkan lagi di kartu terpilih
-      });
-      grid.appendChild(d);
-    });
+  $('doKey').value=String(state.doKey);
+  $('doKey').addEventListener('change',function(){ state.doKey=+this.value; save(state); renderCode(); lastBig=''; });
+
+  $('ambang').value=state.ambang; $('ambVal').textContent=state.ambang;
+  $('ambang').addEventListener('input',function(){
+    state.ambang=+this.value; state._thr=state.ambang/1000; $('ambVal').textContent=this.value; save(state);
+  });
+
+  $('stabil').value=state.stabil; $('stbVal').textContent=state.stabil;
+  $('stabil').addEventListener('input',function(){
+    state.stabil=+this.value; $('stbVal').textContent=this.value; save(state);
+  });
+
+  bindSw('swJeda',function(on){ state.jedaNol=on; save(state); }, state.jedaNol);
+
+  /* ---------- FORMAT KELUARAN ---------- */
+  function applyFmt(){
+    document.body.classList.toggle('nkmode', state.fmt==='nokia');
+    $('fmtNote').innerHTML = (state.fmt==='nokia')
+      ? 'Kode siap tempel ke <b>Composer Ringtone</b> — contoh <b>8e2 8#d2 4a1</b>.'
+      : 'Kode memakai notasi terpilih di atas (angka / do-re-mi / huruf).';
   }
-  $('copyAll').addEventListener('click',function(){
-    if(!st.palette.length){ toast('Palet kosong'); return; }
-    copyText(st.palette.join(', '),'Semua HEX');
-  });
-  $('clearAll').addEventListener('click',function(){
-    if(!st.palette.length){ toast('Palet sudah kosong'); return; }
-    st.palette=[]; save(st); renderPalette(); toast('Palet dikosongkan');
-  });
+  bindSeg('segFmt',function(v){ state.fmt=v; save(state); applyFmt(); renderCode(); });
+  $('segFmt').querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===state.fmt); });
 
-  renderPalette();
-  diagnose();
+  /* ---------- PENGATURAN RINGTONE ---------- */
+  $('nkTitle').value=state.nkTitle;
+  $('nkTitle').addEventListener('input',function(){ state.nkTitle=this.value; save(state); renderCode(); });
 
-  window.addEventListener('resize',function(){
-    if(stage.classList.contains('ready')){
-      rx=clamp(rx,0,stage.clientWidth); ry=clamp(ry,0,stage.clientHeight);
-      refreshLive();
-    }
-  });
+  $('nkTempo').value=state.nkTempo;
+  $('nkTempo').addEventListener('input',function(){ var v=parseInt(this.value,10); state.nkTempo=isNaN(v)?state.nkTempo:v; save(state); renderCode(); });
+  $('nkTempo').addEventListener('blur',function(){ var v=Math.max(40,Math.min(300,parseInt(this.value,10)||120)); state.nkTempo=v; this.value=v; save(state); renderCode(); });
+
+  bindSeg('segDur',function(v){ state.nkDur=+v; save(state); renderCode(); });
+  $('segDur').querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', (+b.dataset.v)===state.nkDur); });
+
+  bindSeg('segShift',function(v){ state.nkShift=+v; $('shVal').textContent=(+v>0?'+':'')+v; save(state); renderCode(); });
+  $('segShift').querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', (+b.dataset.v)===state.nkShift); });
+  $('shVal').textContent=(state.nkShift>0?'+':'')+state.nkShift;
+
+  applyFmt();
+  refreshDoWrap();
+  renderCode();
 })();
 </script>
 </body>
